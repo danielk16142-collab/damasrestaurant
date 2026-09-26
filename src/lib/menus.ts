@@ -385,6 +385,93 @@ export const brunchDrinks: Menu = {
   ],
 };
 
+
+/**
+ * Wine page: the parts of the 7-page wine list proofread against the PDF
+ * (by the glass, the Levant and Greece, arak, beer and cider). The full
+ * bottle list stays a PDF until a proofread transcription is done; see
+ * tools/parse-wine-list.py.
+ */
+const w = (name: string, fr: string, en: string, price: string): Dish => ({ name: same(name), desc: { fr, en }, price });
+export const wine: Menu = {
+  id: 'vins',
+  title: { fr: 'Vins', en: 'Wine' },
+  intro: {
+    fr: 'Une cave généreuse de vignerons artisans, et les vins rares du Levant : Syrie, Liban, Grèce.',
+    en: 'A generous cellar of artisan growers, and the rare wines of the Levant: Syria, Lebanon, Greece.',
+  },
+  pdf: '/menus/vins.pdf',
+  sections: [
+    {
+      id: 'verre-blanc',
+      title: { fr: 'Au verre · blanc', en: 'By the glass · white' },
+      items: [
+        w('Roero Arneis 2024, Tibaldi', 'Arneis. Roero, Piémont, Italie', 'Arneis. Roero, Piedmont, Italy', '17'),
+        w('Kashf 2022, El Sabban', 'Viognier. Mont-Liban', 'Viognier. Mount Lebanon', '18'),
+        w('Roc Troucat 2023, La Bancale', 'Carignan blanc. Roussillon, France', 'Carignan blanc. Roussillon, France', '18'),
+        w('Bargylus Blanc 2018', 'Sauvignon blanc, chardonnay. Lattaquié, Syrie', 'Sauvignon blanc, chardonnay. Latakia, Syria', '25'),
+      ],
+    },
+    {
+      id: 'verre-bulles',
+      title: { fr: 'Au verre · bulles, rosé et orange', en: 'By the glass · sparkling, rosé and orange' },
+      items: [
+        w('Origins NV, Keush', 'Voskehat. Brut. Vayots Dzor, Arménie', 'Voskehat. Brut. Vayots Dzor, Armenia', '20'),
+        w('Bulles de Roche 2022, Thierry Germain', 'Crémant de Loire, France', 'Crémant de Loire, France', '24'),
+        w('L’Éclat 2023, Roche en Loire', 'Rosé. Cabernet franc, grolleau. Touraine, Loire, France', 'Rosé. Cabernet franc, grolleau. Touraine, Loire, France', '17'),
+        w('Trebbiano Orange 2022, Casale', 'Orange. Trebbiano. Toscane, Italie', 'Orange. Trebbiano. Tuscany, Italy', '18'),
+      ],
+    },
+    {
+      id: 'verre-rouge',
+      title: { fr: 'Au verre · rouge', en: 'By the glass · red' },
+      items: [
+        w('Ayehoros 2022, Dalamara', 'Xinomavro, merlot. Macédoine, Grèce', 'Xinomavro, merlot. Macedonia, Greece', '17'),
+        w('Dolcetto d’Alba 2022, Mauro Veglio', 'Dolcetto. Piémont, Italie', 'Dolcetto. Piedmont, Italy', '18'),
+        w('Mise en Bouche 2023, Darnaud', 'Syrah. Crozes-Hermitage, Rhône, France', 'Syrah. Crozes-Hermitage, Rhône, France', '21'),
+        w('Liaison 2022, Enderle & Moll', 'Pinot noir. Bade, Allemagne', 'Pinot noir. Baden, Germany', '22'),
+        w('Bargylus Rouge 2017', 'Syrah, merlot, cabernet sauvignon. Lattaquié, Syrie', 'Syrah, merlot, cabernet sauvignon. Latakia, Syria', '27'),
+      ],
+    },
+    {
+      id: 'levant',
+      title: { fr: 'Levant et Grèce · bouteille', en: 'Levant and Greece · bottle' },
+      items: [
+        w('Bargylus 2018', 'Blanc. Sauvignon, chardonnay. Lattaquié, Syrie', 'White. Sauvignon, chardonnay. Latakia, Syria', '115'),
+        w('Bargylus 2017', 'Rouge. Syrah, cabernet… Lattaquié, Syrie', 'Red. Syrah, cabernet… Latakia, Syria', '145'),
+        w('Kashf 2022, El-Sabban', 'Blanc. Viognier. Mont-Liban', 'White. Viognier. Mount Lebanon', '75'),
+        w('Wajd 2022, El-Sabban', 'Rouge. Pinot noir. Mont-Liban', 'Red. Pinot noir. Mount Lebanon', '80'),
+        w('Héritage 2015, Château Cana', 'Rouge. Grenache, cabernet… Mont-Liban', 'Red. Grenache, cabernet… Mount Lebanon', '85'),
+        w('Ward 2023, Heya', 'Rosé. Tempranillo. Bekaa, Liban', 'Rosé. Tempranillo. Bekaa, Lebanon', '88'),
+        w('Vino di Sasso 2024, Sclavos', 'Blanc. Robola. Céphalonie, Grèce', 'White. Robola. Kefalonia, Greece', '75'),
+        w('Ayehoros 2022, Dalamara', 'Rouge. Xinomavro, merlot. Naoussa, Grèce', 'Red. Xinomavro, merlot. Naoussa, Greece', '75'),
+        w('Limnio 2022, Aslanis', 'Rouge. Limnio. Thessalonique, Grèce', 'Red. Limnio. Thessaloniki, Greece', '80'),
+      ],
+    },
+    {
+      id: 'arak',
+      title: same('Arak'),
+      items: [
+        { name: same('Massaya'), price: '14' },
+        { name: same('Kefraya'), price: '13' },
+        { name: same('Al-Karram'), price: '14' },
+        { name: same('Brun'), price: '12' },
+        { name: same('Ksarak'), price: '11' },
+        { name: same('Ixsir'), price: '14' },
+      ],
+    },
+    {
+      id: 'bieres-cidres',
+      title: { fr: 'Bières et cidres', en: 'Beer and cider' },
+      items: [
+        w('Almaza', 'Pilsner, 330 ml. Liban', 'Pilsner, 330 ml. Lebanon', '11'),
+        w('Ghost Farm, Wills', 'IPA, 473 ml. Montréal', 'IPA, 473 ml. Montréal', '14'),
+        w('Débuts 2021, Lieux Communs', 'Cidre de pomme et riesling, 750 ml. Montréal', 'Apple and riesling cider, 750 ml. Montréal', '35'),
+      ],
+    },
+  ],
+};
+
 /** The five menus, in switcher order. `key` is the route key in i18n.ts. */
 export type MenuPage = {
   key: 'menu-dinner' | 'menu-brunch' | 'menu-brunch-drinks' | 'menu-desserts' | 'menu-wine';
@@ -437,5 +524,6 @@ export const menuPages: MenuPage[] = [
     label: { fr: 'Vins', en: 'Wine' },
     lede: { fr: 'Cave syrienne, libanaise et d’ailleurs.', en: 'Syrian, Lebanese and beyond.' },
     pdf: '/menus/vins.pdf',
+    menu: wine,
   },
 ];

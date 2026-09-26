@@ -8,7 +8,7 @@ const { class: cls, lang } = Astro.props;
   <Wordmark class="logo__word" />
 </a>
 <style>
-  .logo { display: inline-flex; align-items: center; color: var(--paper); transition: color 0.4s; }
+  .logo { display: inline-flex; align-items: center; color: inherit; transition: color 0.4s; }
   .logo:hover { color: var(--accent); }
   .logo :global(.logo__word) { width: clamp(5.25rem, 4.5rem + 2.5vw, 7rem); height: auto; }
 </style>

@@ -28,7 +28,8 @@ const t = useT(lang);
     z-index: 60;
     display: flex;
     justify-content: center;
-    padding: 0.75rem var(--gutter);
+    padding: 0.75rem var(--gutter) 1.25rem;
+    background: linear-gradient(var(--paper) 72%, rgb(239 230 218 / 0));
     transition: top 0.7s var(--ease-out);
     view-transition-name: menu-switch;
   }
@@ -74,6 +75,15 @@ const t = useT(lang);
   }
   @media (max-width: 640px) {
     .mswitch { justify-content: flex-start; padding-inline: 0.5rem; top: 4.5rem; }
+    .mswitch__row { -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); }
     .mswitch__btn { padding: 0 0.9rem; }
   }
 </style>
+
+<script>
+  // Keep the current menu's button in view when the row scrolls (phones)
+  document.querySelectorAll<HTMLElement>('.mswitch__row').forEach((row) => {
+    const cur = row.querySelector<HTMLElement>('[aria-current]');
+    if (cur) row.scrollLeft = cur.offsetLeft - row.clientWidth / 2 + cur.offsetWidth / 2;
+  });
+</script>

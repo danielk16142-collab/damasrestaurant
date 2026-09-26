@@ -1,0 +1,12 @@
+---
+import MenuPage from '../../../views/MenuPage.astro';
+import { menuPages } from '../../../lib/menus';
+import { routes } from '../../../lib/i18n';
+
+export function getStaticPaths() {
+  // Slugs come from the damas.ca URLs in i18n.ts (e.g. /fr/menus/diner/)
+  return menuPages.map((m) => ({ params: { menu: routes[m.key].fr.split('/').filter(Boolean).pop() }, props: { menuKey: m.key } }));
+}
+const { menuKey } = Astro.props;
+---
+<MenuPage lang="fr" menuKey={menuKey} />

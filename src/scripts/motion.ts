@@ -57,6 +57,13 @@ function initScrollState() {
   window.addEventListener('scroll', update, { passive: true });
 }
 
+/** L4: staggered load reveal for [data-reveal-load], on every page (after the intro, if any). */
+function initLoadReveals() {
+  const els = gsap.utils.toArray<HTMLElement>('[data-reveal-load]');
+  if (!els.length) return;
+  gsap.fromTo(els, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 1.3, ease: 'expo.out', stagger: 0.1, delay: introDelay() + 0.35 });
+}
+
 function initReveals() {
   gsap.set('[data-reveal]', { opacity: 0, y: 40 });
   // No `once`: with once, triggers already in view kill themselves mid-creation and
@@ -267,6 +274,7 @@ export function initMotion() {
   }
   initSmoothScroll();
   document.fonts.ready.then(() => {
+    initLoadReveals();
     initSplits();
     initClips();
     initReveals();

@@ -1,0 +1,63 @@
+---
+// Menus hub (/fr/menus/): the five menus as arch cards, as on damas.ca.
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Base from '../layouts/Base.astro';
+import MenuSwitcher from '../components/MenuSwitcher.astro';
+import { menuPages } from '../lib/menus';
+import { url, useT, type Lang } from '../lib/i18n';
+import { breadcrumbLd } from '../lib/seo';
+import imgDinner from '../assets/photos/mezzes-table.avif';
+import imgBrunch from '../assets/photos/brunch-oeufs.jpg';
+import imgBrunchDrinks from '../assets/photos/cocktails-duo.avif';
+import imgDesserts from '../assets/photos/douceur-pistache.jpg';
+import imgWine from '../assets/photos/vins-selection.avif';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useT(lang);
+const fr = lang === 'fr';
+const images: Record<string, ImageMetadata> = {
+  'menu-dinner': imgDinner, 'menu-brunch': imgBrunch, 'menu-brunch-drinks': imgBrunchDrinks, 'menu-desserts': imgDesserts, 'menu-wine': imgWine,
+};
+const title = fr ? 'Menus — Restaurant Damas, cuisine syrienne à Outremont' : 'Menus — Restaurant Damas, Syrian dining in Outremont';
+const description = fr
+  ? 'Les menus de Damas, en ligne et sans téléchargement : dîner et menu dégustation, brunch du week-end, boissons, desserts et carte des vins.'
+  : 'The Damas menus, online with no download: dinner and tasting menu, weekend brunch, drinks, desserts and the wine list.';
+---
+<Base lang={lang} page="menus" title={title} description={description} jsonLd={[breadcrumbLd(lang, [{ key: 'menus', name: 'Menus' }])]} tone="paper">
+  <header class="hub wrap">
+    <p class="eyebrow" data-reveal-load>{fr ? 'Cuisine syrienne · Outremont' : 'Syrian cuisine · Outremont'}</p>
+    <h1 data-split="load">{fr ? <>Les <em>menus</em></> : <>The <em>menus</em></>}</h1>
+    <p class="lede" data-reveal-load>{fr ? 'Chaque menu s’ouvre dans la page, sans téléchargement.' : 'Every menu opens right here, no download needed.'}</p>
+  </header>
+  <MenuSwitcher lang={lang} />
+  <div class="wrap hub__grid">
+    {menuPages.map((m, i) => (
+      <a href={url(m.key, lang)} class="card" data-reveal>
+        <figure class="card__img"><Image src={images[m.key]} alt="" widths={[360, 640]} sizes="(max-width: 700px) 80vw, 20vw" /></figure>
+        <span class="card__n num">{String(i + 1).padStart(2, '0')}</span>
+        <h2 class="card__title">{m.label[lang]}</h2>
+        <p class="card__lede">{m.lede[lang]}</p>
+        <span class="link">{fr ? 'Consulter' : 'Open'} →</span>
+      </a>
+    ))}
+  </div>
+  <p class="wrap hub__note">{t.pricesNote} {t.allergyNote}</p>
+</Base>
+
+<style>
+  .hub { display: grid; gap: 1.25rem; justify-items: start; padding-top: 9rem; padding-bottom: 1rem; }
+  .hub h1 { font-size: var(--step-6); }
+  .hub .lede { color: var(--stone); }
+  .hub__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: 2rem 1.5rem; padding-block: 3rem var(--section); }
+  .card { display: grid; gap: 0.6rem; align-content: start; }
+  .card__img { margin: 0 0 0.6rem; aspect-ratio: 4 / 5; border-radius: 50% 50% 0 0 / 30% 30% 0 0; overflow: hidden; }
+  .card__img :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform 1.4s var(--ease-out); }
+  .card:hover .card__img :global(img) { transform: scale(1.05); }
+  .card__n { font-size: var(--step--2); letter-spacing: 0.2em; color: var(--accent-deep); }
+  .card__title { font-size: var(--step-3); }
+  .card:hover .card__title { font-style: italic; color: var(--accent-deep); }
+  .card__lede { color: var(--stone); font-size: var(--step--1); }
+  .hub__note { color: var(--stone); font-size: var(--step--1); padding-bottom: var(--section); margin-top: -3rem; }
+</style>
