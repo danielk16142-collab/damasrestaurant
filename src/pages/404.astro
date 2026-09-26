@@ -1,0 +1,28 @@
+---
+import Base from '../layouts/Base.astro';
+import Emblem from '../components/Emblem.astro';
+import { url } from '../lib/i18n';
+---
+<Base lang="fr" title="Page introuvable · Page not found — Restaurant Damas" description="Cette page n’existe pas. This page does not exist." noindex>
+  <section class="nf">
+    <Emblem class="nf__emblem" color="oxblood" loading="eager" />
+    <div class="wrap nf__inner">
+      <p class="eyebrow">404</p>
+      <h1 data-split="load">Cette nuit-là <em>n’existe pas</em></h1>
+      <p class="lede muted">La page que vous cherchez a changé d’adresse, ou n’a jamais été écrite.</p>
+      <p class="muted" lang="en-CA">This night doesn’t exist. The page you were looking for has moved, or was never written.</p>
+      <div class="nf__actions">
+        <a href={url('home', 'fr')} class="btn btn--accent">Retour à Damas</a>
+        <a href={url('menus', 'fr')} class="link">Voir les menus</a>
+        <a href={url('home', 'en')} class="link" lang="en-CA">English site</a>
+      </div>
+    </div>
+  </section>
+</Base>
+<style>
+  .nf { position: relative; min-height: 100svh; display: flex; align-items: center; overflow: hidden; padding-block: 8rem 4rem; isolation: isolate; }
+  .nf :global(.nf__emblem) { position: absolute; z-index: -1; left: 50%; top: 50%; width: min(1100px, 150vw); transform: translate(-50%, -50%); opacity: 0.45; }
+  .nf__inner { display: grid; gap: 1.5rem; justify-items: start; }
+  .nf h1 { font-size: var(--step-6); max-width: 12ch; }
+  .nf__actions { display: flex; flex-wrap: wrap; gap: 1.5rem 2rem; align-items: center; margin-top: 1rem; }
+</style>

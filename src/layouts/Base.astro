@@ -1,0 +1,87 @@
+---
+import '../styles/global.css';
+import ebGaramond from '@fontsource/eb-garamond/files/eb-garamond-latin-400-normal.woff2?url';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import CookieConsent from '../components/CookieConsent.astro';
+import ReserveBar from '../components/ReserveBar.astro';
+import { routes, langs, useT, type Lang, type RouteKey } from '../lib/i18n';
+import { abs, restaurantLd } from '../lib/seo';
+
+interface Props {
+  lang: Lang;
+  /** Omit for pages without a canonical (404). */
+  page?: RouteKey;
+  title: string;
+  description: string;
+  image?: string;
+  jsonLd?: object[];
+  noindex?: boolean;
+  /** Paint the page on paper (menus, legal) instead of the night ground. */
+  tone?: 'night' | 'paper';
+}
+const { lang, page, title, description, image = '/og/damas-home.jpg', jsonLd = [], noindex = false, tone = 'night' } = Astro.props;
+const t = useT(lang);
+const canonical = page ? abs(routes[page][lang]) : null;
+const locale = (l: Lang) => (l === 'fr' ? 'fr_CA' : 'en_CA');
+const graphs = [restaurantLd(lang), ...jsonLd];
+---
+<!doctype html>
+<html lang={lang === 'fr' ? 'fr-CA' : 'en-CA'} data-page={page ?? 'none'} data-tone={tone}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
+    {page && <link rel="canonical" href={canonical} />}
+    {page && langs.map((l) => <link rel="alternate" hreflang={l === 'fr' ? 'fr-CA' : 'en-CA'} href={abs(routes[page][l])} />)}
+    {page && <link rel="alternate" hreflang="x-default" href={abs(routes[page].fr)} />}
+    <meta property="og:type" content="restaurant" />
+    <meta property="og:site_name" content="Restaurant Damas" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {canonical && <meta property="og:url" content={canonical} />}
+    <meta property="og:image" content={abs(image)} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={locale(lang)} />
+    <meta property="og:locale:alternate" content={locale(lang === 'fr' ? 'en' : 'fr')} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#120a0d" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="preload" href={ebGaramond} as="font" type="font/woff2" crossorigin />
+    {graphs.map((g) => <script type="application/ld+json" set:html={JSON.stringify(g)} />)}
+    <script is:inline>
+      // Hide animated elements before first paint, but only when motion will run.
+      // Failsafe: if motion never starts, show everything after 3.5s.
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('js-motion');
+        setTimeout(function () {
+          if (!document.documentElement.hasAttribute('data-motion-ready')) {
+            document.documentElement.classList.remove('js-motion');
+          }
+        }, 3500);
+      }
+    </script>
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{t.skip}</a>
+    <slot name="intro" />
+    <Nav lang={lang} page={page ?? 'home'} />
+    <main id="main" class:list={[tone === 'paper' && 'paper']}>
+      <slot />
+    </main>
+    <Footer lang={lang} />
+    <ReserveBar lang={lang} />
+    <CookieConsent />
+    <div class="grain" aria-hidden="true"></div>
+    <script>
+      import { initMotion } from '../scripts/motion';
+      document.documentElement.setAttribute('data-motion-ready', '');
+      initMotion();
+    </script>
+  </body>
+</html>

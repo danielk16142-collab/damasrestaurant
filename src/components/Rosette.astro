@@ -1,0 +1,28 @@
+---
+/**
+ * The octagonal Damascene rosette from the dessert menu, drawn as strokes so
+ * it can "draw itself" on scroll (see [data-draw] in scripts/motion.ts).
+ */
+interface Props { class?: string; size?: number }
+const { class: cls, size = 100 } = Astro.props;
+const c = 50;
+const pts = (r: number, n: number, rot = 0) =>
+  Array.from({ length: n }, (_, i) => {
+    const a = (Math.PI * 2 * i) / n + rot;
+    return [c + r * Math.cos(a), c + r * Math.sin(a)];
+  });
+const oct = pts(46, 8, Math.PI / 8);
+const star = pts(46, 8, Math.PI / 8);
+// 8-point star {8/3}: connect every third vertex
+const starPath = star.map((_, i) => star[(i * 3) % 8]).map((p, i) => `${i ? 'L' : 'M'}${p[0].toFixed(2)} ${p[1].toFixed(2)}`).join(' ') + 'Z';
+const inner = pts(17, 8, Math.PI / 8);
+const innerStar = inner.map((_, i) => inner[(i * 3) % 8]).map((p, i) => `${i ? 'L' : 'M'}${p[0].toFixed(2)} ${p[1].toFixed(2)}`).join(' ') + 'Z';
+const octPath = oct.map((p, i) => `${i ? 'L' : 'M'}${p[0].toFixed(2)} ${p[1].toFixed(2)}`).join(' ') + 'Z';
+---
+<svg class={cls} viewBox="0 0 100 100" width={size} height={size} aria-hidden="true" data-draw>
+  <g fill="none" stroke="currentColor" stroke-width="1" stroke-linejoin="round">
+    <path d={octPath} />
+    <path d={starPath} />
+    <path d={innerStar} />
+  </g>
+</svg>

@@ -1,0 +1,72 @@
+---
+/**
+ * Shared layout for /privacy, /cookies and /terms (see references/legal.md).
+ * Sections are plain <section><h2 id>…</h2>…</section> in the default slot;
+ * pass `toc` to list them in a sticky contents column.
+ */
+import Base from '../layouts/Base.astro';
+import { legal } from '../lib/content';
+import type { Lang, RouteKey } from '../lib/i18n';
+import { breadcrumbLd } from '../lib/seo';
+
+interface Props {
+  lang: Lang;
+  page: RouteKey;
+  title: string;
+  description: string;
+  toc?: { id: string; label: string }[];
+}
+const { lang, page, title, description, toc = [] } = Astro.props;
+const fr = lang === 'fr';
+const updated = new Date(legal.updated + 'T12:00:00').toLocaleDateString(fr ? 'fr-CA' : 'en-CA', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+<Base lang={lang} page={page} title={`${title} — Restaurant Damas`} description={description} tone="paper" jsonLd={[breadcrumbLd(lang, [{ key: page, name: title }])]}>
+  <header class="legal__hero wrap">
+    <p class="eyebrow" data-reveal-load>{fr ? 'Mentions' : 'Legal'}</p>
+    <h1 data-split="load">{title}</h1>
+    <p class="muted" data-reveal-load>{fr ? 'Dernière mise à jour :' : 'Last updated:'} {updated}</p>
+  </header>
+
+  <div class="legal wrap">
+    {toc.length > 0 && (
+      <nav class="legal__toc" aria-label={fr ? 'Sur cette page' : 'On this page'}>
+        <p class="eyebrow">{fr ? 'Sur cette page' : 'On this page'}</p>
+        <ol role="list">{toc.map((t) => <li><a href={`#${t.id}`}>{t.label}</a></li>)}</ol>
+      </nav>
+    )}
+    <article class="legal__body">
+      <slot />
+    </article>
+  </div>
+</Base>
+
+<style>
+  .legal__hero { display: grid; gap: 1.25rem; justify-items: start; padding-top: 9rem; }
+  .legal__hero h1 { font-size: var(--step-5); max-width: 18ch; }
+  .legal {
+    display: grid;
+    grid-template-columns: minmax(12rem, 1fr) minmax(0, 3fr);
+    gap: 4rem;
+    padding-block: var(--section);
+  }
+  .legal__toc { position: sticky; top: 7rem; align-self: start; }
+  .legal__toc ol { display: grid; gap: 0.6rem; margin-top: 1.2rem; font-size: var(--step-0); }
+  .legal__toc a { color: var(--stone); transition: color 0.3s; }
+  .legal__toc a:hover { color: var(--ink); }
+  .legal__body { max-width: 68ch; min-width: 0; }
+  .legal__body :global(section + section) { margin-top: 3rem; }
+  .legal__body :global(h2) { font-size: var(--step-2); line-height: 1.2; margin-bottom: 1rem; scroll-margin-top: 7rem; }
+  .legal__body :global(p),
+  .legal__body :global(li) { color: var(--stone); }
+  .legal__body :global(p + p),
+  .legal__body :global(ul) { margin-top: 0.9rem; }
+  .legal__body :global(ul) { padding-left: 1.2rem; display: grid; gap: 0.4rem; }
+  .legal__body :global(a) { text-decoration: underline; text-underline-offset: 3px; }
+  .legal__body :global(table) { display: block; overflow-x: auto; width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: var(--step-0); }
+  .legal__body :global(th),
+  .legal__body :global(td) { text-align: left; padding: 0.7rem 0.5rem; border-bottom: 1px solid var(--line-light); vertical-align: top; }
+  @media (max-width: 860px) {
+    .legal { grid-template-columns: 1fr; }
+    .legal__toc { display: none; }
+  }
+</style>

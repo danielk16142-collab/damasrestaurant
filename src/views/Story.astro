@@ -1,0 +1,154 @@
+---
+// Notre histoire (new page): the tale, the timeline, the setting, Syrian
+// hospitality and Folfol, the counter next door.
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Process from '../components/Process.astro';
+import Rosette from '../components/Rosette.astro';
+import { site } from '../lib/content';
+import { url, useT, type Lang } from '../lib/i18n';
+import { breadcrumbLd } from '../lib/seo';
+import heroImg from '../assets/photos/salle-soir.jpg';
+import salon from '../assets/photos/salon-lanternes.jpg';
+import salleLarge from '../assets/photos/salle-large.jpg';
+import salleTables from '../assets/photos/salle-tables.jpg';
+import four from '../assets/photos/four-pain.jpg';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useT(lang);
+const fr = lang === 'fr';
+
+const steps = fr
+  ? [
+      { title: '2010 · La première nuit', text: 'Le chef et copropriétaire Fuad Alnirabie ouvre Damas pour faire découvrir aux Montréalais la cuisine de sa Syrie natale.' },
+      { title: '2015 · Avenue Van Horne', text: `Damas s’installe dans un espace plus grand, au coin de Bloomfield, à Outremont : une centaine de places et une terrasse de ${site.terraceSeats} places pour la belle saison.` },
+      { title: "Canada's 100 Best", text: 'Damas figure au palmarès des meilleurs restaurants du pays.' },
+      { title: '2025 · Guide MICHELIN', text: 'À la toute première édition du Guide MICHELIN au Québec, Damas reçoit un Bib Gourmand.' },
+    ]
+  : [
+      { title: '2010 · The first night', text: 'Chef and co-owner Fuad Alnirabie opens Damas to share the cooking of his native Syria with Montrealers.' },
+      { title: '2015 · Van Horne Avenue', text: `Damas moves into a larger space on the corner of Bloomfield, in Outremont: about a hundred seats and a ${site.terraceSeats}-seat terrace for the warmer months.` },
+      { title: "Canada's 100 Best", text: 'Damas is named among the country’s best restaurants.' },
+      { title: '2025 · MICHELIN Guide', text: 'In the very first MICHELIN Guide for Québec, Damas is awarded a Bib Gourmand.' },
+    ];
+
+const rituals = fr
+  ? [
+      { ar: 'أهلاً وسهلاً', tr: 'Ahlan wa sahlan', t: 'L’accueil', d: 'On entre comme on entre dans une maison de Damas : attendu, reçu, installé.' },
+      { ar: 'مازة', tr: 'Mezzé', t: 'Le partage', d: 'Rien ne se mange seul. Les petits plats arrivent au centre et circulent de main en main.' },
+      { ar: 'خبز', tr: 'Khubz', t: 'Le pain', d: 'Il sort du four, gonflé et brûlant, et sert de cuillère autant que d’accompagnement.' },
+      { ar: 'صحتين', tr: 'Sahtein', t: 'Le souhait', d: 'Littéralement « deux santés » : ainsi se souhaite le bon appétit, en Syrie.' },
+    ]
+  : [
+      { ar: 'أهلاً وسهلاً', tr: 'Ahlan wa sahlan', t: 'The welcome', d: 'You enter as you would a home in Damascus: expected, received, settled in.' },
+      { ar: 'مازة', tr: 'Mezze', t: 'The sharing', d: 'Nothing is eaten alone. Small dishes land in the middle and pass from hand to hand.' },
+      { ar: 'خبز', tr: 'Khubz', t: 'The bread', d: 'Straight from the oven, puffed and piping hot, as much a spoon as a side.' },
+      { ar: 'صحتين', tr: 'Sahtein', t: 'The wish', d: 'Literally “two healths”: this is how Syrians wish you a good meal.' },
+    ];
+const title = fr ? 'Notre histoire — le chef Fuad Alnirabie et Damas depuis 2010' : 'Our story — chef Fuad Alnirabie and Damas since 2010';
+const description = fr
+  ? 'L’histoire de Damas : le chef Fuad Alnirabie, sa Syrie natale, l’avenue Van Horne depuis 2015, un décor de palais damascène et l’art de recevoir à la syrienne.'
+  : 'The story of Damas: chef Fuad Alnirabie, his native Syria, Van Horne Avenue since 2015, a Damascene palace setting and Syrian hospitality.';
+---
+<Base lang={lang} page="story" title={title} description={description} jsonLd={[breadcrumbLd(lang, [{ key: 'story', name: fr ? 'Notre histoire' : 'Our story' }])]}>
+  <PageHero eyebrow={t.navLong.story} image={heroImg} imageAlt={fr ? 'La salle de Damas un soir de service, sous les lanternes' : 'The Damas dining room on a busy evening, under the lanterns'}>
+    <Fragment slot="title">{fr ? <>Il était une fois, <em>avenue Van Horne</em></> : <>Once upon a time, <em>on Van Horne Avenue</em></>}</Fragment>
+  </PageHero>
+
+  <section class="section wrap tale" data-blooms>
+    <Rosette class="tale__rosette" />
+    <p class="tale__text" data-words>{fr
+      ? `Shéhérazade racontait une histoire chaque nuit pour que l’aube n’arrive jamais. Chez Damas, le chef ${site.chef} fait de même avec la Syrie : chaque soir, un récit de Damas et d’Alep, raconté par le feu, les épices et le partage.`
+      : `Scheherazade told a story every night so that dawn would never come. At Damas, chef ${site.chef} does the same with Syria: each evening, a tale of Damascus and Aleppo, told through fire, spice and sharing.`}</p>
+  </section>
+
+  <div class="paper">
+    <Process eyebrow={fr ? 'Les grandes nuits' : 'The great nights'} steps={steps}>
+      {fr ? <>Depuis <em>2010</em></> : <>Since <em>2010</em></>}
+    </Process>
+  </div>
+
+  <section class="section decor">
+    <div class="wrap decor__grid">
+      <div class="decor__text">
+        <p class="eyebrow" data-reveal>{fr ? 'Le décor' : 'The setting'}</p>
+        <h2 data-split>{fr ? <>Un palais <em>des Mille et une Nuits</em></> : <>A palace <em>of a Thousand and One Nights</em></>}</h2>
+        <p class="muted" data-reveal>{fr
+          ? 'Plafonds rouges constellés de lanternes, murs rayés à la manière des palais damascènes, moucharabiehs, velours, bois sculpté, lustres de perles et de cristal, banquettes aux motifs turquoise : chaque salle est un chapitre, chaque coin une alcôve où la soirée se prolonge.'
+          : 'Red ceilings studded with lanterns, walls striped like the palaces of Damascus, mashrabiya screens, velvet, carved wood, beaded crystal chandeliers, turquoise-patterned banquettes: every room is a chapter, every corner an alcove where the evening lingers.'}</p>
+      </div>
+      <figure class="decor__a" data-clip><Image src={salon} alt={fr ? 'Alcôve aux banquettes turquoise sous des lustres de perles' : 'Alcove with turquoise banquettes beneath beaded chandeliers'} widths={[480, 900]} sizes="(max-width: 800px) 80vw, 34vw" /></figure>
+      <figure class="decor__b media" data-parallax="10"><Image src={salleLarge} alt={fr ? 'La salle rouge et ses lanternes' : 'The red dining room and its lanterns'} widths={[640, 1080]} sizes="(max-width: 800px) 90vw, 50vw" /></figure>
+      <figure class="decor__c" data-clip><Image src={salleTables} alt={fr ? 'Tables dressées sous les lanternes' : 'Tables set beneath the lanterns'} widths={[400, 700]} sizes="(max-width: 800px) 60vw, 24vw" /></figure>
+    </div>
+  </section>
+
+  <section class="section wrap rituals" aria-labelledby="rituals-title">
+    <p class="eyebrow" data-reveal>{fr ? 'L’art de recevoir' : 'The art of hospitality'}</p>
+    <h2 id="rituals-title" data-split>{fr ? <>Recevoir <em>à la syrienne</em></> : <>Hospitality, <em>the Syrian way</em></>}</h2>
+    <ul class="rituals__grid" role="list">
+      {rituals.map((r) => (
+        <li class="ritual" data-reveal>
+          <span class="ritual__ar arabic" lang="ar">{r.ar}</span>
+          <span class="ritual__tr">{r.tr}</span>
+          <h3>{r.t}</h3>
+          <p class="muted">{r.d}</p>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="section folfol oxblood">
+    <div class="wrap folfol__grid">
+      <figure class="folfol__img" data-clip><Image src={four} alt={fr ? 'Le pain sort du four' : 'Bread coming out of the oven'} widths={[400, 700]} sizes="(max-width: 800px) 70vw, 28vw" /></figure>
+      <div class="folfol__text">
+        <p class="eyebrow" data-reveal>{fr ? 'Juste à côté' : 'Next door'}</p>
+        <h2 data-split>{fr ? <>Folfol, <em>notre comptoir voisin</em></> : <>Folfol, <em>our counter next door</em></>}</h2>
+        <p data-reveal>{fr
+          ? 'Chez Damas, nous prenons la livraison au sérieux, au point d’avoir fondé un comptoir gourmand qui lui est dédié. Folfol sert les mêmes plats qu’au restaurant et les livre jusqu’à votre porte.'
+          : 'At Damas, we take delivery seriously, so much so that we founded a gourmet counter just for it. Folfol serves the same dishes as the restaurant and brings them to your door.'}</p>
+        <a href={url('delivery', lang)} class="btn btn--accent" data-reveal>{fr ? 'Livraison et à emporter' : 'Delivery and takeout'} <span class="arrow">→</span></a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .tale { display: grid; justify-items: center; gap: 2rem; text-align: center; }
+  :global(.tale__rosette) { width: 64px; color: var(--damask); }
+  .tale__text { font-family: var(--font-display); font-size: var(--step-3); line-height: 1.25; max-width: 32ch; }
+  .decor { background: var(--ink-2); }
+  .decor__grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 2rem; align-items: start; }
+  .decor__grid figure { margin: 0; overflow: hidden; }
+  .decor__grid :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .decor__text { grid-column: 1 / span 6; display: grid; gap: 1.5rem; }
+  .decor__text h2 { font-size: var(--step-4); }
+  .decor__text p { max-width: 46ch; }
+  .decor__a { grid-column: 8 / span 5; grid-row: 1 / span 2; aspect-ratio: 3 / 4; border-radius: 50% 50% 0 0 / 30% 30% 0 0; }
+  .decor__b { grid-column: 1 / span 6; aspect-ratio: 16 / 11; margin-top: 2rem !important; }
+  .decor__c { grid-column: 8 / span 3; aspect-ratio: 3 / 4; border-radius: 50% 50% 0 0 / 30% 30% 0 0; }
+  @media (max-width: 800px) {
+    .decor__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.5rem 1rem; }
+    .decor__text, .decor__b { grid-column: 1 / -1; }
+    .decor__a { grid-column: 1 / -1; grid-row: auto; width: 85%; justify-self: end; }
+    .decor__c { grid-column: 1; }
+  }
+  .rituals { display: grid; gap: 1.25rem; }
+  .rituals h2 { font-size: var(--step-4); }
+  .rituals__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2rem; margin-top: 2.5rem; }
+  .ritual { display: grid; gap: 0.6rem; align-content: start; padding-top: 1.5rem; border-top: 1px solid var(--line-dark); }
+  .ritual__ar { font-size: var(--step-3); color: var(--damask); line-height: 1.3; justify-self: start; }
+  .ritual__tr { font-size: var(--step--2); font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--brass); }
+  .ritual h3 { font-size: var(--step-2); }
+  @media (max-width: 900px) { .rituals__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 520px) { .rituals__grid { grid-template-columns: 1fr; } }
+  .folfol__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: clamp(2rem, 6vw, 6rem); align-items: center; }
+  .folfol__img { margin: 0; aspect-ratio: 4 / 5; border-radius: 50% 50% 0 0 / 30% 30% 0 0; overflow: hidden; }
+  .folfol__img :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .folfol__text { display: grid; gap: 1.25rem; justify-items: start; }
+  .folfol__text h2 { font-size: var(--step-4); }
+  .folfol__text p { max-width: 46ch; color: rgb(239 230 218 / 0.9); }
+  @media (max-width: 800px) { .folfol__grid { grid-template-columns: 1fr; } .folfol__img { width: 70%; } }
+</style>

@@ -1,0 +1,389 @@
+
+
+@import '@fontsource/eb-garamond/400.css';
+@import '@fontsource/eb-garamond/400-italic.css';
+@import '@fontsource/eb-garamond/500.css';
+@import '@fontsource/karla/400.css';
+@import '@fontsource/karla/500.css';
+@import '@fontsource/karla/600.css';
+@import '@fontsource/aref-ruqaa/arabic-400.css';
+
+/* ==========================================================================
+   Damas design system
+   Brand (from the logo and damas.ca): night #120A0D, cream #EFE6DA, amber
+   #E8A54B, brass #B98B4E, oxblood #3E0F1C; damask red #D1232A from the printed
+   menus, used for ornament only. EB Garamond for display, Karla for text.
+   The site is dark by default; `.paper` sections are the light "breaths".
+   ========================================================================== */
+
+:root {
+  /* Brand */
+  --accent: #e8a54b;
+  --accent-soft: #f0c48a;
+  --accent-deep: #90590f; /* gold for text on light backgrounds (AA contrast) */
+  --ink: #120a0d;
+  --ink-2: #1d1210;
+  --ink-3: #271a13;
+
+  /* Warm neutrals */
+  --paper: #efe6da;
+  --bone: #e4d8ca;
+  --sand: #cfbfac;
+  --stone: #79624b; /* muted text on paper */
+  --mist: #a99c8f;  /* muted text on ink (damas.ca taupe, 7.3:1) */
+  --brass: #b98b4e;  /* eyebrows, hairlines, prices on ink (6.4:1) */
+  --oxblood: #3e0f1c; /* footer, private salons */
+  --damask: #d1232a;  /* ornament only: emblem, calligraphy (fails 4.5:1 for small text) */
+  --line-light: rgb(18 10 13 / 0.12);
+  --line-dark: rgb(232 165 75 / 0.18);
+
+  /* Type */
+  --font-display: 'EB Garamond', 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+  --font-body: 'Karla', Optima, Candara, 'Segoe UI', system-ui, sans-serif;
+  --font-arabic: 'Aref Ruqaa', 'Amiri', serif;
+
+  --step--2: 0.75rem;  /* 12px -> 12px */
+  --step--1: 0.8rem;  /* 13px -> 13px */
+  --step-0: clamp(1rem, 0.9583rem + 0.1852vw, 1.125rem);  /* 16px -> 18px */
+  --step-1: clamp(1.25rem, 1.142rem + 0.4815vw, 1.575rem);  /* 20px -> 25px */
+  --step-2: clamp(1.562rem, 1.348rem + 0.9519vw, 2.205rem);  /* 25px -> 35px */
+  --step-3: clamp(1.953rem, 1.575rem + 1.68vw, 3.087rem);  /* 31px -> 49px */
+  --step-4: clamp(2.441rem, 1.815rem + 2.786vw, 4.322rem);  /* 39px -> 69px */
+  --step-5: clamp(3.052rem, 2.052rem + 4.443vw, 6.051rem);  /* 49px -> 97px */
+  --step-6: clamp(3.75rem, 1.875rem + 8.333vw, 9.375rem);  /* 60px -> 150px */
+
+  /* Space */
+  --gutter: clamp(1rem, 0.6rem + 2vw, 2.5rem);
+  --section: clamp(5rem, 3rem + 8vw, 11rem);
+  --max: 1440px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);
+  --dur: 0.6s;
+
+  --radius: 2px;
+  color-scheme: dark;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Reset                                                                       */
+/* -------------------------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+body {
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.6;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
+}
+img, picture, svg, video { display: block; max-width: 100%; }
+img { height: auto; }
+input, button, textarea, select { font: inherit; color: inherit; }
+/* 16px minimum in form fields: iOS zooms the page into anything smaller. */
+input, textarea, select { font-size: max(1rem, 1em); }
+button { cursor: pointer; background: none; border: 0; padding: 0; }
+a { color: inherit; text-decoration: none; }
+ul[role='list'], ol[role='list'] { list-style: none; padding: 0; }
+::selection { background: var(--accent); color: var(--ink); }
+.arabic { font-family: var(--font-arabic); direction: rtl; unicode-bidi: isolate; font-weight: 400; }
+
+:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 4px;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Page transitions (native cross-document View Transitions)                   */
+/* -------------------------------------------------------------------------- */
+@view-transition { navigation: auto; }
+::view-transition-old(root) { animation: vt-out 0.45s var(--ease-in-out) both; }
+::view-transition-new(root) { animation: vt-in 0.7s var(--ease-out) 0.1s both; }
+::view-transition-group(*) { animation-duration: 0.8s; animation-timing-function: var(--ease-in-out); }
+@keyframes vt-out { to { opacity: 0; transform: translateY(-1.5%); } }
+@keyframes vt-in { from { opacity: 0; transform: translateY(2%); } }
+
+/* -------------------------------------------------------------------------- */
+/* Layout primitives                                                           */
+/* -------------------------------------------------------------------------- */
+.wrap {
+  width: 100%;
+  max-width: var(--max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.section { padding-block: var(--section); }
+.dark { background: var(--ink); color: var(--paper); }
+.muted { color: var(--mist); }
+.oxblood { background: var(--oxblood); color: var(--paper); }
+/* Light "breath" sections (menus, lexicon, legal), like the printed menus */
+.paper { background: var(--paper); color: var(--ink); --line-dark: var(--line-light); }
+.paper .muted, .paper.muted { color: var(--stone); }
+.bone { background: var(--bone); color: var(--ink); }
+.bone .muted { color: var(--stone); }
+
+/* -------------------------------------------------------------------------- */
+/* Typography                                                                  */
+/* -------------------------------------------------------------------------- */
+.display, h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.08; /* EB Garamond: below this, descenders and ascenders of stacked lines can touch */
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  overflow-wrap: break-word;
+  font-optical-sizing: auto;
+}
+h1 { font-size: var(--step-5); }
+h2 { font-size: var(--step-4); }
+h3 { font-size: var(--step-2); line-height: 1.1; letter-spacing: -0.01em; }
+.display em, h1 em, h2 em, h3 em {
+  font-style: italic;
+  color: var(--accent);
+}
+.paper :is(.display, h1, h2, h3) em, .bone :is(.display, h1, h2, h3) em { color: var(--accent-deep); }
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9em;
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--brass);
+}
+.paper .eyebrow, .bone .eyebrow { color: var(--accent-deep); }
+.eyebrow::before {
+  content: '';
+  width: 2.2rem;
+  height: 1px;
+  background: currentColor;
+}
+.on-image .eyebrow { color: var(--accent); }
+/* Small text over photos: a soft shadow keeps it legible on bright areas. */
+.on-image .eyebrow, .on-image .link { text-shadow: 0 1px 14px rgb(18 10 13 / 0.55); }
+
+.lede {
+  font-size: var(--step-1);
+  line-height: 1.55;
+  max-width: 38ch;
+}
+p { text-wrap: pretty; }
+.prose p + p { margin-top: 1.2em; }
+.prose { max-width: 62ch; }
+
+.num {
+  font-family: var(--font-display);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Buttons & links                                                             */
+/* -------------------------------------------------------------------------- */
+.btn {
+  --btn-bg: var(--paper);
+  --btn-fg: var(--ink);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: 3.25rem;
+  padding: 0 1.9rem;
+  border-radius: var(--radius); /* damas.ca uses squared buttons */
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  overflow: hidden;
+  isolation: isolate;
+  transition: color 0.5s var(--ease-out);
+  white-space: nowrap;
+}
+@media (max-width: 480px) {
+  .btn { white-space: normal; text-align: center; padding-block: 0.85rem; max-width: 100%; }
+}
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--accent);
+  border-radius: inherit;
+  transform: translateY(105%);
+  transition: transform 0.55s var(--ease-out);
+}
+.btn:hover::before { transform: translateY(0); }
+.btn:hover { color: var(--ink); }
+.btn--accent { --btn-bg: var(--accent); --btn-fg: var(--ink); }
+.btn--accent::before { background: var(--paper); }
+.btn--ghost {
+  --btn-bg: transparent;
+  --btn-fg: currentColor;
+  box-shadow: inset 0 0 0 1px currentColor;
+}
+.btn--light { --btn-bg: var(--paper); --btn-fg: var(--ink); }
+.btn .arrow { transition: transform 0.5s var(--ease-out); }
+.btn:hover .arrow { transform: translateX(4px); }
+.btn[disabled] { opacity: 0.4; pointer-events: none; }
+
+.link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding-block: 0.3rem;
+}
+.link::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 1px;
+  background: currentColor;
+  transform-origin: right;
+  transition: transform 0.6s var(--ease-out);
+}
+.link:hover::after { transform: scaleX(0); }
+
+/* -------------------------------------------------------------------------- */
+/* Media                                                                       */
+/* -------------------------------------------------------------------------- */
+.media {
+  position: relative;
+  overflow: hidden;
+  background: var(--ink-3);
+}
+.media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.status-pill {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  background: rgb(18 10 13 / 0.55);
+  backdrop-filter: blur(8px);
+  color: var(--paper);
+  font-size: var(--step--2);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.status-pill[data-status='Sold'] { background: var(--accent); color: var(--ink); }
+
+/* -------------------------------------------------------------------------- */
+/* Motion hooks (initial states only apply when JS motion is running)          */
+/* -------------------------------------------------------------------------- */
+html.js-motion [data-reveal-load] { opacity: 0; }
+html.js-motion [data-reveal] { opacity: 0; transform: translateY(40px); }
+html.js-motion [data-clip] { clip-path: inset(100% 0 0 0); }
+html.js-motion [data-split] { visibility: hidden; }
+.split-line { overflow: clip; padding-bottom: 0.08em; margin-bottom: -0.08em; }
+
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+}
+
+[hidden] { display: none !important; }
+
+.sr-only {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0);
+  white-space: nowrap; border: 0;
+}
+.skip-link {
+  position: fixed; top: 1rem; left: 1rem; z-index: 300;
+  padding: 0.8rem 1.2rem; background: var(--accent); color: var(--ink);
+  transform: translateY(-200%);
+}
+.skip-link:focus { transform: none; }
+
+/* -------------------------------------------------------------------------- */
+/* Damas atmosphere                                                            */
+/* -------------------------------------------------------------------------- */
+.oxblood .eyebrow { color: var(--accent); }
+
+/* A1: static grain, like the paper of the printed menus */
+.grain {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 95;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* P7: a warm pool of lantern light follows the pointer (fine pointers only) */
+.lantern {
+  pointer-events: none;
+  position: fixed;
+  left: 0; top: 0;
+  z-index: 94;
+  width: 44vmax; height: 44vmax;
+  margin: -22vmax 0 0 -22vmax;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(232 165 75 / 0.11), rgb(232 165 75 / 0.04) 45%, transparent 72%);
+  mix-blend-mode: screen;
+  opacity: 0;
+  transition: opacity 1.2s var(--ease-out);
+}
+html.has-pointer .lantern { opacity: 1; }
+[data-tone='paper'] .lantern, .paper .lantern { display: none; }
+
+/* A3: slow lantern-light blooms drifting behind a section (Zimmerl) */
+[data-blooms] { position: relative; isolation: isolate; overflow: clip; }
+.bloom {
+  position: absolute;
+  z-index: -1;
+  width: 60vmax; height: 60vmax;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.55;
+  pointer-events: none;
+}
+.bloom--amber { background: radial-gradient(closest-side, rgb(232 165 75 / 0.22), transparent 70%); }
+.bloom--oxblood { background: radial-gradient(closest-side, rgb(110 20 36 / 0.55), transparent 70%); }
+
+/* Arabic numerals / calligraphy accents */
+.ar-accent { font-family: var(--font-arabic); color: var(--damask); line-height: 1; }
+
+/* A2: hairline that draws in */
+.hairline { height: 1px; background: currentColor; opacity: 0.25; transform-origin: left; }
+html.js-motion [data-draw-line] { transform: scaleX(0); }
+
+/* Room for the home page's side index (SideIndex.astro) */
+@media (min-width: 1101px) {
+  html[data-page='home'] main .wrap { padding-right: calc(var(--gutter) + 2.75rem); }
+}
+
+/* A dark or oxblood section nested in a paper page resets the paper colours */
+.paper .dark .eyebrow, .paper .oxblood .eyebrow { color: var(--brass); }
+.paper .oxblood .eyebrow { color: var(--accent); }
+.paper .dark :is(.display, h1, h2, h3) em, .paper .oxblood :is(.display, h1, h2, h3) em { color: var(--accent); }
+.paper .dark .muted, .paper .oxblood .muted { color: var(--mist); }

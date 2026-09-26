@@ -1,0 +1,307 @@
+---
+// Header: damas.ca's navigation (plus the new story page), a Réserver button and
+// the language switch. Transparent over dark heroes, blurs on scroll, hides on
+// scroll down (N1). Under 1180px a full-screen menu takes over, with a photo
+// preview per link (N2, N3).
+import { Image } from 'astro:assets';
+import Logo from './Logo.astro';
+import Emblem from './Emblem.astro';
+import { site } from '../lib/content';
+import { url, useT, other, routes, type Lang, type RouteKey } from '../lib/i18n';
+import imgHome from '../assets/photos/salon-lanternes.jpg';
+import imgCuisine from '../assets/photos/mezzes-cuivre.jpg';
+import imgStory from '../assets/photos/salle-soir.jpg';
+import imgMenus from '../assets/photos/fattouch.avif';
+import imgEvents from '../assets/photos/evenements-prives.avif';
+import imgGift from '../assets/photos/douceur-pistache.jpg';
+import imgContact from '../assets/photos/moucharabieh.jpg';
+
+interface Props { lang: Lang; page: RouteKey }
+const { lang, page } = Astro.props;
+const t = useT(lang);
+
+const links: { key: 'home' | 'cuisine' | 'story' | 'menus' | 'events' | 'gift' | 'contact'; img: ImageMetadata; ar: string }[] = [
+  { key: 'home', img: imgHome, ar: 'البيت' },
+  { key: 'cuisine', img: imgCuisine, ar: 'المائدة' },
+  { key: 'story', img: imgStory, ar: 'الحكاية' },
+  { key: 'menus', img: imgMenus, ar: 'القائمة' },
+  { key: 'events', img: imgEvents, ar: 'السهرة' },
+  { key: 'gift', img: imgGift, ar: 'هدية' },
+  { key: 'contact', img: imgContact, ar: 'الطريق' },
+];
+const current = routes[page][lang];
+const isActive = (key: RouteKey) => (key === 'home' ? page === 'home' : current.startsWith(routes[key][lang]));
+const otherLang = other(lang);
+---
+<header class="nav">
+  <div class="nav__inner">
+    <Logo class="nav__logo" lang={lang} />
+    <nav class="nav__links" aria-label={t.mainNav}>
+      {links.map((l) => (
+        <a href={url(l.key, lang)} class="nav__link" aria-current={isActive(l.key) ? 'page' : undefined}>{t.nav[l.key]}</a>
+      ))}
+    </nav>
+    <div class="nav__actions">
+      <a href={url('reserve', lang)} class="btn btn--accent nav__cta">{t.reserve}</a>
+      <a href={routes[page][otherLang]} class="nav__lang" hreflang={otherLang} lang={otherLang} aria-label={t.langSwitchLabel}>{t.langSwitchShort}</a>
+      <button class="nav__burger" aria-expanded="false" aria-controls="menu" aria-label={t.openMenu} data-open={t.openMenu} data-close={t.closeMenu}>
+        <span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div id="menu" class="menu" inert data-lenis-prevent>
+  <Emblem class="menu__emblem" color="oxblood" loading="lazy" />
+  <div class="menu__inner wrap">
+    <nav aria-label={t.mainNav}>
+      <ol class="menu__list" role="list">
+        {links.map((l, i) => (
+          <li>
+            <a href={url(l.key, lang)} aria-current={isActive(l.key) ? 'page' : undefined} data-menu-link={i}>
+              <span class="menu__num">{String(i + 1).padStart(2, '0')}</span>
+              <span class="menu__label">{t.navLong[l.key]}</span>
+              <span class="menu__ar arabic" lang="ar" aria-hidden="true">{l.ar}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+    <div class="menu__side">
+      <div class="menu__preview" aria-hidden="true">
+        {links.map((l, i) => (
+          <Image src={l.img} alt="" widths={[400, 720]} sizes="(max-width: 900px) 0px, 28vw" loading="lazy" class:list={['menu__img', { 'is-on': isActive(l.key) || (i === 0 && !links.some((x) => isActive(x.key))) }]} data-menu-img={i} />
+        ))}
+      </div>
+      <div class="menu__meta">
+        <p class="eyebrow">{t.visit}</p>
+        <a href={site.mapsUrl} target="_blank" rel="noopener">{site.address.street[lang]}, {site.address.neighbourhood}</a>
+        <a href={`tel:${site.phoneIntl}`}>{site.phone}</a>
+        <a href={`mailto:${site.email}`}>{site.email}</a>
+        <a href={url('reserve', lang)} class="btn btn--accent">{t.reserveTable}</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .nav {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 100;
+    color: var(--paper);
+    transition: transform 0.7s var(--ease-out), background-color 0.5s ease, backdrop-filter 0.5s ease;
+  }
+  :global(html[data-scrolled]) .nav {
+    background: rgb(18 10 13 / 0.82);
+    backdrop-filter: blur(14px) saturate(1.2);
+    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  }
+  :global(html[data-scroll-dir='down']:not(.menu-open)) .nav { transform: translateY(-100%); }
+  /* Solid once the curtain is down, so links scrolled beneath the bar stay legible */
+  :global(html.menu-open) .nav { background: var(--ink-2); backdrop-filter: none; transition: background-color 0.3s ease 0.7s; }
+  /* Paper pages (menus, legal): ink navigation, paper glass on scroll */
+  :global(html[data-tone='paper']:not(.menu-open)) .nav { color: var(--ink); }
+  :global(html[data-tone='paper'][data-scrolled]:not(.menu-open)) .nav { background: rgb(239 230 218 / 0.86); box-shadow: 0 1px 0 var(--line-light); }
+  :global(html[data-tone='paper']) .nav__lang { border-left-color: currentColor; }
+
+  .nav__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    max-width: var(--max);
+    margin-inline: auto;
+    padding: 1.1rem var(--gutter);
+    transition: padding 0.5s var(--ease-out);
+  }
+  :global(html[data-scrolled]) .nav__inner { padding-block: 0.7rem; }
+
+  .nav__links { display: flex; gap: clamp(1rem, 1.9vw, 2.1rem); }
+  .nav__link {
+    position: relative;
+    font-size: var(--step--2);
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding-block: 0.4rem;
+    opacity: 0.8;
+    transition: opacity 0.3s;
+    white-space: nowrap;
+  }
+  .nav__link::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 1px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.6s var(--ease-out);
+  }
+  .nav__link:hover, .nav__link[aria-current] { opacity: 1; }
+  .nav__link:hover::after, .nav__link[aria-current]::after { transform: scaleX(1); }
+
+  .nav__actions { display: flex; align-items: center; gap: 1rem; }
+  .nav__cta { min-height: 2.75rem; padding-inline: 1.35rem; }
+  .nav__lang {
+    font-size: var(--step--2);
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    padding: 0.6rem 0 0.6rem 1rem;
+    border-left: 1px solid rgb(239 230 218 / 0.25);
+    border-left-color: color-mix(in srgb, currentColor 30%, transparent);
+    opacity: 0.8;
+    transition: opacity 0.3s, color 0.3s;
+  }
+  .nav__lang:hover { opacity: 1; color: var(--accent); }
+
+  .nav__burger {
+    display: none;
+    position: relative;
+    width: 2.8rem;
+    height: 2.8rem;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1px currentColor;
+    z-index: 2;
+  }
+  .nav__burger span {
+    position: absolute;
+    left: 0.85rem; right: 0.85rem;
+    height: 1px;
+    background: currentColor;
+    transition: transform 0.5s var(--ease-out);
+  }
+  .nav__burger span:first-child { top: calc(50% - 3px); }
+  .nav__burger span:last-child { top: calc(50% + 3px); }
+  .nav__burger[aria-expanded='true'] span:first-child { transform: translateY(3px) rotate(45deg); }
+  .nav__burger[aria-expanded='true'] span:last-child { transform: translateY(-3px) rotate(-45deg); }
+
+  @media (max-width: 1180px) {
+    .nav__links { display: none; }
+    .nav__burger { display: block; }
+  }
+  @media (max-width: 560px) {
+    .nav__cta { display: none; } /* the sticky bottom bar carries Réserver on phones */
+  }
+
+  /* Full-screen menu: an arch curtain opens from the top */
+  .menu {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    background: var(--ink-2);
+    color: var(--paper);
+    clip-path: inset(0 0 100% 0 round 0 0 50% 50%);
+    visibility: hidden;
+    transition: clip-path 1s var(--ease-in-out), visibility 0s 1s;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+  :global(html.menu-open) .menu {
+    clip-path: inset(0 0 0 0 round 0 0 0 0);
+    visibility: visible;
+    transition: clip-path 1s var(--ease-in-out), visibility 0s;
+  }
+  /* Nothing inside the closed menu downloads: lazy images under display:none are deferred */
+  .menu :global(.menu__emblem), .menu__preview { display: none; }
+  :global(html.menu-open) .menu :global(.menu__emblem) { display: block; }
+  @media (min-width: 901px) { :global(html.menu-open) .menu__preview { display: block; } }
+  .menu :global(.menu__emblem) {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: min(1100px, 140vw);
+    transform: translate(-50%, -50%);
+    opacity: 0.35;
+    pointer-events: none;
+  }
+  .menu__inner {
+    position: relative;
+    min-height: 100%;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    align-items: center;
+    gap: 3rem;
+    padding-top: 6.5rem;
+    padding-bottom: calc(3rem + env(safe-area-inset-bottom));
+  }
+  .menu__inner > * { min-width: 0; }
+  .menu__list li { overflow: hidden; border-bottom: 1px solid var(--line-dark); }
+  .menu__list a {
+    display: flex;
+    align-items: baseline;
+    gap: 1.25rem;
+    padding-block: 0.45rem;
+    transform: translateY(100%);
+    transition: transform 0.9s var(--ease-out), color 0.3s;
+  }
+  :global(html.menu-open) .menu__list a { transform: none; }
+  .menu__list li:nth-child(1) a { transition-delay: 0.3s, 0s; }
+  .menu__list li:nth-child(2) a { transition-delay: 0.35s, 0s; }
+  .menu__list li:nth-child(3) a { transition-delay: 0.4s, 0s; }
+  .menu__list li:nth-child(4) a { transition-delay: 0.45s, 0s; }
+  .menu__list li:nth-child(5) a { transition-delay: 0.5s, 0s; }
+  .menu__list li:nth-child(6) a { transition-delay: 0.55s, 0s; }
+  .menu__list li:nth-child(7) a { transition-delay: 0.6s, 0s; }
+  .menu__num { font-size: var(--step--2); letter-spacing: 0.2em; color: var(--brass); flex: none; }
+  .menu__label {
+    font-family: var(--font-display);
+    font-size: clamp(1.9rem, 1.2rem + 3.2vw, 4.2rem);
+    line-height: 1.1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    letter-spacing: -0.015em;
+    transition: transform 0.6s var(--ease-out), color 0.3s;
+  }
+  /* Arabic labels render only once the menu is open, so the Arabic font isn't fetched on pages without Arabic */
+  .menu__ar { display: none; }
+  :global(html.menu-open) .menu__ar { display: inline; }
+  .menu__ar { margin-left: auto; font-size: var(--step-1); color: var(--damask); opacity: 0; transition: opacity 0.5s; flex: none; }
+  .menu__list a:hover .menu__ar, .menu__list a:focus-visible .menu__ar { opacity: 1; }
+  .menu__list a:hover .menu__label, .menu__list a[aria-current] .menu__label { font-style: italic; color: var(--accent); transform: translateX(0.5rem); }
+  .menu__side { display: grid; gap: 2rem; justify-items: start; }
+  .menu__preview { position: relative; width: 100%; max-width: 22rem; aspect-ratio: 4 / 5; border-radius: 50% 50% 0 0 / 34% 34% 0 0; overflow: hidden; background: var(--ink-3); }
+  .menu__preview :global(.menu__img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.08); transition: opacity 0.8s var(--ease-out), transform 1.4s var(--ease-out); }
+  .menu__preview :global(.menu__img.is-on) { opacity: 1; transform: none; }
+  .menu__meta { display: grid; gap: 0.5rem; justify-items: start; opacity: 0; transition: opacity 0.6s 0.6s; }
+  :global(html.menu-open) .menu__meta { opacity: 1; }
+  .menu__meta a:not(.btn) { color: rgb(239 230 218 / 0.85); }
+  .menu__meta a:not(.btn):hover { color: var(--accent); }
+  .menu__meta .btn { margin-top: 1rem; }
+  @media (max-width: 900px) {
+    .menu__inner { grid-template-columns: 1fr; align-items: start; }
+    .menu__preview { display: none; }
+  }
+</style>
+
+<script>
+  const root = document.documentElement;
+  const btn = document.querySelector<HTMLButtonElement>('.nav__burger')!;
+  const menu = document.getElementById('menu')!;
+  const setOpen = (open: boolean) => {
+    root.classList.toggle('menu-open', open);
+    btn.setAttribute('aria-expanded', String(open));
+    btn.setAttribute('aria-label', open ? btn.dataset.close! : btn.dataset.open!);
+    menu.inert = !open;
+    if (open) {
+      window.__lenis?.stop();
+      menu.querySelector<HTMLElement>('a')?.focus({ preventScroll: true });
+    } else window.__lenis?.start();
+  };
+  btn.addEventListener('click', () => setOpen(!root.classList.contains('menu-open')));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && root.classList.contains('menu-open')) {
+      setOpen(false);
+      btn.focus();
+    }
+  });
+  // N3: hovering or focusing a link previews its photo
+  const imgs = menu.querySelectorAll<HTMLElement>('[data-menu-img]');
+  menu.querySelectorAll<HTMLElement>('[data-menu-link]').forEach((a) => {
+    const show = () => imgs.forEach((im) => im.classList.toggle('is-on', im.dataset.menuImg === a.dataset.menuLink));
+    a.addEventListener('pointerenter', show);
+    a.addEventListener('focus', show);
+  });
+</script>

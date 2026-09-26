@@ -1,0 +1,132 @@
+---
+// Signature moment, part 2 (I3 + I10): the hero is an arched window on the
+// lantern-lit salon; scrolling widens it until you stand inside the room.
+// Headline and actions sit beneath the arch. Reduced motion: full-bleed at once.
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import LiveEvening from './LiveEvening.astro';
+import type { Lang } from '../lib/i18n';
+interface Props { image: ImageMetadata; alt: string; lang: Lang; eyebrow: string }
+const { image, alt, lang, eyebrow } = Astro.props;
+---
+<section class="ahero on-image" data-ahero>
+  <div class="ahero__sticky">
+    <div class="ahero__window" data-ahero-window>
+      <Picture src={image} alt={alt} formats={['avif', 'webp']} widths={[640, 960, 1440, 2048]} sizes="100vw" loading="eager" fetchpriority="high" class="ahero__img" />
+      <div class="ahero__shade"></div>
+    </div>
+    <div class="ahero__content wrap">
+      <p class="eyebrow ahero__eyebrow" data-reveal-load>{eyebrow}</p>
+      <h1 class="ahero__title" data-split="load" data-delay="0.15"><slot name="title" /></h1>
+      {Astro.slots.has('lede') && <p class="ahero__lede" data-reveal-load><slot name="lede" /></p>}
+      <div class="ahero__foot" data-reveal-load>
+        <LiveEvening lang={lang} class="ahero__live" />
+        <div class="ahero__actions"><slot name="actions" /></div>
+      </div>
+      <div class="ahero__aside" data-reveal-load><slot name="aside" /></div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ahero { position: relative; height: 190svh; }
+  .ahero__sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; }
+  .ahero__window {
+    position: absolute;
+    inset: 0;
+    clip-path: inset(12% 31% 30% 31% round 20vw 20vw 0 0);
+    will-change: clip-path;
+  }
+  .ahero__window :global(picture), .ahero__window :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .ahero__window :global(img) { transform-origin: 50% 60%; }
+  .ahero__shade {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgb(18 10 13 / 0.55) 0%, rgb(18 10 13 / 0) 22%),
+      linear-gradient(0deg, rgb(18 10 13 / 0.92) 0%, rgb(18 10 13 / 0.45) 38%, rgb(18 10 13 / 0.05) 70%);
+  }
+  .ahero__content {
+    position: relative;
+    height: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr auto auto auto;
+    padding-top: 6.5rem;
+    padding-bottom: clamp(1.5rem, 4vh, 3rem);
+    pointer-events: none;
+  }
+  .ahero__content :global(a), .ahero__content :global(button) { pointer-events: auto; }
+  .ahero__eyebrow { justify-self: center; }
+  .ahero__title {
+    grid-row: 3;
+    justify-self: center;
+    text-align: center;
+    max-width: 16ch;
+    font-size: min(var(--step-6), 13svh);
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+    text-shadow: 0 8px 50px rgb(18 10 13 / 0.6);
+  }
+  .ahero__lede {
+    grid-row: 4;
+    justify-self: center;
+    text-align: center;
+    max-width: 52ch;
+    line-height: 1.4;
+    margin-top: clamp(0.75rem, 2vh, 1.25rem);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--step-1);
+    color: rgb(239 230 218 / 0.9);
+    text-shadow: 0 4px 30px rgb(18 10 13 / 0.7);
+  }
+  .ahero__foot {
+    grid-row: 5;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem 2rem;
+    margin-top: clamp(1.25rem, 3vh, 2rem);
+    padding-top: 1.25rem;
+    border-top: 1px solid rgb(239 230 218 / 0.18);
+  }
+  .ahero__actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+  .ahero__aside { position: absolute; right: var(--gutter); top: 45%; display: grid; gap: 0.3rem; text-align: right; font-size: var(--step-0); color: rgb(239 230 218 / 0.85); max-width: 14rem; }
+  @media (max-width: 900px) {
+    .ahero { height: 160svh; }
+    .ahero__window { clip-path: inset(11% 9% 34% 9% round 40vw 40vw 0 0); }
+    .ahero__aside { display: none; }
+    .ahero__title { font-size: min(var(--step-6), 10.5svh); }
+    .ahero__lede { font-size: var(--step-0); max-width: 34ch; }
+    .ahero__foot { justify-content: center; text-align: center; margin-top: 0.75rem; padding-top: 0.9rem; }
+  }
+  @media (max-width: 760px) {
+    /* The sticky bottom bar already offers Réserver on phones */
+    .ahero__actions :global(.btn--accent) { display: none; }
+    .ahero__sticky { height: calc(100svh - 3.4rem - env(safe-area-inset-bottom)); }
+    .ahero__content { padding-top: 5.5rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ahero { height: auto; }
+    .ahero__sticky { position: relative; }
+    .ahero__window { clip-path: none; }
+  }
+</style>
+
+<script>
+  import { gsap } from '../scripts/motion';
+  const hero = document.querySelector<HTMLElement>('[data-ahero]');
+  const win = hero?.querySelector<HTMLElement>('[data-ahero-window]');
+  if (hero && win && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const delay = parseFloat(document.documentElement.dataset.intro || '0');
+    gsap.fromTo(win.querySelector('img'), { scale: 1.25 }, { scale: 1, duration: 2.4, ease: 'expo.out', delay }); // L2
+    const mobile = matchMedia('(max-width: 900px)').matches;
+    const from = mobile ? 'inset(11% 9% 34% 9% round 40vw 40vw 0vw 0vw)' : 'inset(12% 31% 30% 31% round 20vw 20vw 0vw 0vw)';
+    const tl = gsap.timeline({ scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom bottom', scrub: 0.8 } });
+    tl.fromTo(win, { clipPath: from }, { clipPath: 'inset(0% 0% 0% 0% round 0vw 0vw 0vw 0vw)', ease: 'none' }, 0)
+      .to(hero.querySelector('.ahero__eyebrow'), { opacity: 0, ease: 'none', duration: 0.3 }, 0)
+      .to(hero.querySelector('.ahero__title'), { yPercent: -18, ease: 'none' }, 0)
+      .to(hero.querySelector('.ahero__lede'), { opacity: 0, ease: 'none', duration: 0.3 }, 0);
+  }
+</script>

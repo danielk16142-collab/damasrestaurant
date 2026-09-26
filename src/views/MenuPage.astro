@@ -1,0 +1,155 @@
+---
+// One menu per URL (the damas.ca structure), on paper like the printed menus:
+// short hero, the sticky switcher, one dropdown per section, notes, CTA.
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Base from '../layouts/Base.astro';
+import MenuSwitcher from '../components/MenuSwitcher.astro';
+import MenuSection from '../components/MenuSection.astro';
+import Rosette from '../components/Rosette.astro';
+import { menuPages, tasting } from '../lib/menus';
+import { url, useT, type Lang } from '../lib/i18n';
+import { breadcrumbLd, menuLd } from '../lib/seo';
+import imgDinner from '../assets/photos/mezzes-table.avif';
+import imgBrunch from '../assets/photos/brunch-oeufs.jpg';
+import imgBrunchDrinks from '../assets/photos/cocktails-duo.avif';
+import imgDesserts from '../assets/photos/douceur-pistache.jpg';
+import imgWine from '../assets/photos/vins-selection.avif';
+
+interface Props { lang: Lang; menuKey: (typeof menuPages)[number]['key'] }
+const { lang, menuKey } = Astro.props;
+const t = useT(lang);
+const fr = lang === 'fr';
+const page = menuPages.find((m) => m.key === menuKey)!;
+const menu = page.menu!;
+const images: Record<string, ImageMetadata> = {
+  'menu-dinner': imgDinner, 'menu-brunch': imgBrunch, 'menu-brunch-drinks': imgBrunchDrinks, 'menu-desserts': imgDesserts, 'menu-wine': imgWine,
+};
+// Dinner: food sections, then the tasting menu, then the bar (as on the printed menu)
+const foodCount = menuKey === 'menu-dinner' ? 3 : menu.sections.length;
+const food = menu.sections.slice(0, foodCount);
+const rest = menu.sections.slice(foodCount);
+const unit = menuKey === 'menu-wine' ? 'refs' : 'items';
+
+const seo = {
+  'menu-dinner': fr
+    ? { title: 'Menu du soir — mezzés, grillades et menu dégustation | Damas', description: 'Le menu du soir de Damas : mezzés froids et chauds, spécialités syriennes et grillades sur charbon de bois, menu dégustation à 160 $, cocktails et nectars.' }
+    : { title: 'Dinner menu — mezze, charcoal grills and tasting menu | Damas', description: 'Dinner at Damas: hot and cold mezze, Syrian specialties and charcoal grills, a $160 tasting menu, cocktails and traditional nectars.' },
+  'menu-brunch': fr
+    ? { title: 'Brunch à Outremont — menu du samedi et du dimanche | Damas', description: 'Le brunch syrien de Damas, samedi et dimanche de 11 h à 15 h, avenue Van Horne : mezzé matinal du chef, menemen, grillades et pain doré au halva.' }
+    : { title: 'Brunch in Outremont — Saturday and Sunday menu | Damas', description: 'Syrian brunch at Damas, Saturday and Sunday 11 am to 3 pm on Van Horne Avenue: the chef’s morning mezze, menemen, grills and halva French toast.' },
+  'menu-brunch-drinks': fr
+    ? { title: 'Boissons du brunch — cafés signatures et cocktails | Damas', description: 'Cafés signatures au baklava et à la cardamome, jus frais, cocktails et boissons sans alcool du brunch de Damas, à Outremont.' }
+    : { title: 'Brunch drinks — signature coffees and cocktails | Damas', description: 'Baklava and cardamom signature coffees, fresh juices, cocktails and zero-proof drinks at the Damas brunch in Outremont.' },
+  'menu-desserts': fr
+    ? { title: 'Desserts syriens — kunafa, ashta et halva | Damas', description: 'Les desserts de Damas : glace à l’ashta et pistache, barbe à papa syrienne, halawet al-jibn, kunafa au fromage. Eau de rose, fleur d’oranger, cardamome.' }
+    : { title: 'Syrian desserts — kunafa, ashta and halva | Damas', description: 'Desserts at Damas: pistachio ashta ice cream with Syrian cotton candy, halawet al-jibn, cheese kunafa. Rosewater, orange blossom, cardamom.' },
+  'menu-wine': fr
+    ? { title: 'Carte des vins — vins syriens et libanais, arak | Damas', description: 'La cave de Damas : vins au verre, vins de Syrie (Bargylus), du Liban et de Grèce, arak, bières et cidres. Carte complète en PDF.' }
+    : { title: 'Wine list — Syrian and Lebanese wines, arak | Damas', description: 'The Damas cellar: wines by the glass, wines from Syria (Bargylus), Lebanon and Greece, arak, beer and cider. Full list as a PDF.' },
+}[menuKey];
+const jsonLd = [breadcrumbLd(lang, [{ key: 'menus', name: 'Menus' }, { key: menuKey, name: page.label[lang] }]), menuLd(menu, lang, menuKey)];
+---
+<Base lang={lang} page={menuKey} title={seo.title} description={seo.description} jsonLd={jsonLd} tone="paper">
+  <header class="mhero wrap">
+    <div class="mhero__text">
+      <p class="eyebrow" data-reveal-load><a href={url('menus', lang)}>Menus</a> · {page.label[lang]}</p>
+      <h1 data-split="load">{page.label[lang]}</h1>
+      <p class="lede" data-reveal-load>{menu.intro?.[lang] ?? page.lede[lang]}</p>
+      {menu.note && <p class="mhero__note" data-reveal-load>{menu.note[lang]}</p>}
+      <a href={page.pdf} class="link" target="_blank" rel="noopener" data-reveal-load>{t.downloadPdf} ↓</a>
+    </div>
+    <figure class="mhero__img" data-clip="load">
+      <Image src={images[menuKey]} alt="" widths={[360, 640]} sizes="(max-width: 800px) 60vw, 24vw" loading="eager" />
+    </figure>
+  </header>
+
+  <MenuSwitcher lang={lang} current={menuKey} />
+
+  <div class="wrap mbody">
+    {food.map((s, i) => <MenuSection section={s} lang={lang} index={i} open={i === 0} unit={unit} />)}
+
+    {page.tasting && (
+      <section class="tcard" id="degustation" data-reveal>
+        <Rosette class="tcard__rosette" />
+        <p class="eyebrow">{fr ? 'Menu dégustation' : 'Tasting menu'}</p>
+        <h2>{fr ? <>Un voyage <em>au cœur de la Syrie</em></> : <>A journey <em>through the soul of Syria</em></>}</h2>
+        <p class="tcard__price num">{tasting.price} <small>$ · {tasting.per[lang]}</small></p>
+        <p class="tcard__text">{tasting.text[lang]}</p>
+        <ul class="tcard__pairings" role="list">
+          {tasting.pairings.map((p) => <li><span>{p.name[lang]}</span><span class="tcard__dots" aria-hidden="true"></span><span class="num">+ {p.price}</span></li>)}
+        </ul>
+      </section>
+    )}
+
+    {rest.map((s, i) => <MenuSection section={s} lang={lang} index={food.length + i} unit={unit} />)}
+
+    {menuKey === 'menu-wine' && (
+      <p class="mbody__full" data-reveal>
+        {fr
+          ? 'Champagnes, bulles, blancs, orange, rosés et rouges de France, d’Italie, d’Espagne et du Québec : la carte complète compte plus de deux cents étiquettes.'
+          : 'Champagne, sparkling, white, orange, rosé and red from France, Italy, Spain and Québec: the full list runs to more than two hundred labels.'}
+        {' '}<a href={page.pdf} class="link" target="_blank" rel="noopener">{fr ? 'Carte des vins complète (PDF)' : 'Full wine list (PDF)'} ↓</a>
+      </p>
+    )}
+
+    <div class="mnotes">
+      <p>{t.pricesNote}</p>
+      <p>{t.allergyNote}</p>
+    </div>
+  </div>
+
+  <section class="mcta dark">
+    <div class="wrap mcta__inner">
+      <p class="eyebrow">{fr ? 'Ce soir' : 'Tonight'}</p>
+      <h2 data-split>{fr ? <>Votre table <em>vous attend</em></> : <>Your table <em>is waiting</em></>}</h2>
+      <a href={url('reserve', lang)} class="btn btn--accent">{t.reserveTable} <span class="arrow">→</span></a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .mhero { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 2rem 4rem; align-items: end; padding-top: 9rem; padding-bottom: 2rem; }
+  .mhero__text { display: grid; gap: 1.25rem; justify-items: start; }
+  .mhero__text h1 { font-size: var(--step-6); }
+  .mhero__text .lede { color: var(--stone); }
+  .mhero__text .eyebrow a:hover { color: var(--ink); }
+  .mhero__note { font-family: var(--font-display); font-style: italic; font-size: var(--step-1); color: var(--accent-deep); }
+  .mhero__img { margin: 0; justify-self: end; width: 100%; max-width: 20rem; aspect-ratio: 4 / 5; border-radius: 50% 50% 0 0 / 30% 30% 0 0; overflow: hidden; }
+  .mhero__img :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  @media (max-width: 800px) {
+    .mhero { grid-template-columns: 1fr; padding-top: 7rem; }
+    .mhero__img { display: none; }
+  }
+
+  .mbody { padding-top: 2rem; padding-bottom: var(--section); }
+  .mnotes { display: grid; gap: 0.3rem; margin-top: 3rem; color: var(--stone); font-size: var(--step-0); }
+  .mbody__full { margin-top: 3rem; max-width: 60ch; color: var(--stone); }
+
+  .tcard {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 1.1rem;
+    text-align: center;
+    margin-block: clamp(3rem, 6vw, 5rem);
+    padding: clamp(3rem, 6vw, 5rem) clamp(1.25rem, 5vw, 4rem);
+    border: 1px solid rgb(18 10 13 / 0.18);
+    border-radius: 50% 50% 0 0 / 18% 18% 0 0;
+    max-width: 44rem;
+    margin-inline: auto;
+    scroll-margin-top: 8rem;
+  }
+  :global(.tcard__rosette) { width: 54px; color: var(--damask); }
+  .tcard h2 { font-size: var(--step-4); max-width: 16ch; }
+  .tcard__price { font-family: var(--font-display); font-size: var(--step-5); line-height: 1; color: var(--accent-deep); }
+  .tcard__price small { font-family: var(--font-body); font-size: var(--step--2); letter-spacing: 0.16em; text-transform: uppercase; color: var(--stone); }
+  .tcard__text { max-width: 52ch; color: var(--stone); }
+  .tcard__pairings { width: 100%; max-width: 26rem; display: grid; gap: 0.5rem; text-align: left; margin-top: 0.5rem; }
+  .tcard__pairings li { display: flex; align-items: baseline; gap: 0.5rem; font-family: var(--font-display); font-size: var(--step-1); }
+  .tcard__dots { flex: 1; min-width: 1rem; border-bottom: 1px dotted rgb(18 10 13 / 0.3); transform: translateY(-0.3em); }
+
+  .mcta { padding-block: var(--section); text-align: center; }
+  .mcta__inner { display: grid; justify-items: center; gap: 1.5rem; }
+  .mcta h2 { font-size: var(--step-5); }
+</style>

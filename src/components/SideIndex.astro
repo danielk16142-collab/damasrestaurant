@@ -1,0 +1,61 @@
+---
+// S6 (after Nocturne and Zimmerl): a vertical line of dots on the right that
+// names the current hour and chapter of the evening. Chapters are sections with
+// data-chapter="<label>" and data-hour="<time>". Desktop only; decorative.
+---
+<aside class="sidx" aria-hidden="true" data-sidx>
+  <span class="sidx__label"><span class="sidx__hour" data-sidx-hour></span><span data-sidx-name></span></span>
+  <ol class="sidx__dots" data-sidx-dots></ol>
+</aside>
+
+<style>
+  .sidx {
+    position: fixed;
+    right: 0.9rem;
+    top: 50%;
+    z-index: 70;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: opacity 0.6s var(--ease-out);
+    pointer-events: none;
+    mix-blend-mode: difference;
+    color: var(--paper);
+  }
+  .sidx.is-on { opacity: 1; }
+  .sidx__label { display: grid; justify-items: center; gap: 0.2rem; font-size: var(--step--2); font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; }
+  .sidx__label > span:last-child { display: none; }
+  .sidx__hour { font-family: var(--font-display); font-style: italic; font-size: var(--step-0); white-space: nowrap; letter-spacing: 0; text-transform: none; }
+  .sidx__dots { display: grid; gap: 0.75rem; list-style: none; padding: 0; margin: 0; position: relative; }
+  .sidx__dots::before { content: ''; position: absolute; left: 50%; top: -1.5rem; bottom: -1.5rem; width: 1px; background: currentColor; opacity: 0.3; }
+  .sidx__dots :global(li) { position: relative; width: 7px; height: 7px; border-radius: 50%; box-shadow: inset 0 0 0 1px currentColor; background: var(--ink); transition: transform 0.5s var(--ease-out), background 0.4s; }
+  .sidx__dots :global(li.is-on) { background: currentColor; transform: scale(1.5); }
+  @media (max-width: 1100px) { .sidx { display: none; } }
+</style>
+
+<script>
+  import { ScrollTrigger } from '../scripts/motion';
+  const box = document.querySelector<HTMLElement>('[data-sidx]');
+  const chapters = [...document.querySelectorAll<HTMLElement>('[data-chapter]')];
+  if (box && chapters.length) {
+    const dots = box.querySelector('[data-sidx-dots]')!;
+    const hour = box.querySelector('[data-sidx-hour]')!;
+    const name = box.querySelector('[data-sidx-name]')!;
+    const lis = chapters.map(() => dots.appendChild(document.createElement('li')));
+    const set = (i: number) => {
+      hour.textContent = chapters[i].dataset.hour || '';
+      name.textContent = chapters[i].dataset.chapter || '';
+      lis.forEach((li, j) => li.classList.toggle('is-on', j === i));
+    };
+    chapters.forEach((sec, i) => {
+      ScrollTrigger.create({ trigger: sec, start: 'top 55%', end: 'bottom 55%', refreshPriority: -1, onToggle: (s) => s.isActive && set(i) });
+    });
+    ScrollTrigger.create({
+      trigger: chapters[0], endTrigger: chapters[chapters.length - 1], start: 'top 60%', end: 'bottom 40%', refreshPriority: -1,
+      onToggle: (s) => box.classList.toggle('is-on', s.isActive),
+    });
+  }
+</script>

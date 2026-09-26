@@ -1,0 +1,115 @@
+---
+/*
+ * Privacy policy (Quebec Law 25 baseline, US CalOPPA covered). Built from the
+ * kit skeleton for what this site actually does: no analytics, no marketing
+ * cookies, no newsletter; OpenTable and Google Maps load only on request; the
+ * events form currently composes an email (no data stored by the site).
+ * Draft, not legal advice. Items marked TO CONFIRM in content.ts `legal`.
+ */
+import LegalPage from '../components/LegalPage.astro';
+import { legal, site } from '../lib/content';
+import { url, type Lang } from '../lib/i18n';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+const toc = fr
+  ? [
+      { id: 'qui', label: 'Qui sommes-nous' }, { id: 'collecte', label: 'Ce que nous recueillons' }, { id: 'fins', label: 'À quelles fins' },
+      { id: 'tiers', label: 'Fournisseurs' }, { id: 'conservation', label: 'Conservation' }, { id: 'droits', label: 'Vos droits' },
+      { id: 'temoins', label: 'Témoins' }, { id: 'securite', label: 'Sécurité' }, { id: 'modifications', label: 'Modifications' },
+    ]
+  : [
+      { id: 'who', label: 'Who we are' }, { id: 'collect', label: 'What we collect' }, { id: 'why', label: 'Why we use it' },
+      { id: 'share', label: 'Service providers' }, { id: 'keep', label: 'How long we keep it' }, { id: 'rights', label: 'Your rights' },
+      { id: 'cookies', label: 'Cookies' }, { id: 'security', label: 'Security' }, { id: 'changes', label: 'Changes' },
+    ];
+---
+<LegalPage lang={lang} page="privacy" title={fr ? 'Politique de confidentialité' : 'Privacy policy'} description={fr ? 'Comment le Restaurant Damas recueille, utilise et protège vos renseignements personnels.' : 'How Restaurant Damas collects, uses and protects your personal information.'} toc={toc}>
+  {fr ? (
+    <>
+      <section><h2 id="qui">Qui sommes-nous</h2>
+        <p>Ce site est exploité par {legal.entity}, {legal.address} (« nous »). Nous sommes responsables des renseignements personnels recueillis par ce site.</p>
+        <p>La personne responsable de la protection des renseignements personnels est {legal.privacyContact.fr}, joignable à <a href={`mailto:${legal.privacyEmail}`}>{legal.privacyEmail}</a>.</p>
+      </section>
+      <section><h2 id="collecte">Ce que nous recueillons</h2>
+        <ul>
+          <li><strong>Ce que vous nous envoyez</strong> : si vous nous écrivez (courriel, téléphone) ou utilisez le formulaire d’événement privé, les renseignements que vous choisissez de donner (nom, courriel, téléphone, date, nombre de convives, demandes particulières, allergies).</li>
+          <li><strong>Renseignements techniques</strong> nécessaires au fonctionnement du site, comme l’adresse IP et le type de navigateur, conservés dans les journaux de notre hébergeur.</li>
+        </ul>
+        <p>Ce site n’utilise <strong>aucun outil d’analyse ni de publicité</strong>, et n’a pas d’infolettre. Les réservations se font chez OpenTable, selon sa propre politique.</p>
+      </section>
+      <section><h2 id="fins">À quelles fins</h2>
+        <ul>
+          <li>Répondre à votre demande et organiser votre réservation ou votre événement.</li>
+          <li>Assurer la sécurité et le bon fonctionnement du site.</li>
+        </ul>
+        <p>Nous ne vendons pas vos renseignements personnels et ne les utilisons pas pour prendre des décisions automatisées à votre sujet.</p>
+      </section>
+      <section><h2 id="tiers">Fournisseurs</h2>
+        <p>Ces fournisseurs traitent des renseignements pour notre compte :</p>
+        <table><thead><tr><th>Fournisseur</th><th>Fin</th><th>Lieu</th></tr></thead>
+          <tbody>{legal.processors.map((p) => <tr><td>{p.name}</td><td>{p.purpose.fr}</td><td>{p.location.fr}</td></tr>)}</tbody></table>
+        <p>Certains fournisseurs conservent des renseignements hors du Québec. Le cas échéant, nous veillons à ce qu’ils bénéficient d’une protection adéquate.</p>
+      </section>
+      <section><h2 id="conservation">Conservation</h2>
+        <p>Les demandes reçues par courriel sont conservées le temps de traiter votre demande et de tenir nos dossiers, puis supprimées. Les journaux techniques de l’hébergeur sont conservés pour une courte durée.</p>
+      </section>
+      <section><h2 id="droits">Vos droits</h2>
+        <p>Vous pouvez demander d’accéder à vos renseignements, de les faire corriger ou supprimer, et retirer votre consentement. Écrivez à <a href={`mailto:${legal.privacyEmail}`}>{legal.privacyEmail}</a> ; nous répondons dans un délai de 30 jours.</p>
+        <p>Vous pouvez aussi porter plainte auprès de la Commission d’accès à l’information du Québec.</p>
+      </section>
+      <section><h2 id="temoins">Témoins</h2>
+        <p>Voir notre <a href={url('cookies', 'fr')}>politique relative aux témoins</a>.</p>
+      </section>
+      <section><h2 id="securite">Sécurité</h2>
+        <p>Le site est servi en HTTPS et l’accès aux demandes est limité aux personnes qui les traitent. En cas d’incident de confidentialité présentant un risque de préjudice sérieux, nous vous aviserons, ainsi que les autorités, comme la loi l’exige.</p>
+      </section>
+      <section><h2 id="modifications">Modifications</h2>
+        <p>Nous mettrons cette page à jour si nos pratiques changent et en indiquerons la date en haut de page. Contact : {site.name}, {legal.address}, <a href={`mailto:${legal.privacyEmail}`}>{legal.privacyEmail}</a>.</p>
+      </section>
+    </>
+  ) : (
+    <>
+      <section><h2 id="who">Who we are</h2>
+        <p>This website is run by {legal.entity}, {legal.address} (“we”). We are responsible for the personal information collected through it.</p>
+        <p>The person responsible for the protection of personal information is {legal.privacyContact.en}, reachable at <a href={`mailto:${legal.privacyEmail}`}>{legal.privacyEmail}</a>.</p>
+      </section>
+      <section><h2 id="collect">What we collect</h2>
+        <ul>
+          <li><strong>What you send us</strong>: if you write or call us, or use the private-events form, the information you choose to give (name, email, phone, date, number of guests, special requests, allergies).</li>
+          <li><strong>Technical information</strong> needed to run the site, such as your IP address and browser type, kept in our host’s server logs.</li>
+        </ul>
+        <p>This site uses <strong>no analytics or advertising tools</strong> and has no newsletter. Reservations are made with OpenTable, under its own policy.</p>
+      </section>
+      <section><h2 id="why">Why we use it</h2>
+        <ul>
+          <li>To answer your request and arrange your reservation or event.</li>
+          <li>To keep the site secure and working.</li>
+        </ul>
+        <p>We don’t sell your personal information, and we don’t use it to make automated decisions about you.</p>
+      </section>
+      <section><h2 id="share">Service providers</h2>
+        <p>These providers process information on our behalf:</p>
+        <table><thead><tr><th>Provider</th><th>Purpose</th><th>Location</th></tr></thead>
+          <tbody>{legal.processors.map((p) => <tr><td>{p.name}</td><td>{p.purpose.en}</td><td>{p.location.en}</td></tr>)}</tbody></table>
+        <p>Some providers store information outside Québec. When they do, we make sure it receives adequate protection.</p>
+      </section>
+      <section><h2 id="keep">How long we keep it</h2>
+        <p>Requests received by email are kept as long as needed to handle them and keep our records, then deleted. Our host’s technical logs are kept for a short period.</p>
+      </section>
+      <section><h2 id="rights">Your rights</h2>
+        <p>You can ask to access, correct or delete your information, and withdraw your consent. Write to <a href={`mailto:${legal.privacyEmail}`}>{legal.privacyEmail}</a>; we answer within 30 days.</p>
+        <p>You can also complain to the Commission d’accès à l’information du Québec. California residents: you have the right to know about, delete and correct the personal information we hold, and we don’t sell or share it.</p>
+      </section>
+      <section><h2 id="cookies">Cookies</h2>
+        <p>See our <a href={url('cookies', 'en')}>cookie policy</a>.</p>
+      </section>
+      <section><h2 id="security">Security</h2>
+        <p>The site is served over HTTPS and access to requests is limited to the people who handle them. If a privacy incident creates a risk of serious harm, we’ll notify you and the authorities as the law requires.</p>
+      </section>
+      <section><h2 id="changes">Changes</h2>
+        <p>We’ll update this page if our practices change and show the date at the top. Contact: {site.name}, {legal.address}, <a href={`mailto:${legal.privacyEmail}`}>{legal.privacyEmail}</a>.</p>
+      </section>
+    </>
+  )}
+</LegalPage>

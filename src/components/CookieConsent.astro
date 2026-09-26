@@ -1,0 +1,162 @@
+---
+/**
+ * Cookie consent banner (see references/legal.md).
+ * Renders only when a consent category is enabled in content.ts.
+ * Tracking scripts stay inert until accepted:
+ *   <script type="text/plain" data-consent="analytics" data-src="https://..."></script>
+ * Any element with [data-cookie-settings] reopens the banner.
+ */
+import { consent } from '../lib/content';
+
+// Translate these for multilingual sites (see references/i18n.md).
+const copy = {
+  title: 'Cookies',
+  body: 'We use essential storage to run this site. With your permission we’d also like to use cookies to',
+  analyticsPurpose: 'understand how the site is used',
+  marketingPurpose: 'measure our advertising',
+  policy: 'Cookie policy',
+  accept: 'Accept all',
+  reject: 'Reject all',
+  choose: 'Choose',
+  save: 'Save choices',
+  essential: 'Essential (always on)',
+  analytics: 'Analytics',
+  marketing: 'Marketing',
+};
+
+const categories = (['analytics', 'marketing'] as const).filter((c) => consent[c]);
+const purposes = categories.map((c) => copy[`${c}Purpose`]).join(' and ');
+---
+{categories.length > 0 && (
+  <section class="cc dark" data-cc hidden aria-labelledby="cc-title">
+    <p id="cc-title" class="eyebrow">{copy.title}</p>
+    <p class="cc__body">
+      {copy.body} {purposes}. <a href="/cookies" class="cc__link">{copy.policy}</a>
+    </p>
+
+    <fieldset class="cc__choices" data-cc-choices hidden>
+      <legend class="sr-only">{copy.choose}</legend>
+      <label class="cc__opt"><input type="checkbox" checked disabled /> {copy.essential}</label>
+      {categories.map((c) => (
+        <label class="cc__opt"><input type="checkbox" name={c} /> {copy[c]}</label>
+      ))}
+    </fieldset>
+
+    <div class="cc__actions">
+      <button type="button" class="cc__btn" data-cc-reject>{copy.reject}</button>
+      <button type="button" class="cc__btn" data-cc-accept>{copy.accept}</button>
+      <button type="button" class="cc__more" data-cc-choose aria-expanded="false">{copy.choose}</button>
+      <button type="button" class="cc__btn" data-cc-save hidden>{copy.save}</button>
+    </div>
+  </section>
+)}
+
+<style>
+  .cc {
+    position: fixed;
+    z-index: 90;
+    left: var(--gutter);
+    bottom: var(--gutter);
+    width: min(26rem, calc(100vw - 2 * var(--gutter)));
+    padding: 1.5rem;
+    border: 1px solid var(--line-dark);
+    border-radius: var(--radius);
+    display: grid;
+    gap: 1rem;
+    font-size: var(--step--1);
+    animation: cc-in 0.6s var(--ease-out) both;
+  }
+  .cc__body { color: var(--mist); line-height: 1.55; font-size: 0.875rem; }
+  .cc__link { color: var(--paper); text-decoration: underline; text-underline-offset: 3px; }
+  .cc__choices { border: 0; padding: 0; display: grid; gap: 0.5rem; }
+  .cc__opt { display: flex; gap: 0.6rem; align-items: center; }
+  .cc__opt input { accent-color: var(--accent); width: 1.1rem; height: 1.1rem; }
+  .cc__actions { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; }
+  /* Accept and reject share one style: refusing must be as easy as accepting. */
+  .cc__btn {
+    flex: 1 1 auto;
+    min-height: 44px;
+    padding: 0.6rem 1.1rem;
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    color: var(--paper);
+    transition: background-color 0.3s, color 0.3s;
+  }
+  .cc__btn:hover { background: var(--accent); color: var(--ink); }
+  .cc__more { min-height: 44px; padding-inline: 0.4rem; color: var(--mist); text-decoration: underline; text-underline-offset: 3px; }
+  .cc__more:hover { color: var(--paper); }
+  .cc :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  @keyframes cc-in { from { opacity: 0; transform: translateY(16px); } }
+  @media (prefers-reduced-motion: reduce) { .cc { animation: none; } }
+</style>
+
+<script>
+  type Choice = { v: 1; analytics: boolean; marketing: boolean; date: string };
+  const KEY = 'consent';
+
+  const read = (): Choice | null => {
+    try {
+      const c = JSON.parse(localStorage.getItem(KEY) || 'null');
+      return c && c.v === 1 ? c : null;
+    } catch {
+      return null;
+    }
+  };
+
+  // Turn inert <script type="text/plain" data-consent> tags into real scripts for accepted categories.
+  const apply = (c: Choice) => {
+    document.querySelectorAll<HTMLScriptElement>('script[type="text/plain"][data-consent]').forEach((s) => {
+      if (!c[s.dataset.consent as 'analytics' | 'marketing']) return;
+      const real = document.createElement('script');
+      for (const { name, value } of Array.from(s.attributes)) {
+        if (name === 'type' || name === 'data-consent') continue;
+        real.setAttribute(name === 'data-src' ? 'src' : name, value);
+      }
+      real.text = s.text;
+      s.replaceWith(real);
+    });
+    window.dispatchEvent(new CustomEvent('consent:change', { detail: c }));
+  };
+
+  const banner = document.querySelector<HTMLElement>('[data-cc]');
+  if (banner) {
+    const choices = banner.querySelector<HTMLFieldSetElement>('[data-cc-choices]')!;
+    const chooseBtn = banner.querySelector<HTMLButtonElement>('[data-cc-choose]')!;
+    const saveBtn = banner.querySelector<HTMLButtonElement>('[data-cc-save]')!;
+    const box = (name: string) => choices.querySelector<HTMLInputElement>(`input[name="${name}"]`);
+
+    const save = (analytics: boolean, marketing: boolean) => {
+      const c: Choice = { v: 1, analytics, marketing, date: new Date().toISOString() };
+      try { localStorage.setItem(KEY, JSON.stringify(c)); } catch {}
+      banner.hidden = true;
+      apply(c);
+    };
+
+    const open = (expanded: boolean) => {
+      const c = read();
+      ['analytics', 'marketing'].forEach((n) => { const b = box(n); if (b) b.checked = !!c?.[n as 'analytics']; });
+      choices.hidden = !expanded;
+      saveBtn.hidden = !expanded;
+      chooseBtn.hidden = expanded;
+      chooseBtn.setAttribute('aria-expanded', String(expanded));
+      banner.hidden = false;
+    };
+
+    banner.querySelector('[data-cc-accept]')!.addEventListener('click', () => save(true, true));
+    banner.querySelector('[data-cc-reject]')!.addEventListener('click', () => save(false, false));
+    chooseBtn.addEventListener('click', () => { open(true); (box('analytics') ?? box('marketing'))?.focus(); });
+    saveBtn.addEventListener('click', () => save(!!box('analytics')?.checked, !!box('marketing')?.checked));
+
+    document.addEventListener('click', (e) => {
+      if (!(e.target as Element).closest('[data-cookie-settings]')) return;
+      e.preventDefault();
+      open(true);
+      banner.querySelector<HTMLButtonElement>('[data-cc-save]')?.focus();
+    });
+
+    const stored = read();
+    if (stored) apply(stored);
+    else open(false);
+  }
+</script>

@@ -1,0 +1,90 @@
+/* Multi-step enquiry form */
+.iform { display: grid; gap: 2rem; }
+.iform__progress { display: flex; gap: 0.5rem; }
+.iform__tick { flex: 1; display: grid; gap: 0.6rem; }
+.iform__tick-bar { height: 2px; background: var(--line-light); position: relative; overflow: hidden; }
+.iform__tick-bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.8s var(--ease-out);
+}
+.iform__tick[data-state='done'] .iform__tick-bar::after,
+.iform__tick[data-state='current'] .iform__tick-bar::after { transform: scaleX(1); }
+.iform__tick[data-state='current'] .iform__tick-bar::after { background: var(--accent); }
+.iform__tick-label { font-size: var(--step--2); font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--stone); }
+.iform__tick[data-state='current'] .iform__tick-label { color: var(--ink); }
+
+.iform__step { animation: step-in 0.7s var(--ease-out) both; }
+@keyframes step-in {
+  from { opacity: 0; transform: translateX(calc(var(--dir, 1) * 40px)); }
+}
+.iform fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 1.75rem; min-width: 0; }
+.iform legend { padding: 0; margin-bottom: 1.5rem; }
+.iform__title { font-size: var(--step-3); outline: none; }
+.iform__hint { color: var(--stone); margin-top: -1rem; }
+
+.intents { display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 0.75rem; }
+.intent {
+  position: relative;
+  display: grid;
+  gap: 0.35rem;
+  padding: 1.4rem 1.5rem;
+  text-align: left;
+  border: 1px solid var(--line-light);
+  transition: border-color 0.3s, background 0.4s var(--ease-out), color 0.4s;
+}
+.intent:hover { border-color: var(--ink); }
+.intent[aria-pressed='true'] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.intent__title { font-family: var(--font-display); font-size: var(--step-2); line-height: 1.15; }
+.intent__text { font-size: var(--step-0); color: var(--stone); }
+.intent[aria-pressed='true'] .intent__text { color: var(--mist); }
+.intent__arrow { position: absolute; top: 1.3rem; right: 1.4rem; transition: transform 0.4s var(--ease-out); }
+.intent:hover .intent__arrow { transform: translateX(4px); color: var(--accent-deep); }
+.intent[aria-pressed='true'] .intent__arrow { color: var(--accent); }
+
+.field { display: grid; gap: 0.7rem; }
+.field__label { font-size: var(--step--2); font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; }
+.field__opt { font-weight: 500; letter-spacing: 0.05em; text-transform: none; color: var(--stone); margin-left: 0.4rem; }
+.pills { display: flex; flex-wrap: wrap; gap: 0.5rem; outline: none; }
+.pill {
+  padding: 0.65rem 1.15rem;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px var(--line-light);
+  font-size: var(--step--1);
+  transition: background 0.3s var(--ease-out), color 0.3s, box-shadow 0.3s;
+}
+.pill:hover { box-shadow: inset 0 0 0 1px var(--ink); }
+.pill[aria-pressed='true'] { background: var(--ink); color: var(--paper); box-shadow: none; }
+.input {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--sand);
+  padding: 0.7rem 0;
+  font-size: var(--step-1);
+  outline: none;
+  transition: border-color 0.3s;
+  resize: vertical;
+  border-radius: 0;
+}
+.input:focus { border-color: var(--ink); }
+.input[aria-invalid='true'] { border-color: #a4452c; }
+.input::placeholder { color: var(--sand); }
+select.input { appearance: none; cursor: pointer; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.75rem 2rem; }
+@media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } }
+.check { display: flex; gap: 0.8rem; align-items: flex-start; font-size: var(--step-0); color: var(--stone); cursor: pointer; }
+.check input { accent-color: var(--ink); width: 1.1rem; height: 1.1rem; margin-top: 0.15rem; flex: none; }
+.iform__error { color: #a4452c; font-size: var(--step-0); }
+.iform__nav { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding-top: 1.5rem; border-top: 1px solid var(--line-light); }
+.iform--done { gap: 1.25rem; animation: step-in 0.8s var(--ease-out) both; }
+.iform--done .iform__title { font-size: var(--step-4); }
+.iform__done-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem; margin-top: 1rem; }
+
+
+.iform__notice { font-size: var(--step-0); color: var(--stone); padding: 0.4rem 0 0.4rem 1.1rem; border-left: 2px solid var(--accent-deep); }
+.iform__title em { font-style: italic; color: var(--accent-deep); }

@@ -1,0 +1,89 @@
+---
+// The menu switcher (the user's brief, after Nocturne): a sticky row of buttons,
+// one per menu. Each is a real link to that menu's own URL (kept from damas.ca),
+// and the active pill morphs between pages through a named View Transition.
+import { menuPages } from '../lib/menus';
+import { url, useT, type Lang, type RouteKey } from '../lib/i18n';
+interface Props { lang: Lang; current?: RouteKey }
+const { lang, current } = Astro.props;
+const t = useT(lang);
+---
+<nav class="mswitch" aria-label={lang === 'fr' ? 'Choisir un menu' : 'Choose a menu'}>
+  <ul class="mswitch__row" role="list">
+    {menuPages.map((m) => (
+      <li>
+        <a href={url(m.key, lang)} class="mswitch__btn" aria-current={m.key === current ? 'page' : undefined}>
+          {m.key === current && <span class="mswitch__ink" aria-hidden="true"></span>}
+          <span class="mswitch__label">{m.label[lang]}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<style>
+  .mswitch {
+    position: sticky;
+    top: 5.25rem;
+    z-index: 60;
+    display: flex;
+    justify-content: center;
+    padding: 0.75rem var(--gutter) 1.25rem;
+    background: linear-gradient(var(--paper) 72%, rgb(239 230 218 / 0));
+    transition: top 0.7s var(--ease-out);
+    view-transition-name: menu-switch;
+  }
+  :global(html[data-scroll-dir='down']) .mswitch { top: 0.75rem; }
+  .mswitch__row {
+    display: flex;
+    gap: 0.25rem;
+    max-width: 100%;
+    padding: 0.35rem;
+    border-radius: var(--radius);
+    background: rgb(239 230 218 / 0.9);
+    box-shadow: 0 0 0 1px var(--line-light), 0 12px 40px rgb(18 10 13 / 0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .mswitch__row::-webkit-scrollbar { display: none; }
+  .mswitch__btn {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: 2.75rem;
+    padding: 0 1.15rem;
+    border-radius: var(--radius);
+    color: var(--stone);
+    font-size: var(--step--2);
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: color 0.4s var(--ease-out);
+  }
+  .mswitch__btn:hover { color: var(--ink); }
+  .mswitch__btn[aria-current] { color: var(--paper); }
+  .mswitch__label { position: relative; z-index: 1; }
+  .mswitch__ink {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius);
+    background: var(--ink);
+    view-transition-name: menu-ink;
+  }
+  @media (max-width: 640px) {
+    .mswitch { justify-content: flex-start; padding-inline: 0.5rem; top: 4.5rem; }
+    .mswitch__row { -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); }
+    .mswitch__btn { padding: 0 0.9rem; }
+  }
+</style>
+
+<script>
+  // Keep the current menu's button in view when the row scrolls (phones)
+  document.querySelectorAll<HTMLElement>('.mswitch__row').forEach((row) => {
+    const cur = row.querySelector<HTMLElement>('[aria-current]');
+    if (cur) row.scrollLeft = cur.offsetLeft - row.clientWidth / 2 + cur.offsetWidth / 2;
+  });
+</script>

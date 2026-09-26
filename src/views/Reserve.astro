@@ -1,0 +1,78 @@
+---
+// Réserver: the OpenTable widget (rid 66991), loaded only when the visitor asks
+// for it (Law 25: third-party cookies; also faster), with a direct link as backup.
+import Base from '../layouts/Base.astro';
+import Hours from '../components/Hours.astro';
+import Emblem from '../components/Emblem.astro';
+import LiveEvening from '../components/LiveEvening.astro';
+import { integrations, site } from '../lib/content';
+import { url, type Lang } from '../lib/i18n';
+import { breadcrumbLd } from '../lib/seo';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+const title = fr ? 'Réserver une table — Restaurant Damas, Outremont' : 'Reserve a table — Restaurant Damas, Outremont';
+const description = fr
+  ? 'Réservez votre table au restaurant Damas, 1201 avenue Van Horne à Outremont. Disponibilités en direct sur OpenTable ; groupes de plus de huit par courriel.'
+  : 'Reserve your table at Restaurant Damas, 1201 Van Horne Avenue in Outremont. Live availability on OpenTable; parties larger than eight by email.';
+---
+<Base lang={lang} page="reserve" title={title} description={description} jsonLd={[breadcrumbLd(lang, [{ key: 'reserve', name: fr ? 'Réserver' : 'Reserve' }])]}>
+  <section class="rsv">
+    <Emblem class="rsv__emblem" color="oxblood" loading="eager" />
+    <div class="wrap rsv__grid">
+      <div class="rsv__text">
+        <p class="eyebrow" data-reveal-load>{fr ? 'Réservations' : 'Reservations'}</p>
+        <h1 data-split="load">{fr ? <>Votre table <em>vous attend</em></> : <>Your table <em>is waiting</em></>}</h1>
+        <p class="lede muted" data-reveal-load>{fr ? 'Choisissez la date et l’heure qui vous conviennent.' : 'Choose the date and time that suit you.'}</p>
+        <LiveEvening lang={lang} class="rsv__live" />
+        <div class="rsv__hours" data-reveal-load><Hours lang={lang} /></div>
+        <p class="rsv__group" data-reveal-load>{fr ? 'Pour un groupe de plus de huit personnes ou une privatisation, écrivez-nous à ' : 'For parties larger than eight, or to book the room privately, email us at '}<a class="link" href={`mailto:${site.email}`}>{site.email}</a>. <a class="link" href={url('events', lang)}>{fr ? 'Événements privés' : 'Private events'} →</a></p>
+      </div>
+
+      <div class="rsv__widget" data-ot data-src={integrations.opentableWidget(lang)} data-loading={fr ? 'Chargement du calendrier OpenTable…' : 'Loading the OpenTable calendar…'}>
+        <div class="rsv__gate" data-ot-gate>
+          <p class="rsv__gate-title">{fr ? 'Disponibilités en direct' : 'Live availability'}</p>
+          <p class="muted">{fr ? 'Le calendrier est fourni par OpenTable, qui peut déposer ses propres témoins une fois ouvert.' : 'The calendar is provided by OpenTable, which may set its own cookies once opened.'}</p>
+          <button type="button" class="btn btn--accent" data-ot-load>{fr ? 'Voir les disponibilités' : 'See availability'}</button>
+          <a href={integrations.opentableUrl} class="link" target="_blank" rel="noopener">{fr ? 'Ou réserver sur OpenTable' : 'Or book on OpenTable'} ↗</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .rsv { position: relative; min-height: 100svh; overflow: hidden; isolation: isolate; padding-top: 9rem; padding-bottom: var(--section); }
+  .rsv :global(.rsv__emblem) { position: absolute; z-index: -1; right: -12vw; top: 10%; width: min(900px, 110vw); opacity: 0.5; }
+  .rsv__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(2.5rem, 6vw, 6rem); align-items: start; }
+  .rsv__text { display: grid; gap: 1.5rem; justify-items: start; }
+  .rsv__text h1 { font-size: var(--step-6); }
+  .rsv__hours { padding-top: 1.5rem; border-top: 1px solid var(--line-dark); width: 100%; }
+  .rsv__group { color: var(--mist); max-width: 46ch; }
+  .rsv__widget { min-height: 30rem; border: 1px solid var(--line-dark); border-radius: 50% 50% var(--radius) var(--radius) / 16% 16% var(--radius) var(--radius); background: rgb(18 10 13 / 0.6); backdrop-filter: blur(6px); display: grid; place-items: center; padding: 3rem 1.5rem; overflow: hidden; }
+  .rsv__gate { display: grid; justify-items: center; gap: 1rem; text-align: center; max-width: 26rem; }
+  .rsv__gate-title { font-family: var(--font-display); font-size: var(--step-3); }
+  .rsv__widget :global(iframe) { width: 100%; min-height: 30rem; border: 0; }
+  @media (max-width: 900px) { .rsv__grid { grid-template-columns: 1fr; } .rsv { padding-top: 7rem; } }
+</style>
+
+<script>
+  // Load OpenTable only on request. Until its iframe shows up, keep a loading
+  // line and the direct link visible, so the box is never empty.
+  document.querySelectorAll<HTMLElement>('[data-ot]').forEach((box) => {
+    box.querySelector('[data-ot-load]')?.addEventListener('click', () => {
+      const gate = box.querySelector<HTMLElement>('[data-ot-gate]')!;
+      gate.querySelector('[data-ot-load]')?.remove();
+      gate.querySelector('.muted')!.textContent = box.dataset.loading!;
+      const s = document.createElement('script');
+      s.src = box.dataset.src!;
+      s.async = true;
+      box.appendChild(s);
+      const obs = new MutationObserver(() => {
+        if (box.querySelector('iframe')) { gate.remove(); obs.disconnect(); window.dispatchEvent(new Event('damas:layout')); }
+      });
+      obs.observe(box, { childList: true, subtree: true });
+    });
+  });
+</script>
