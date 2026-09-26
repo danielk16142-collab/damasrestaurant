@@ -376,3 +376,8 @@ html.has-pointer .lantern { opacity: 1; }
 /* A2: hairline that draws in */
 .hairline { height: 1px; background: currentColor; opacity: 0.25; transform-origin: left; }
 html.js-motion [data-draw-line] { transform: scaleX(0); }
+
+/* Room for the home page's side index (SideIndex.astro) */
+@media (min-width: 1101px) {
+  html[data-page='home'] main .wrap { padding-right: calc(var(--gutter) + 2.75rem); }
+}

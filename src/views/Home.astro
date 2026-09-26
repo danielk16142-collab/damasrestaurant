@@ -1,0 +1,555 @@
+---
+// Home: "Une nuit à Damas". The evening unfolds hour by hour; each chapter is a
+// room of the house. Copy builds on Damas's own words from damas.ca.
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Intro from '../components/Intro.astro';
+import ArchHero from '../components/ArchHero.astro';
+import SideIndex from '../components/SideIndex.astro';
+import Embers from '../components/Embers.astro';
+import Rosette from '../components/Rosette.astro';
+import { site } from '../lib/content';
+import { dinner, drinks, tasting, levantWines, araks } from '../lib/menus';
+import { url, useT, type Lang } from '../lib/i18n';
+import type { L } from '../lib/menus';
+
+import heroImg from '../assets/photos/salon-lanternes.jpg';
+import moucharabieh from '../assets/photos/moucharabieh.jpg';
+import sallePlafond from '../assets/photos/salle-plafond.jpg';
+import longueTable from '../assets/photos/longue-table.jpg';
+import mezzesCuivre from '../assets/photos/mezzes-cuivre.jpg';
+import fattouch from '../assets/photos/fattouch.avif';
+import hummus from '../assets/photos/hummus.jpg';
+import kibbeh from '../assets/photos/kibbeh.jpg';
+import faconnage from '../assets/photos/kibbeh-faconnage.jpg';
+import halloumi from '../assets/photos/halloumi.jpg';
+import fourPain from '../assets/photos/four-pain.jpg';
+import tomates from '../assets/photos/tomates-farcies.avif';
+import braise from '../assets/photos/braise-poisson.jpg';
+import carre from '../assets/photos/boeuf-sauce.avif';
+import filet from '../assets/photos/boeuf-pain.webp';
+import samke from '../assets/photos/poisson-herbes.jpg';
+import grillades from '../assets/photos/table-partage.jpg';
+import kebabAgneau from '../assets/photos/mijote-freekeh.jpg';
+import freekeh from '../assets/photos/moujaddara.avif';
+import cocktailRose from '../assets/photos/cocktail-rose.jpg';
+import barman from '../assets/photos/barman.jpg';
+import bargylus from '../assets/photos/bargylus.avif';
+import brunchOeufs from '../assets/photos/brunch-oeufs.jpg';
+import brunchBoeuf from '../assets/photos/brunch-boeuf.jpg';
+import salons from '../assets/photos/evenements-prives.avif';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useT(lang);
+const fr = lang === 'fr';
+const tr = (x: L) => x[lang];
+
+const mezzes = [
+  { img: mezzesCuivre, ar: 'مازة', name: { fr: 'Plateau de mezzés du chef', en: "Chef's mezzes platter" }, note: { fr: 'Hummus, mouhammara, mutabbal de betterave et d’aubergine', en: 'Hummus, mouhammara, beet and eggplant mutabbal' } },
+  { img: fattouch, ar: 'فتّوش', name: { fr: 'Salade fattouch', en: 'Fattouch salad' }, note: { fr: 'Mezzé froid', en: 'Cold mezze' } },
+  { img: kibbeh, ar: 'كبّة', name: { fr: 'Kibbeh aux pistaches', en: 'Pistachio kibbeh' }, note: { fr: 'Mutabbal de betterave', en: 'Beet mutabbal' } },
+  { img: faconnage, ar: 'باليد', name: { fr: 'Façonnées à la main', en: 'Shaped by hand' }, note: { fr: 'Une à une, en cuisine, chaque soir', en: 'One by one, in the kitchen, every evening' } },
+  { img: hummus, ar: 'حمّص', name: { fr: 'Hummus', en: 'Hummus' }, note: { fr: 'Le cœur de toute table syrienne', en: 'The heart of every Syrian table' } },
+  { img: halloumi, ar: 'حلّوم', name: { fr: 'Halloumi grillé', en: 'Grilled halloumi' }, note: { fr: 'Mezzé chaud', en: 'Hot mezze' } },
+  { img: tomates, ar: 'مازة', name: { fr: 'Bouchées du moment', en: 'Bites of the moment' }, note: { fr: 'Pour les réceptions', en: 'For receptions' } },
+  { img: fourPain, ar: 'خبز', name: { fr: 'Le four à pain', en: 'The bread oven' }, note: { fr: 'Le pain gonfle et arrive brûlant', en: 'The bread puffs up and arrives piping hot' } },
+];
+
+// Signature grills, straight from the dinner menu (P3: each row previews its photo)
+const grillSection = dinner.sections.find((s) => s.id === 'specialites')!;
+const pick = (fr: string) => grillSection.items.find((i) => i.name.fr === fr)!;
+const signatures = [
+  { dish: pick('Carré d’agneau'), img: carre },
+  { dish: pick('Kebab de filet mignon'), img: filet },
+  { dish: pick('Daurade rose rôtie façon samké harra'), img: samke },
+  { dish: pick('Kebab d’agneau à l’aubergine'), img: kebabAgneau },
+  { dish: pick('Grillades mixtes pour deux'), img: grillades },
+];
+const cocktails = drinks.sections.find((s) => s.id === 'cocktails')!.items.map((i) => i.name[lang]);
+
+const c = fr
+  ? {
+      title: 'Restaurant Damas — cuisine syrienne à Outremont, Montréal',
+      description: 'Une soirée syrienne enchantée au cœur d’Outremont, avenue Van Horne : mezzés, grillades sur charbon de bois, menu dégustation et cave généreuse. Bib Gourmand MICHELIN.',
+      heroAlt: 'Un salon de Damas sous des lustres de perles rouges, banquettes turquoise',
+      h1: ['Un voyage vers la Syrie', 'le temps d’un soir'],
+      salle: {
+        hour: '17 h 30', chapter: 'La salle',
+        title: ['La', 'salle'],
+        words: 'Au restaurant Damas, un microcosme au confort unique vous accueillera avec des couleurs chaudes, des velours, du bois sculpté et des lumières multicolores.',
+        p1: 'Chez Damas, le personnage principal est sans doute cette ambiance unique. Nos habitués le savent : ils viennent s’immerger dans le climat méditerranéen et oriental depuis plusieurs années, certains de très loin.',
+        p2: 'La magie de Damas tient à sa capacité de réunir des personnes d’origines différentes. Que vous soyez du Mile End ou du bout du monde, c’est vous, le héros du conte, l’ingrédient manquant.',
+        figs: [['2010', 'Première nuit', true], ['100', 'Places en salle', false], ['70', 'Places en terrasse', false]],
+      },
+      mezze: { hour: '18 h', chapter: 'Les mezzés', title: ['Tout commence', 'au centre de la table'], text: 'Comme ailleurs en Méditerranée, la cuisine syrienne fait la part belle aux mezzés chauds et froids : de petits plats à partager entre convives, servis avant le plat principal.' },
+      braise: { hour: '19 h', chapter: 'La braise', title: ['Sur le', 'charbon de bois'], text: 'Agneau, bœuf Canadian Prime, poissons entiers : les grillades prennent le temps de la braise.', list: 'Signatures' },
+      voyage: { hour: '20 h', chapter: 'Le voyage', title: ['Menu', 'dégustation'] },
+      bar: { hour: '21 h', chapter: 'Le bar et la cave', title: ['Safran, rose,', 'coriandre'], text: 'Nos boissons reflètent l’art ancien des épices : une touche de coriandre, une pincée de safran et de rose dans les cocktails. La culture du vin syrien est ancienne, et le vin occupe une place essentielle à la table de Damas.', levant: 'Vins du Levant', arak: 'Arak', wine: 'La carte des vins' },
+      brunch: { hour: 'Le week-end', chapter: 'Le brunch', title: ['Quand la maison', 's’éveille'], text: 'Le samedi et le dimanche, de 11 h à 15 h : mezzé matinal du chef, casserole d’œufs menemen, pain doré au halva, et le four à pain qui ne s’arrête pas.', cta: 'Menu brunch' },
+      salons: { hour: 'Sur demande', chapter: 'Les salons', title: ['Privatiser', 'la salle'], text: 'Certains jours, Damas peut être réservé pour vos occasions privées : réceptions d’entreprise ou célébrations personnelles, autour d’un festin à partager.', cta: 'Événements privés' },
+      honours: 'Distinctions',
+      tale: 'Nous aimons penser que le restaurant Damas ressemble à un conte des Mille et une Nuits : une tapisserie mystérieuse et envoûtante, et surtout invitante.',
+    }
+  : {
+      title: 'Restaurant Damas — Syrian dining in Outremont, Montréal',
+      description: 'An enchanted Syrian evening in Outremont, on Van Horne Avenue: mezze, charcoal grills, a tasting menu and a generous cellar. MICHELIN Guide Bib Gourmand.',
+      heroAlt: 'A Damas salon beneath red beaded chandeliers, with turquoise banquettes',
+      h1: ['A journey to Syria', 'for one evening'],
+      salle: {
+        hour: '5:30 pm', chapter: 'The room',
+        title: ['The', 'room'],
+        words: 'At Restaurant Damas, a uniquely comfortable microcosm greets you with warm colours, velvet, carved wood and multicoloured lights.',
+        p1: 'Damas is a crossroads of Eastern and Western cultures and stories. Like the tale of a thousand and one nights, the best way to experience it is to come and immerse yourself, time and again.',
+        p2: 'The true magic of Damas is how it brings people together, from across the street or across the world. Whether you come from Mile End or the end of the world, you are the hero of the tale, the missing ingredient.',
+        figs: [['2010', 'The first night', true], ['100', 'Seats indoors', false], ['70', 'Seats on the terrace', false]],
+      },
+      mezze: { hour: '6 pm', chapter: 'Mezze', title: ['It all begins', 'at the centre of the table'], text: 'As elsewhere around the Mediterranean, Syrian cuisine favours hot and cold mezze: small dishes shared among the table, served before the main course.' },
+      braise: { hour: '7 pm', chapter: 'The embers', title: ['Over', 'charcoal'], text: 'Lamb, Canadian Prime beef, whole fish: the grills take their time over the embers.', list: 'Signatures' },
+      voyage: { hour: '8 pm', chapter: 'The journey', title: ['Tasting', 'menu'] },
+      bar: { hour: '9 pm', chapter: 'Bar and cellar', title: ['Saffron, rose,', 'cilantro'], text: 'Our drinks reflect the ancient art of spicing: a touch of cilantro, a pinch of saffron and rose in the cocktails. Syrian wine culture is ancient, and wine is essential at the Damas table.', levant: 'Wines of the Levant', arak: 'Arak', wine: 'The wine list' },
+      brunch: { hour: 'Weekends', chapter: 'Brunch', title: ['When the house', 'wakes up'], text: 'Saturday and Sunday, 11 am to 3 pm: the chef’s morning mezze, menemen egg casserole, halva French toast, and a bread oven that never stops.', cta: 'Brunch menu' },
+      salons: { hour: 'On request', chapter: 'The salons', title: ['Book', 'the room'], text: 'On certain days, Damas can be booked for your private occasions, corporate or personal, around a feast made for sharing.', cta: 'Private events' },
+      honours: 'Honours',
+      tale: 'We like to think that Damas is reminiscent of the tale of a thousand and one nights: an abundant, mysterious and enticing tapestry, enriched by our generous cellar.',
+    };
+---
+<Base lang={lang} page="home" title={c.title} description={c.description}>
+  <Intro slot="intro" lang={lang} />
+
+  <ArchHero image={heroImg} alt={c.heroAlt} lang={lang} eyebrow="Outremont · Montréal">
+    <Fragment slot="title">{c.h1[0]}{' '}<em>{c.h1[1]}</em></Fragment>
+    <Fragment slot="actions">
+      <a href={url('reserve', lang)} class="btn btn--accent" data-magnetic>{t.reserveTable}</a>
+      <a href={url('menus', lang)} class="btn btn--ghost">{t.seeMenus}</a>
+    </Fragment>
+    <Fragment slot="aside">
+      <span class="eyebrow">{fr ? 'Guide MICHELIN' : 'MICHELIN Guide'}</span><span>Bib Gourmand 2025</span>
+    </Fragment>
+  </ArchHero>
+
+  <SideIndex />
+
+  <!-- 17 h 30 · La salle -->
+  <section class="salle section" data-chapter={c.salle.chapter} data-hour={c.salle.hour} data-blooms>
+    <div class="wrap">
+      <header class="chap">
+        <span class="chap__ar ar-accent" lang="ar" aria-hidden="true">١</span>
+        <span class="chap__hour">{c.salle.hour}</span>
+        <p class="eyebrow">{c.salle.chapter}</p>
+      </header>
+      <h2 class="sr-only">{fr ? 'La salle' : 'The room'}</h2>
+      <p class="statement" data-words>{c.salle.words}</p>
+      <div class="salle__grid">
+        <figure class="salle__a arch-frame" data-clip>
+          <Image src={moucharabieh} alt={fr ? 'Salle aux murs rayés et moucharabieh lumineux sous les lustres' : 'Striped walls and a glowing mashrabiya beneath chandeliers'} widths={[480, 800, 1100]} sizes="(max-width: 800px) 90vw, 36vw" />
+        </figure>
+        <div class="salle__text">
+          <Rosette class="salle__rosette" />
+          <p data-reveal>{c.salle.p1}</p>
+          <p data-reveal>{c.salle.p2}</p>
+        </div>
+        <figure class="salle__b media" data-parallax="10">
+          <Image src={sallePlafond} alt={fr ? 'Le plafond rouge constellé de lanternes' : 'The red ceiling studded with lanterns'} widths={[640, 1100, 1440]} sizes="(max-width: 800px) 90vw, 50vw" />
+        </figure>
+        <figure class="salle__c arch-frame" data-clip>
+          <Image src={longueTable} alt={fr ? 'La longue table dressée sous les lustres de cristal' : 'The long table set beneath crystal chandeliers'} widths={[400, 700]} sizes="(max-width: 800px) 60vw, 22vw" />
+        </figure>
+      </div>
+      <ul class="figs" role="list">
+        {c.salle.figs.map(([n, l, year]) => (
+          <li data-reveal>
+            <span class="figs__n num" data-count={n} data-nogroup={year ? '' : undefined}>{n}</span>
+            <span class="eyebrow">{l}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- 18 h · Les mezzés (the page's one pinned section) -->
+  <section class="mezze" data-chapter={c.mezze.chapter} data-hour={c.mezze.hour} data-hscroll>
+    <div class="mezze__track" data-hscroll-track>
+      <div class="mezze__intro">
+        <header class="chap">
+          <span class="chap__ar ar-accent" lang="ar" aria-hidden="true">٢</span>
+          <span class="chap__hour">{c.mezze.hour}</span>
+          <p class="eyebrow">{c.mezze.chapter}</p>
+        </header>
+        <h2 data-split>{c.mezze.title[0]}{' '}<em>{c.mezze.title[1]}</em></h2>
+        <p class="muted" data-reveal>{c.mezze.text}</p>
+        <a href={url('menu-dinner', lang)} class="link" data-reveal>{fr ? 'Les mezzés au menu' : 'Mezze on the menu'} →</a>
+      </div>
+      {mezzes.map((m, i) => (
+        <figure class="plate">
+          <div class:list={['plate__img', i % 2 ? 'arch-soft' : 'arch-frame']}>
+            <Image src={m.img} alt={tr(m.name)} widths={[420, 700, 960]} sizes="(max-width: 900px) 72vw, 28vw" />
+          </div>
+          <figcaption>
+            <span class="plate__ar ar-accent" lang="ar" aria-hidden="true">{m.ar}</span>
+            <span class="plate__n num">{String(i + 1).padStart(2, '0')}</span>
+            <strong>{tr(m.name)}</strong>
+            <span class="muted">{tr(m.note)}</span>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  </section>
+
+  <!-- 19 h · La braise -->
+  <section class="braise section on-image" data-chapter={c.braise.chapter} data-hour={c.braise.hour}>
+    <div class="braise__bg media" data-parallax="12">
+      <Image src={braise} alt={fr ? 'Poisson entier grillé sur le charbon de bois' : 'Whole fish grilling over charcoal'} widths={[800, 1280, 1800]} sizes="100vw" />
+    </div>
+    <div class="braise__shade"></div>
+    <Embers />
+    <div class="wrap braise__grid">
+      <div class="braise__head">
+        <header class="chap">
+          <span class="chap__ar ar-accent" lang="ar" aria-hidden="true">٣</span>
+          <span class="chap__hour">{c.braise.hour}</span>
+          <p class="eyebrow">{c.braise.chapter}</p>
+        </header>
+        <h2 data-split>{c.braise.title[0]}{' '}<em>{c.braise.title[1]}</em></h2>
+        <p data-reveal>{c.braise.text}</p>
+      </div>
+      <div class="sig" data-sig>
+        <p class="eyebrow">{c.braise.list}</p>
+        <ol class="sig__list" role="list">
+          {signatures.map((s, i) => (
+            <li class="sig__row" data-sig-row={i} data-reveal>
+              <span class="sig__num num">{String(i + 1).padStart(2, '0')}</span>
+              <span class="sig__name">{s.dish.name[lang]}</span>
+              <span class="sig__price num">{s.dish.price}</span>
+              {s.dish.desc && <span class="sig__desc">{s.dish.desc[lang]}</span>}
+            </li>
+          ))}
+        </ol>
+        <div class="sig__float" aria-hidden="true">
+          {signatures.map((s, i) => <Image src={s.img} alt="" widths={[360]} sizes="18rem" class="sig__img" data-sig-img={i} />)}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 20 h · Le voyage -->
+  <section class="voyage section" data-chapter={c.voyage.chapter} data-hour={c.voyage.hour} data-blooms>
+    <div class="wrap voyage__grid">
+      <figure class="voyage__img arch-frame" data-clip>
+        <Image src={freekeh} alt={fr ? 'Moujaddara aux oignons croustillants et herbes' : 'Moujaddara with crisp onions and herbs'} widths={[500, 900, 1200]} sizes="(max-width: 800px) 90vw, 40vw" />
+      </figure>
+      <div class="voyage__card" data-reveal>
+        <header class="chap chap--center">
+          <span class="chap__ar ar-accent" lang="ar" aria-hidden="true">٤</span>
+          <span class="chap__hour">{c.voyage.hour}</span>
+          <p class="eyebrow">{c.voyage.chapter}</p>
+        </header>
+        <h2>{c.voyage.title[0]}{' '}<em>{c.voyage.title[1]}</em></h2>
+        <p class="voyage__price num">{tasting.price} <small>$ · {tr(tasting.per)}</small></p>
+        <p class="muted">{tr(tasting.text)}</p>
+        <svg class="voyage__tilde" viewBox="0 0 60 12" aria-hidden="true" data-draw><path d="M2 8 C 14 -2, 22 14, 30 6 S 46 -2, 58 6" fill="none" stroke="currentColor" stroke-width="1.2" /></svg>
+        <ul class="pairings" role="list">
+          {tasting.pairings.map((p) => <li><span>{tr(p.name)}</span><span class="pairings__dots" aria-hidden="true"></span><span class="num">+ {p.price}</span></li>)}
+        </ul>
+        <div class="voyage__cta">
+          <a href={url('reserve', lang)} class="btn btn--accent">{t.reserveTable}</a>
+          <a href={url('menu-dinner', lang, 'degustation')} class="link">{fr ? 'Le menu du soir' : 'The dinner menu'} →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 21 h · Le bar et la cave -->
+  <section class="bar" data-chapter={c.bar.chapter} data-hour={c.bar.hour}>
+    <div class="marquee" aria-hidden="true" data-marquee>
+      <div class="marquee__row">{[0, 1].map(() => <span>{cocktails.map((n) => <><em>{n}</em><i>✦</i></>)}</span>)}</div>
+    </div>
+    <div class="section wrap bar__grid">
+      <div class="bar__text">
+        <header class="chap">
+          <span class="chap__ar ar-accent" lang="ar" aria-hidden="true">٥</span>
+          <span class="chap__hour">{c.bar.hour}</span>
+          <p class="eyebrow">{c.bar.chapter}</p>
+        </header>
+        <h2 data-split>{c.bar.title[0]}{' '}<em>{c.bar.title[1]}</em></h2>
+        <p class="muted" data-reveal>{c.bar.text}</p>
+      </div>
+      <figure class="bar__a arch-frame" data-clip>
+        <Image src={cocktailRose} alt={fr ? 'Cocktail garni de pétales de rose' : 'Cocktail garnished with rose petals'} widths={[480, 800]} sizes="(max-width: 800px) 70vw, 28vw" />
+      </figure>
+      <figure class="bar__b media" data-parallax="10">
+        <Image src={barman} alt={fr ? 'Le barman verse un cocktail' : 'The bartender pouring a cocktail'} widths={[400, 700]} sizes="(max-width: 800px) 50vw, 20vw" />
+      </figure>
+      <div class="cellar" data-reveal>
+        <figure class="cellar__img arch-soft"><Image src={bargylus} alt={fr ? 'Bouteilles de Bargylus, vin de Syrie' : 'Bottles of Bargylus, a Syrian wine'} widths={[400, 760]} sizes="(max-width: 800px) 70vw, 22vw" /></figure>
+        <div class="cellar__text">
+          <p class="eyebrow">{c.bar.levant}</p>
+          <ul class="cellar__list" role="list">
+            {levantWines.map((w) => <li><span class="cellar__name">{w.name}</span><span class="muted">{w.grapes} · {tr(w.origin)}</span></li>)}
+          </ul>
+          <p class="eyebrow">{c.bar.arak}</p>
+          <p class="muted">{araks.join(' · ')}</p>
+          <a href={url('menu-wine', lang)} class="btn btn--ghost">{c.bar.wine} <span class="arrow">→</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Le week-end · Le brunch -->
+  <section class="brunch section" data-chapter={c.brunch.chapter} data-hour={c.brunch.hour}>
+    <div class="wrap brunch__grid">
+      <figure class="brunch__a arch-frame" data-clip>
+        <Image src={brunchOeufs} alt={fr ? 'Faux-filet grillé et œufs ottomans au brunch' : 'Grilled ribeye and Ottoman eggs at brunch'} widths={[480, 800, 1100]} sizes="(max-width: 800px) 80vw, 34vw" />
+      </figure>
+      <div class="brunch__text">
+        <header class="chap">
+          <span class="chap__ar ar-accent" lang="ar" aria-hidden="true">٦</span>
+          <span class="chap__hour">{c.brunch.hour}</span>
+          <p class="eyebrow">{c.brunch.chapter}</p>
+        </header>
+        <h2 data-split>{c.brunch.title[0]}{' '}<em>{c.brunch.title[1]}</em></h2>
+        <p class="muted" data-reveal>{c.brunch.text}</p>
+        <a href={url('menu-brunch', lang)} class="btn btn--ghost" data-reveal>{c.brunch.cta} <span class="arrow">→</span></a>
+      </div>
+      <figure class="brunch__b media" data-parallax="12">
+        <Image src={brunchBoeuf} alt="" widths={[400, 700]} sizes="(max-width: 800px) 50vw, 20vw" />
+      </figure>
+    </div>
+  </section>
+
+  <!-- Les salons -->
+  <section class="salons oxblood" data-chapter={c.salons.chapter} data-hour={c.salons.hour}>
+    <div class="salons__media" data-salons>
+      <Image src={salons} alt={fr ? 'Salon privé dressé pour une longue tablée sous des lustres de cristal' : 'Private salon set for a long table beneath crystal chandeliers'} widths={[800, 1280, 1772]} sizes="100vw" />
+    </div>
+    <div class="wrap salons__text">
+      <header class="chap">
+        <span class="chap__ar ar-accent" lang="ar" aria-hidden="true">٧</span>
+        <span class="chap__hour">{c.salons.hour}</span>
+        <p class="eyebrow">{c.salons.chapter}</p>
+      </header>
+      <h2 data-split>{c.salons.title[0]}{' '}<em>{c.salons.title[1]}</em></h2>
+      <p data-reveal>{c.salons.text}</p>
+      <a href={url('events', lang)} class="btn btn--accent" data-reveal>{c.salons.cta} <span class="arrow">→</span></a>
+    </div>
+  </section>
+
+  <!-- Distinctions + the tale -->
+  <section class="honours section">
+    <div class="wrap">
+      <p class="eyebrow" data-reveal>{c.honours}</p>
+      <ul class="honours__row" role="list">
+        {site.awards.map((a) => (
+          <li data-reveal><span class="honours__name">{a.label[lang]}</span>{a.year && <span class="honours__year num">{a.year}</span>}</li>
+        ))}
+      </ul>
+      <blockquote class="tale" data-reveal>
+        <Rosette class="tale__rosette" />
+        <p>{c.tale}</p>
+      </blockquote>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* Chapter heading: Arabic numeral, the hour, the chapter name */
+  .chap { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 1.5rem; }
+  .chap--center { justify-content: center; }
+  .chap__ar { font-size: var(--step-3); }
+  .chap__hour { font-family: var(--font-display); font-style: italic; font-size: var(--step-1); color: var(--paper); }
+  .chap .eyebrow::before { display: none; }
+
+  .arch-frame { border-radius: 50% 50% 0 0 / 30% 30% 0 0; overflow: hidden; margin: 0; }
+  .arch-soft { border-radius: 50% 50% 0.25rem 0.25rem / 22% 22% 0.25rem 0.25rem; overflow: hidden; margin: 0; }
+  .arch-frame :global(img), .arch-soft :global(img) { width: 100%; height: 100%; object-fit: cover; }
+
+  /* La salle */
+  .statement { font-family: var(--font-display); font-size: var(--step-4); line-height: 1.15; max-width: 24ch; }
+  .salle__grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 2rem; margin-top: clamp(4rem, 8vw, 7rem); align-items: start; }
+  .salle__a { grid-column: 1 / span 5; aspect-ratio: 4 / 5; }
+  .salle__text { grid-column: 7 / span 5; align-self: center; display: grid; gap: 1.25rem; max-width: 46ch; }
+  .salle__text p { color: rgb(239 230 218 / 0.85); }
+  :global(.salle__rosette) { width: 60px; color: var(--damask); }
+  .salle__b { grid-column: 3 / span 6; aspect-ratio: 16 / 10; margin: 2rem 0 0; }
+  .salle__c { grid-column: 10 / span 3; aspect-ratio: 3 / 4; margin-top: 9rem; }
+  .figs { display: flex; flex-wrap: wrap; gap: 2rem clamp(3rem, 7vw, 7rem); margin-top: clamp(4rem, 8vw, 7rem); padding-top: 2.5rem; border-top: 1px solid var(--line-dark); }
+  .figs li { display: grid; gap: 0.75rem; }
+  .figs__n { font-family: var(--font-display); font-style: italic; font-size: var(--step-6); line-height: 0.9; color: var(--accent); }
+  @media (max-width: 800px) {
+    .salle__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .salle__a, .salle__text, .salle__b { grid-column: 1 / -1; }
+    .salle__c { grid-column: 2; margin-top: -5rem; }
+  }
+
+  /* Les mezzés: pinned horizontal track ≥900px, swipe row below */
+  .mezze { background: var(--ink-2); }
+  .mezze__track { display: flex; align-items: center; gap: clamp(2rem, 4vw, 4.5rem); min-height: 100svh; padding: 6rem var(--gutter) 4rem; }
+  .mezze__intro { flex: 0 0 min(34rem, 80vw); display: grid; gap: 1.25rem; justify-items: start; }
+  .mezze__intro h2 { font-size: var(--step-5); }
+  .plate { flex: 0 0 clamp(16rem, 25vw, 26rem); margin: 0; display: grid; gap: 1.1rem; }
+  .plate:nth-of-type(even) { margin-top: 12vh; }
+  .plate__img { aspect-ratio: 4 / 5; }
+  .plate__img :global(img) { transition: transform 1.4s var(--ease-out); }
+  .plate:hover .plate__img :global(img) { transform: scale(1.05); }
+  .plate figcaption { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0.2rem 0.9rem; align-items: baseline; }
+  .plate__ar { grid-column: 1 / -1; font-size: var(--step-3); justify-self: start; }
+  .plate__n { font-size: var(--step--2); letter-spacing: 0.2em; color: var(--brass); }
+  .plate strong { font-family: var(--font-display); font-weight: 400; font-size: var(--step-1); }
+  .plate .muted { grid-column: 2; font-size: var(--step--1); }
+  @media (max-width: 899px) {
+    .mezze__track { min-height: 0; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter); align-items: start; scrollbar-width: none; }
+    .mezze__track::-webkit-scrollbar { display: none; }
+    .mezze__intro { scroll-snap-align: start; }
+    .plate { flex-basis: 72vw; scroll-snap-align: start; }
+    .plate:nth-of-type(even) { margin-top: 2.5rem; }
+  }
+
+  /* La braise */
+  .braise { position: relative; overflow: hidden; isolation: isolate; }
+  .braise__bg { position: absolute; inset: 0; z-index: -2; }
+  .braise__bg :global(img) { filter: brightness(0.55) saturate(1.1); }
+  .braise__shade { position: absolute; inset: 0; z-index: -1; background: radial-gradient(ellipse at 25% 55%, rgb(18 10 13 / 0.2), rgb(18 10 13 / 0.85) 70%), linear-gradient(var(--ink), transparent 18%, transparent 82%, var(--ink)); }
+  .braise__grid { position: relative; z-index: 2; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(2rem, 7vw, 7rem); align-items: end; }
+  .braise__head { display: grid; gap: 1.25rem; }
+  .braise__head h2 { font-size: var(--step-5); }
+  .braise__head p { max-width: 38ch; color: rgb(239 230 218 / 0.9); }
+  .sig { position: relative; }
+  .sig__list { margin-top: 1rem; border-top: 1px solid rgb(239 230 218 / 0.2); }
+  .sig__row { display: grid; grid-template-columns: 2.5rem minmax(0, 1fr) auto; gap: 0.2rem 1rem; padding-block: 1.1rem; border-bottom: 1px solid rgb(239 230 218 / 0.2); transition: padding 0.5s var(--ease-out); }
+  .sig__row:hover { padding-left: 0.5rem; }
+  .sig__num { font-size: var(--step--2); letter-spacing: 0.2em; color: var(--brass); padding-top: 0.55rem; }
+  .sig__name { font-family: var(--font-display); font-size: var(--step-2); line-height: 1.15; transition: color 0.4s; }
+  .sig__row:hover .sig__name { color: var(--accent); font-style: italic; }
+  .sig__price { font-family: var(--font-display); font-size: var(--step-1); color: var(--accent); }
+  .sig__desc { grid-column: 2 / -1; font-size: var(--step--1); color: rgb(239 230 218 / 0.75); }
+  .sig__float { position: fixed; left: 0; top: 0; z-index: 5; width: 16rem; aspect-ratio: 4 / 5; pointer-events: none; border-radius: 50% 50% 0 0 / 28% 28% 0 0; overflow: hidden; opacity: 0; transform: scale(0.85); transition: opacity 0.4s, transform 0.6s var(--ease-out); }
+  .sig__float.is-on { opacity: 1; transform: scale(1); }
+  .sig__float :global(.sig__img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.4s; }
+  .sig__float :global(.sig__img.is-on) { opacity: 1; }
+  @media (max-width: 900px) { .braise__grid { grid-template-columns: 1fr; } }
+  @media (hover: none) { .sig__float { display: none; } }
+
+  /* Le voyage */
+  .voyage__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(2rem, 6vw, 7rem); align-items: center; }
+  .voyage__img { aspect-ratio: 4 / 5; }
+  .voyage__card { display: grid; gap: 1.2rem; justify-items: center; text-align: center; padding: clamp(2.5rem, 5vw, 4.5rem) clamp(1.25rem, 4vw, 3.5rem); border: 1px solid var(--line-dark); border-radius: 50% 50% 0 0 / 22% 22% 0 0; background: linear-gradient(rgb(62 15 28 / 0.35), transparent 70%); }
+  .voyage__card .chap { margin: 2.5rem 0 0; }
+  .voyage__card h2 { font-size: var(--step-4); }
+  .voyage__price { font-family: var(--font-display); font-size: var(--step-5); color: var(--accent); line-height: 1; }
+  .voyage__price small { font-family: var(--font-body); font-size: var(--step--2); letter-spacing: 0.16em; text-transform: uppercase; color: var(--mist); }
+  .voyage__card p.muted { max-width: 52ch; }
+  .voyage__tilde { width: 60px; color: var(--brass); }
+  .pairings { width: 100%; max-width: 26rem; display: grid; gap: 0.5rem; text-align: left; }
+  .pairings li { display: flex; align-items: baseline; gap: 0.5rem; font-family: var(--font-display); font-size: var(--step-1); }
+  .pairings__dots { flex: 1; border-bottom: 1px dotted var(--line-dark); transform: translateY(-0.3em); min-width: 1rem; }
+  .voyage__cta { display: flex; flex-wrap: wrap; gap: 1rem 2rem; justify-content: center; align-items: center; margin-top: 1rem; }
+  @media (max-width: 800px) { .voyage__grid { grid-template-columns: 1fr; } .voyage__img { width: 85%; } }
+
+  /* Le bar et la cave */
+  .bar { background: linear-gradient(var(--ink), var(--ink-2)); overflow: hidden; }
+  .marquee { overflow: hidden; border-block: 1px solid var(--line-dark); padding-block: 1.5rem; }
+  .marquee__row { display: flex; width: max-content; animation: marquee 60s linear infinite; }
+  .marquee:hover .marquee__row { animation-play-state: paused; }
+  .marquee__row span { display: flex; align-items: center; gap: 2.5rem; padding-right: 2.5rem; font-family: var(--font-display); font-size: var(--step-5); white-space: nowrap; line-height: 1.2; }
+  .marquee__row em { color: transparent; -webkit-text-stroke: 1px var(--accent); font-style: italic; }
+  .marquee__row i { font-style: normal; font-size: 0.35em; color: var(--damask); }
+  @keyframes marquee { to { transform: translateX(-50%); } }
+  .bar__grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 2rem; align-items: start; }
+  .bar__text { grid-column: 1 / span 5; display: grid; gap: 1.25rem; align-self: center; }
+  .bar__text h2 { font-size: var(--step-5); }
+  .bar__a { grid-column: 7 / span 4; aspect-ratio: 3 / 4; }
+  .bar__b { grid-column: 11 / span 2; aspect-ratio: 2 / 3; margin: 8rem 0 0; }
+  .cellar { grid-column: 2 / span 10; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: clamp(2rem, 5vw, 5rem); margin-top: clamp(4rem, 8vw, 7rem); align-items: center; }
+  .cellar__img { aspect-ratio: 4 / 5; }
+  .cellar__text { display: grid; gap: 1rem; justify-items: start; }
+  .cellar__list { width: 100%; margin-bottom: 1rem; }
+  .cellar__list li { display: grid; padding-block: 0.8rem; border-bottom: 1px solid var(--line-dark); }
+  .cellar__name { font-family: var(--font-display); font-size: var(--step-1); }
+  .cellar__list .muted { font-size: var(--step--1); }
+  @media (max-width: 800px) {
+    .bar__text { grid-column: 1 / -1; }
+    .bar__a { grid-column: 1 / span 8; }
+    .bar__b { grid-column: 9 / -1; margin-top: 5rem; }
+    .cellar { grid-column: 1 / -1; grid-template-columns: 1fr; }
+    .cellar__img { width: 70%; }
+  }
+
+  /* Le brunch */
+  .brunch__grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 2rem; align-items: center; }
+  .brunch__a { grid-column: 1 / span 5; aspect-ratio: 3 / 4; }
+  .brunch__text { grid-column: 7 / span 5; display: grid; gap: 1.25rem; justify-items: start; }
+  .brunch__text h2 { font-size: var(--step-5); }
+  .brunch__b { grid-column: 9 / span 3; aspect-ratio: 3 / 4; }
+  @media (max-width: 800px) {
+    .brunch__a { grid-column: 1 / span 10; }
+    .brunch__text { grid-column: 1 / -1; }
+    .brunch__b { grid-column: 6 / -1; }
+  }
+
+  /* Les salons */
+  .salons { position: relative; min-height: 115svh; display: flex; align-items: flex-end; overflow: hidden; isolation: isolate; padding-bottom: var(--section); }
+  .salons__media { position: absolute; inset: 0; z-index: -1; clip-path: inset(8% 8% 20% 8% round 45vw 45vw 0 0); }
+  .salons__media :global(img) { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6); }
+  .salons__media::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, var(--oxblood) 8%, transparent 60%); }
+  .salons__text { display: grid; gap: 1.25rem; justify-items: start; }
+  .salons__text h2 { font-size: var(--step-5); }
+  .salons__text p { max-width: 44ch; color: rgb(239 230 218 / 0.9); }
+
+  /* Distinctions + the tale */
+  .honours__row { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); gap: 0 3rem; margin-top: 1.5rem; }
+  .honours__row li { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding-block: 1.4rem; border-bottom: 1px solid var(--line-dark); }
+  .honours__name { font-family: var(--font-display); font-size: var(--step-2); line-height: 1.2; }
+  .honours__year { color: var(--accent); font-family: var(--font-display); font-size: var(--step-1); }
+  .tale { display: grid; justify-items: center; gap: 2rem; text-align: center; margin: clamp(5rem, 10vw, 9rem) auto 0; max-width: 40ch; }
+  .tale p { font-family: var(--font-display); font-style: italic; font-size: var(--step-3); line-height: 1.25; }
+  :global(.tale__rosette) { width: 56px; color: var(--damask); }
+  @media (prefers-reduced-motion: reduce) { .marquee__row { animation: none; } }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger } from '../scripts/motion';
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // P3: the signature list previews each dish; the photo follows the pointer
+  const sig = document.querySelector<HTMLElement>('[data-sig]');
+  const float = sig?.querySelector<HTMLElement>('.sig__float');
+  if (sig && float && matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    const imgs = float.querySelectorAll<HTMLElement>('[data-sig-img]');
+    const xTo = gsap.quickTo(float, 'x', { duration: 0.6, ease: 'power3.out' });
+    const yTo = gsap.quickTo(float, 'y', { duration: 0.6, ease: 'power3.out' });
+    sig.querySelectorAll<HTMLElement>('[data-sig-row]').forEach((row) => {
+      row.addEventListener('pointerenter', () => {
+        float.classList.add('is-on');
+        imgs.forEach((im) => im.classList.toggle('is-on', im.dataset.sigImg === row.dataset.sigRow));
+      });
+    });
+    sig.addEventListener('pointermove', (e) => { xTo(e.clientX + 24); yTo(e.clientY - 140); });
+    sig.addEventListener('pointerleave', () => float.classList.remove('is-on'));
+  }
+
+  // T6: the marquee speeds up with the scroll, then settles
+  const row = document.querySelector<HTMLElement>('[data-marquee] .marquee__row');
+  if (row && !reduce) {
+    const anim = row.getAnimations()[0];
+    if (anim) {
+      ScrollTrigger.create({
+        trigger: row, start: 'top bottom', end: 'bottom top', refreshPriority: -1,
+        onUpdate: (self) => {
+          const v = Math.min(Math.abs(self.getVelocity()) / 500, 4);
+          anim.playbackRate = 1 + v;
+          clearTimeout((row as any)._t);
+          (row as any)._t = setTimeout(() => (anim.playbackRate = 1), 250);
+        },
+      });
+    }
+  }
+
+  // The salon doors open (I10)
+  const salons = document.querySelector<HTMLElement>('[data-salons]');
+  if (salons && !reduce) {
+    gsap.fromTo(salons, { clipPath: 'inset(8% 8% 20% 8% round 45vw 45vw 0vw 0vw)' }, {
+      clipPath: 'inset(0% 0% 0% 0% round 0vw 0vw 0vw 0vw)', ease: 'none',
+      scrollTrigger: { trigger: salons.parentElement, start: 'top 85%', end: 'center center', scrub: 0.8, refreshPriority: -1 },
+    });
+  }
+</script>
