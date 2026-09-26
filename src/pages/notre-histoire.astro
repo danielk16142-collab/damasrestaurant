@@ -1,0 +1,12 @@
+---
+import Base from '../layouts/Base.astro';
+import View from '../views/Story.astro';
+import { meta, breadcrumb, glossarySchema } from '../data/seo';
+const lang = 'fr' as const;
+const page = 'story' as const;
+const m = meta[page][lang];
+const jsonLd = [breadcrumb(page, lang), glossarySchema(lang)].filter(Boolean) as Record<string, unknown>[];
+---
+<Base lang={lang} page={page} title={m.title} description={m.description} jsonLd={jsonLd}>
+  <View lang={lang} />
+</Base>

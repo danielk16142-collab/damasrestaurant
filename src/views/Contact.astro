@@ -1,0 +1,89 @@
+---
+import { Image } from 'astro:assets';
+import { t, type Lang } from '../i18n/ui';
+import { site } from '../data/site';
+import Hours from '../components/Hours.astro';
+import heroImg from '../assets/photos/moucharabieh.jpg';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+const s = t[lang];
+---
+<section class="contact">
+  <div class="wrap contact__grid">
+    <div class="contact__text">
+      <p class="eyebrow">{s.nav.contact}</p>
+      <h1 class="display h-xl" data-reveal="line">{fr ? <>Trouver <em>la porte</em></> : <>Find <em>the door</em></>}</h1>
+      <p class="lede muted" data-reveal="fade">
+        {fr
+          ? 'Au coin de Van Horne et Bloomfield, à Outremont. Poussez la porte : la nuit commence.'
+          : 'On the corner of Van Horne and Bloomfield, in Outremont. Push open the door: the night begins.'}
+      </p>
+
+      <div class="contact__blocks">
+        <div data-reveal="fade">
+          <h2 class="eyebrow">{s.address}</h2>
+          <address>
+            {fr ? site.address.street : site.address.streetEn}<br />
+            {site.address.locality}, {site.address.region} {site.address.postalCode}
+          </address>
+          <a class="link-u" href={site.mapsUrl} target="_blank" rel="noopener">{s.directions} →</a>
+        </div>
+        <div data-reveal="fade">
+          <h2 class="eyebrow">{s.hours}</h2>
+          <Hours lang={lang} />
+        </div>
+        <div data-reveal="fade">
+          <h2 class="eyebrow">{s.phone}</h2>
+          <a class="contact__phone display" href={`tel:${site.phone}`}>{site.phoneDisplay}</a>
+          {site.email && <p><a class="link-u" href={`mailto:${site.email}`}>{site.email}</a></p>}
+        </div>
+        <div data-reveal="fade">
+          <h2 class="eyebrow">{fr ? 'Accès' : 'Getting here'}</h2>
+          <p class="muted">{fr ? 'Métro Outremont (ligne bleue), à quelques minutes à pied.' : 'Outremont metro (blue line), a few minutes’ walk.'}</p>
+        </div>
+      </div>
+
+      <a class="btn btn--solid" href={site.reservationUrl} target="_blank" rel="noopener" data-reveal="fade">{s.reserveLong}</a>
+    </div>
+
+    <div class="contact__side">
+      <figure class="contact__img arch" data-reveal="arch">
+        <Image src={heroImg} alt={fr ? 'Moucharabieh lumineux et lustres dans la salle de Damas' : 'Glowing mashrabiya and chandeliers in the Damas dining room'} widths={[480, 900]} sizes="(max-width: 900px) 80vw, 36vw" loading="eager" />
+      </figure>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="map" data-reveal="fade">
+      <iframe
+        title={fr ? 'Carte : Damas, 1201 avenue Van Horne' : 'Map: Damas, 1201 Van Horne Avenue'}
+        src={site.mapsEmbed}
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        allowfullscreen></iframe>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact { padding-top: calc(var(--header-h) + clamp(3rem, 8vw, 6rem)); padding-bottom: clamp(5rem, 10vw, 8rem); }
+  .contact__grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: clamp(2rem, 6vw, 6rem); align-items: start; }
+  .contact__text { display: grid; gap: 2rem; justify-items: start; }
+  .contact__text .lede { max-width: 30ch; }
+  .contact__blocks { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem 3rem; width: 100%; padding-top: 2rem; border-top: 1px solid var(--cream-faint); }
+  .contact__blocks h2 { margin-bottom: 0.8rem; }
+  .contact__blocks address { font-style: normal; margin-bottom: 0.6rem; font-family: var(--f-display); font-size: 1.2rem; }
+  .contact__phone { font-size: clamp(1.8rem, 3vw, 2.6rem); color: var(--brass-2); }
+  .contact__img { margin: 0; aspect-ratio: 3 / 4; position: sticky; top: calc(var(--header-h) + 2rem); }
+  .contact__img :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .map { margin-top: clamp(4rem, 8vw, 6rem); aspect-ratio: 16 / 7; border-radius: 1rem; overflow: hidden; border: 1px solid var(--cream-faint); }
+  .map iframe { width: 100%; height: 100%; border: 0; filter: invert(0.92) hue-rotate(180deg) sepia(0.25) saturate(0.8) contrast(0.95); }
+  @media (max-width: 900px) {
+    .contact__grid { grid-template-columns: 1fr; }
+    .contact__img { position: static; width: 80%; }
+    .map { aspect-ratio: 4 / 5; }
+  }
+  @media (max-width: 520px) { .contact__blocks { grid-template-columns: 1fr; } }
+</style>

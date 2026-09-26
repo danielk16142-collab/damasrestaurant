@@ -1,0 +1,588 @@
+---
+import { Image, Picture } from 'astro:assets';
+import { routes, t, type Lang } from '../i18n/ui';
+import { site } from '../data/site';
+import { tasting, dinner, drinks, levantWines, araks, winePdf, type L } from '../data/menus';
+import Rosette from '../components/Rosette.astro';
+
+import heroImg from '../assets/photos/salon-lanternes.jpg';
+import salleSoir from '../assets/photos/salle-soir.jpg';
+import moucharabieh from '../assets/photos/moucharabieh.jpg';
+import sallePlafond from '../assets/photos/salle-plafond.jpg';
+import longueTable from '../assets/photos/longue-table.jpg';
+import mezzesCuivre from '../assets/photos/mezzes-cuivre.jpg';
+import fattouch from '../assets/photos/fattouch.avif';
+import hummus from '../assets/photos/hummus.jpg';
+import kibbeh from '../assets/photos/kibbeh.jpg';
+import halloumi from '../assets/photos/halloumi.jpg';
+import faconnage from '../assets/photos/kibbeh-faconnage.jpg';
+import fourPain from '../assets/photos/four-pain.jpg';
+import braise from '../assets/photos/braise-poisson.jpg';
+import boeufSauce from '../assets/photos/boeuf-sauce.avif';
+import poissonHerbes from '../assets/photos/poisson-herbes.jpg';
+import freekeh from '../assets/photos/mijote-freekeh.jpg';
+import cocktailRose from '../assets/photos/cocktail-rose.jpg';
+import barman from '../assets/photos/barman.jpg';
+import bargylus from '../assets/photos/bargylus.avif';
+import brunchOeufs from '../assets/photos/brunch-oeufs.jpg';
+import brunchBoeuf from '../assets/photos/brunch-boeuf.jpg';
+import events from '../assets/photos/evenements-prives.avif';
+import douceur from '../assets/photos/douceur-pistache.jpg';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const s = t[lang];
+const fr = lang === 'fr';
+const tr = (x: L) => x[lang];
+
+const nights = [
+  { roman: 'I', ar: '١' }, { roman: 'II', ar: '٢' }, { roman: 'III', ar: '٣' }, { roman: 'IV', ar: '٤' },
+  { roman: 'V', ar: '٥' }, { roman: 'VI', ar: '٦' }, { roman: 'VII', ar: '٧' },
+];
+
+const mezzes = [
+  { img: mezzesCuivre, ar: 'مازة', name: { fr: 'Plateau de mezzés du chef', en: "Chef's mezzes platter" }, note: { fr: "Hummus, mouhammara, mutabbal de betterave, mutabbal d'aubergine", en: 'Hummus, mouhammara, beet mutabbal, eggplant mutabbal' } },
+  { img: fattouch, ar: 'فتوش', name: { fr: 'Salade fattouch', en: 'Fattouch salad' }, note: { fr: 'Mezzé froid', en: 'Cold mezze' } },
+  { img: hummus, ar: 'حمّص', name: { fr: 'Hummus', en: 'Hummus' }, note: { fr: 'Le cœur de toute table syrienne', en: 'The heart of every Syrian table' } },
+  { img: kibbeh, ar: 'كبّة', name: { fr: 'Kibbeh aux pistaches', en: 'Pistachio kibbeh' }, note: { fr: 'Mutabbal de betterave', en: 'Beet mutabbal' } },
+  { img: faconnage, ar: 'باليد', name: { fr: 'Façonnées à la main', en: 'Shaped by hand' }, note: { fr: 'Une à une, en cuisine, chaque soir', en: 'One by one, in the kitchen, every evening' } },
+  { img: halloumi, ar: 'حلّوم', name: { fr: 'Halloumi grillé', en: 'Grilled halloumi' }, note: { fr: 'Mezzé chaud', en: 'Hot mezze' } },
+  { img: fourPain, ar: 'خبز', name: { fr: 'Le four à pain', en: 'The bread oven' }, note: { fr: 'Le pain gonfle et arrive brûlant', en: 'The bread puffs up and arrives piping hot' } },
+];
+
+const grillIds = ["Carré d'agneau", 'Kebab de filet mignon', 'Daurade rose rôtie façon samké harra', 'Grillades mixtes pour deux', "Kebab d'agneau à l'aubergine"];
+const grills = dinner.sections.find((x) => x.id === 'specialites')!.items.filter((i) => grillIds.includes(i.name.fr));
+const cocktailNames = drinks.sections.find((x) => x.id === 'cocktails')!.items.map((i) => tr(i.name));
+
+const c = fr
+  ? {
+      introLine: 'Il était une fois, à Damas…',
+      heroEyebrow: 'Cuisine syrienne · Outremont, Montréal',
+      heroTitle: ['Une nuit', 'à Damas'],
+      heroSr: 'Damas, restaurant syrien à Montréal — ',
+      heroSide: 'Un conte des Mille et Une Nuits, servi chaque soir avenue Van Horne.',
+      ch1: 'La Maison',
+      manifesto:
+        'Depuis 2010, Damas raconte la Syrie à Montréal. Velours, bois sculpté, lanternes de cuivre et lumières de toutes les couleurs : chaque soir, la salle devient un conte des Mille et Une Nuits — et la table, son plus beau chapitre.',
+      chefTitle: 'Le regard du chef',
+      chefText:
+        'Chef et copropriétaire, Fuad Alnirabie a imaginé Damas comme une ode à sa Syrie natale : les saveurs intemporelles de Damas et d’Alep, relues avec un regard contemporain. Un dialogue entre héritage et imagination.',
+      facts: [
+        { n: '2010', l: 'Première nuit' },
+        { n: '2015', l: 'Avenue Van Horne' },
+        { n: '100', l: 'Places en salle' },
+        { n: '70', l: 'Places en terrasse' },
+      ],
+      ch2: 'La Table',
+      mezzeTitle: ['Le partage', 'des mezzés'],
+      mezzeText: 'À la syrienne, tout commence au centre de la table : une succession de petits plats froids et chauds que l’on partage, que l’on se passe, dont on reparle.',
+      ch3: 'La Braise',
+      grillTitle: ['Sur le', 'charbon de bois'],
+      grillText: 'Agneau, bœuf Canadian Prime, poissons entiers : les grillades prennent le temps de la braise, comme dans les maisons de Damas.',
+      ch4: 'Le Voyage',
+      tastingTitle: ['Menu', 'dégustation'],
+      ch5: 'Le Bar & la Cave',
+      barTitle: ['Rose de Damas,', 'piment d’Alep'],
+      barText: 'Au bar, le garde-manger syrien se verse au verre : safran, cardamome, eau de rose, abricot Qamar al-Din. À la cave, une sélection généreuse où figurent les rares vins de Syrie et du Liban.',
+      levant: 'Vins du Levant',
+      arak: 'Araks',
+      ch6: 'Le Brunch',
+      brunchTitle: ['Quand la maison', 's’éveille'],
+      brunchText: 'Le samedi et le dimanche, Damas se réveille autour du mezzé matinal du chef, de la casserole d’œufs menemen et du pain doré au halva.',
+      brunchCta: 'Menu brunch',
+      ch7: 'Les Salons',
+      eventsTitle: ['Vos soirées,', 'nos salons'],
+      eventsText: 'Anniversaires, repas d’affaires, fêtes de famille : la longue table et les salons de Damas accueillent vos grandes occasions, avec un menu pensé pour le partage.',
+      eventsCta: 'Événements privés',
+      honours: 'Distinctions',
+      sweetTitle: 'Et pour finir, une douceur.',
+    }
+  : {
+      introLine: 'Once upon a time, in Damascus…',
+      heroEyebrow: 'Syrian cuisine · Outremont, Montréal',
+      heroTitle: ['A night', 'in Damascus'],
+      heroSr: 'Damas, Syrian restaurant in Montreal — ',
+      heroSide: 'A tale from the Thousand and One Nights, served every evening on Van Horne Avenue.',
+      ch1: 'The House',
+      manifesto:
+        'Since 2010, Damas has been telling the story of Syria in Montreal. Velvet, carved wood, copper lanterns and light in every colour: each evening, the room becomes a tale from the Thousand and One Nights — and the table, its finest chapter.',
+      chefTitle: "The chef's vision",
+      chefText:
+        'Chef and co-owner Fuad Alnirabie imagined Damas as an ode to his native Syria: the timeless flavours of Damascus and Aleppo, seen through a contemporary eye. A dialogue between heritage and imagination.',
+      facts: [
+        { n: '2010', l: 'The first night' },
+        { n: '2015', l: 'Van Horne Avenue' },
+        { n: '100', l: 'Seats indoors' },
+        { n: '70', l: 'Seats on the terrace' },
+      ],
+      ch2: 'The Table',
+      mezzeTitle: ['The art', 'of mezze'],
+      mezzeText: 'The Syrian way, everything begins at the centre of the table: a procession of small hot and cold dishes to share, to pass around, to talk about.',
+      ch3: 'The Embers',
+      grillTitle: ['Over', 'charcoal'],
+      grillText: 'Lamb, Canadian Prime beef, whole fish: the grills take their time over the embers, as they do in the homes of Damascus.',
+      ch4: 'The Journey',
+      tastingTitle: ['Tasting', 'menu'],
+      ch5: 'Bar & Cellar',
+      barTitle: ['Damascus rose,', 'Aleppo pepper'],
+      barText: 'At the bar, the Syrian pantry is poured by the glass: saffron, cardamom, rosewater, Qamar al-Din apricot. In the cellar, a generous list that includes rare wines from Syria and Lebanon.',
+      levant: 'Wines of the Levant',
+      arak: 'Araks',
+      ch6: 'Brunch',
+      brunchTitle: ['When the house', 'wakes up'],
+      brunchText: "On Saturdays and Sundays, Damas wakes up to the chef's morning mezze, the menemen egg casserole and halva French toast.",
+      brunchCta: 'Brunch menu',
+      ch7: 'The Salons',
+      eventsTitle: ['Your evenings,', 'our salons'],
+      eventsText: "Birthdays, business dinners, family celebrations: Damas's long table and salons host your great occasions, with a menu made for sharing.",
+      eventsCta: 'Private events',
+      honours: 'Honours',
+      sweetTitle: 'And to finish, something sweet.',
+    };
+---
+
+<!-- ═════════ Threshold (intro) ═════════ -->
+<div class="intro" data-intro aria-hidden="true">
+  <div class="intro__stage">
+    <div class="intro__lockup">
+      <img class="intro__emblem" src="/brand/emblem-red.svg" alt="" width="895" height="658" fetchpriority="high" />
+      <img class="intro__word" src="/brand/wordmark-cream.svg" alt="" width="540" height="169" />
+    </div>
+    <p class="intro__line display"><em>{c.introLine}</em></p>
+  </div>
+  <button class="intro__skip" data-intro-skip tabindex="-1">{s.skipIntro}</button>
+</div>
+
+<!-- ═════════ Hero ═════════ -->
+<section class="hero" data-hero>
+  <div class="hero__sticky">
+    <div class="hero__window" data-hero-window>
+      <Picture src={heroImg} formats={['avif', 'webp']} alt={fr ? 'Salon de Damas éclairé par des lustres de perles et de cristal' : 'A Damas salon lit by beaded crystal chandeliers'} widths={[640, 1024, 1536, 2048]} sizes="100vw" loading="eager" fetchpriority="high" class="hero__img" />
+      <div class="hero__shade"></div>
+    </div>
+    <div class="hero__content wrap">
+      <p class="eyebrow hero__eyebrow" data-hero-fade>{c.heroEyebrow}</p>
+      <h1 class="display h-xxl hero__title">
+        <span class="sr-only">{c.heroSr}</span>
+        <span class="hero__l1" data-hero-line>{c.heroTitle[0]}</span>
+        <em class="hero__l2" data-hero-line>{c.heroTitle[1]}</em>
+      </h1>
+      <div class="hero__meta" data-hero-fade>
+        <p>{c.heroSide}</p>
+        <p class="hero__award"><span class="eyebrow">Guide MICHELIN</span> Bib Gourmand 2025</p>
+      </div>
+      <div class="hero__scroll" data-hero-fade aria-hidden="true"><span>{s.scroll}</span><i></i></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════ Night I — The House ═════════ -->
+<section class="ch ch--house" data-chapter="0" id="la-maison">
+  <div class="wrap">
+    <header class="ch__head">
+      <span class="ch__num"><span class="arabic">{nights[0].ar}</span> {s.night} {nights[0].roman}</span>
+      <h2 class="eyebrow">{c.ch1}</h2>
+    </header>
+    <p class="manifesto display" data-reveal="scrub">{c.manifesto}</p>
+
+    <div class="house">
+      <figure class="house__a arch" data-reveal="arch">
+        <Image src={moucharabieh} alt={fr ? 'Salle aux murs rayés et moucharabieh lumineux' : 'Striped walls and a glowing mashrabiya window'} widths={[480, 800, 1100]} sizes="(max-width: 800px) 90vw, 36vw" />
+      </figure>
+      <div class="house__text">
+        <Rosette class="house__rosette" />
+        <h3 class="display h-m" data-reveal="line">{c.chefTitle}</h3>
+        <p class="muted" data-reveal="fade">{c.chefText}</p>
+        <p class="house__sig display" data-reveal="fade"><em>— {site.chef}</em></p>
+      </div>
+      <figure class="house__b" data-reveal="fade">
+        <div class="house__b-in" data-parallax="14">
+          <Image src={sallePlafond} alt={fr ? 'Plafond rouge constellé de lanternes' : 'Red ceiling studded with lanterns'} widths={[640, 1000, 1440]} sizes="(max-width: 800px) 90vw, 46vw" />
+        </div>
+      </figure>
+      <figure class="house__c arch-soft" data-reveal="arch">
+        <Image src={longueTable} alt={fr ? 'La longue table dressée sous les lustres' : 'The long table set beneath the chandeliers'} widths={[400, 700]} sizes="(max-width: 800px) 60vw, 22vw" />
+      </figure>
+    </div>
+
+    <ul class="facts">
+      {c.facts.map((f) => (
+        <li data-reveal="fade"><span class="display facts__n">{f.n}</span><span class="facts__l">{f.l}</span></li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<!-- ═════════ Night II — Mezzes (horizontal) ═════════ -->
+<section class="ch ch--mezze" data-chapter="1" id="mezzes" data-mezze>
+  <div class="mezze__pin" data-mezze-pin>
+    <div class="mezze__track" data-mezze-track>
+      <div class="mezze__intro">
+        <span class="ch__num"><span class="arabic">{nights[1].ar}</span> {s.night} {nights[1].roman} · {c.ch2}</span>
+        <h2 class="display h-xl" data-reveal="line">{c.mezzeTitle[0]} <em>{c.mezzeTitle[1]}</em></h2>
+        <p class="muted" data-reveal="fade">{c.mezzeText}</p>
+      </div>
+      {mezzes.map((m, i) => (
+        <figure class="dish" data-dish>
+          <div class:list={['dish__img', i % 2 ? 'arch-soft' : 'arch']}>
+            <Image src={m.img} alt={tr(m.name)} widths={[420, 700, 960]} sizes="(max-width: 800px) 76vw, 30vw" loading="lazy" />
+          </div>
+          <figcaption>
+            <span class="dish__ar arabic" aria-hidden="true">{m.ar}</span>
+            <span class="dish__n">{String(i + 1).padStart(2, '0')}</span>
+            <strong class="display">{tr(m.name)}</strong>
+            <span class="muted">{tr(m.note)}</span>
+          </figcaption>
+        </figure>
+      ))}
+      <div class="mezze__end">
+        <a class="btn" href={`${routes.menus[lang]}#diner`}>{s.viewMenus}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════ Night III — Embers ═════════ -->
+<section class="ch ch--grill" data-chapter="2" id="la-braise">
+  <div class="grill__bg">
+    <div class="grill__bg-in" data-parallax="18">
+      <Image src={braise} alt={fr ? 'Poisson entier grillé sur le charbon de bois' : 'Whole fish grilling over charcoal'} widths={[800, 1280, 1800]} sizes="100vw" loading="lazy" />
+    </div>
+    <canvas class="grill__embers" data-embers aria-hidden="true"></canvas>
+  </div>
+  <div class="wrap grill__grid">
+    <div class="grill__text">
+      <span class="ch__num"><span class="arabic">{nights[2].ar}</span> {s.night} {nights[2].roman} · {c.ch3}</span>
+      <h2 class="display h-xl" data-reveal="line">{c.grillTitle[0]} <em>{c.grillTitle[1]}</em></h2>
+      <p data-reveal="fade">{c.grillText}</p>
+    </div>
+    <ul class="grill__list">
+      {grills.map((g) => (
+        <li data-reveal="fade">
+          <span class="display">{tr(g.name)}</span>
+          {g.desc && <span class="muted">{tr(g.desc)}</span>}
+        </li>
+      ))}
+    </ul>
+    <figure class="grill__side arch" data-reveal="arch">
+      <Image src={boeufSauce} alt={fr ? 'Sauce versée sur une pièce de bœuf grillée' : 'Sauce poured over grilled beef'} widths={[480, 800]} sizes="(max-width: 800px) 70vw, 26vw" loading="lazy" />
+    </figure>
+    <figure class="grill__side2 arch-soft" data-reveal="arch">
+      <Image src={poissonHerbes} alt={fr ? 'Poisson aux herbes dans un plat de fonte ouvragé' : 'Herb-crusted fish in an engraved cast-iron dish'} widths={[400, 700]} sizes="(max-width: 800px) 60vw, 20vw" loading="lazy" />
+    </figure>
+  </div>
+</section>
+
+<!-- ═════════ Night IV — Tasting ═════════ -->
+<section class="ch ch--tasting" data-chapter="3" id="degustation">
+  <div class="wrap tasting">
+    <figure class="tasting__img arch" data-reveal="arch">
+      <Image src={freekeh} alt={fr ? 'Viande mijotée sur freekeh, pistaches et menthe' : 'Braised meat over freekeh with pistachios and mint'} widths={[500, 900, 1200]} sizes="(max-width: 800px) 90vw, 40vw" loading="lazy" />
+    </figure>
+    <div class="tasting__card" data-reveal="fade">
+      <span class="ch__num"><span class="arabic">{nights[3].ar}</span> {s.night} {nights[3].roman} · {c.ch4}</span>
+      <h2 class="display h-l">{c.tastingTitle[0]} <em>{c.tastingTitle[1]}</em></h2>
+      <p class="tasting__price display"><span>{tasting.price}</span> <small>$ {tr(tasting.per)}</small></p>
+      <p class="muted">{tr(tasting.text)}</p>
+      <svg class="tilde" viewBox="0 0 60 12" aria-hidden="true" data-draw><path d="M2 8 C 14 -2, 22 14, 30 6 S 46 -2, 58 6" fill="none" stroke="currentColor" stroke-width="1.2" /></svg>
+      <ul class="pairings">
+        {tasting.pairings.map((p) => (<li><span>{tr(p.name)}</span><span class="dots"></span><span>+ {p.price}</span></li>))}
+      </ul>
+      <div class="tasting__cta">
+        <a class="btn btn--solid" href={site.reservationUrl} target="_blank" rel="noopener">{s.reserveLong}</a>
+        <a class="btn" href={`${routes.menus[lang]}#degustation`}>{s.viewMenus}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════ Night V — Bar & Cellar ═════════ -->
+<section class="ch ch--bar" data-chapter="4" id="bar">
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee__row display" data-marquee>
+      {[0, 1].map(() => (
+        <span>{cocktailNames.map((n) => (<><em>{n}</em><img src="/brand/emblem-red.svg" alt="" width="60" height="44" loading="lazy" /></>))}</span>
+      ))}
+    </div>
+  </div>
+  <div class="wrap bar">
+    <div class="bar__text">
+      <span class="ch__num"><span class="arabic">{nights[4].ar}</span> {s.night} {nights[4].roman} · {c.ch5}</span>
+      <h2 class="display h-l" data-reveal="line">{c.barTitle[0]} <em>{c.barTitle[1]}</em></h2>
+      <p class="muted" data-reveal="fade">{c.barText}</p>
+    </div>
+    <figure class="bar__a arch" data-reveal="arch">
+      <Image src={cocktailRose} alt={fr ? 'Cocktail aux pétales de rose' : 'Cocktail garnished with rose petals'} widths={[480, 800]} sizes="(max-width: 800px) 70vw, 28vw" loading="lazy" />
+    </figure>
+    <figure class="bar__b" data-reveal="fade">
+      <div data-parallax="12"><Image src={barman} alt={fr ? 'Le barman verse un cocktail' : 'The bartender pouring a cocktail'} widths={[400, 700]} sizes="(max-width: 800px) 60vw, 22vw" loading="lazy" /></div>
+    </figure>
+    <div class="cellar" data-reveal="fade">
+      <figure class="cellar__img arch-soft">
+        <Image src={bargylus} alt={fr ? 'Bouteilles de Bargylus, vin de Syrie' : 'Bottles of Bargylus, a Syrian wine'} widths={[400, 760]} sizes="(max-width: 800px) 70vw, 22vw" loading="lazy" />
+      </figure>
+      <div>
+        <h3 class="eyebrow">{c.levant}</h3>
+        <ul class="cellar__list">
+          {levantWines.map((w) => (<li><span class="display">{w.name}</span><span class="muted">{w.grapes} · {tr(w.origin)}</span></li>))}
+        </ul>
+        <h3 class="eyebrow">{c.arak}</h3>
+        <p class="muted">{araks.join(' · ')}</p>
+        <a class="btn" href={winePdf} target="_blank" rel="noopener">{s.wineList} ↓</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════ Night VI — Brunch ═════════ -->
+<section class="ch ch--brunch" data-chapter="5" id="brunch">
+  <div class="wrap brunch">
+    <figure class="brunch__a arch" data-reveal="arch">
+      <Image src={brunchOeufs} alt={fr ? 'Faux-filet et œufs ottomans au brunch' : 'Ribeye and Ottoman eggs at brunch'} widths={[480, 800, 1100]} sizes="(max-width: 800px) 80vw, 34vw" loading="lazy" />
+    </figure>
+    <div class="brunch__text">
+      <span class="ch__num"><span class="arabic">{nights[5].ar}</span> {s.night} {nights[5].roman} · {c.ch6}</span>
+      <h2 class="display h-l" data-reveal="line">{c.brunchTitle[0]} <em>{c.brunchTitle[1]}</em></h2>
+      <p class="muted" data-reveal="fade">{c.brunchText}</p>
+      <p class="brunch__hours" data-reveal="fade"><span class="eyebrow">{s.brunchDays}</span> 10 h – 14 h</p>
+      <a class="btn" href={`${routes.menus[lang]}#brunch`} data-reveal="fade">{c.brunchCta}</a>
+    </div>
+    <figure class="brunch__b" data-reveal="fade">
+      <div data-parallax="16"><Image src={brunchBoeuf} alt="" widths={[400, 700]} sizes="(max-width: 800px) 50vw, 20vw" loading="lazy" /></div>
+    </figure>
+  </div>
+</section>
+
+<!-- ═════════ Night VII — Salons / Private events ═════════ -->
+<section class="ch ch--events" data-chapter="6" id="salons">
+  <div class="events__media" data-events-media>
+    <Image src={events} alt={fr ? 'Salon privé dressé pour une longue tablée sous des lustres de cristal' : 'Private salon set for a long table under crystal chandeliers'} widths={[800, 1280, 1772]} sizes="100vw" loading="lazy" />
+  </div>
+  <div class="wrap events__text">
+    <span class="ch__num"><span class="arabic">{nights[6].ar}</span> {s.night} {nights[6].roman} · {c.ch7}</span>
+    <h2 class="display h-xl" data-reveal="line">{c.eventsTitle[0]} <em>{c.eventsTitle[1]}</em></h2>
+    <p data-reveal="fade">{c.eventsText}</p>
+    <a class="btn btn--solid" href={routes.events[lang]} data-reveal="fade">{c.eventsCta}</a>
+  </div>
+</section>
+
+<!-- ═════════ Honours + sweet ending ═════════ -->
+<section class="honours">
+  <div class="wrap honours__grid">
+    <div>
+      <h2 class="eyebrow">{c.honours}</h2>
+      <ul class="honours__list">
+        {site.awards.map((a) => (<li data-reveal="fade"><span class="display">{a[lang]}</span>{a.year && <span class="muted">{a.year}</span>}</li>))}
+      </ul>
+    </div>
+    <figure class="honours__img arch" data-reveal="arch">
+      <Image src={douceur} alt={fr ? 'Pâtisserie à la pistache et crème glacée' : 'Pistachio pastry with ice cream'} widths={[400, 700]} sizes="(max-width: 800px) 70vw, 26vw" loading="lazy" />
+      <figcaption class="display"><em>{c.sweetTitle}</em></figcaption>
+    </figure>
+  </div>
+</section>
+
+<div class="chapter-ind" data-chapter-ind aria-hidden="true">
+  <span class="arabic" data-ci-ar>١</span><span data-ci-label>{s.night} I</span>
+</div>
+
+<script define:vars={{ nights, nightLabel: s.night, chapters: [c.ch1, c.ch2, c.ch3, c.ch4, c.ch5, c.ch6, c.ch7] }}>
+  window.__damasNights = { nights, nightLabel, chapters };
+</script>
+
+<style>
+  /* ── Intro ── */
+  .intro { position: fixed; inset: 0; z-index: 120; display: none; place-items: center; background: var(--night); }
+  :global(.js) body[data-has-intro] .intro { display: grid; }
+  .intro__stage { display: grid; justify-items: center; gap: 2.5rem; width: min(760px, 88vw); }
+  .intro__lockup { position: relative; width: 100%; aspect-ratio: 895 / 658; }
+  .intro__emblem { position: absolute; inset: 0; width: 100%; height: 100%; }
+  /* wordmark sits exactly where it lives inside the emblem */
+  .intro__word { position: absolute; left: 17.3%; top: 36.2%; width: 60.4%; }
+  .intro__line { font-size: clamp(1.3rem, 2.6vw, 2.1rem); color: var(--cream-2); text-align: center; }
+  .intro__skip { position: absolute; bottom: 2rem; right: var(--gutter); font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--cream-dim); }
+
+  /* ── Hero ── */
+  .hero { position: relative; height: 210vh; }
+  .hero__sticky { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+  .hero__window { position: absolute; inset: 0; clip-path: inset(14% 30% 0% 30% round 40vw 40vw 0 0); will-change: clip-path; }
+  .hero__img, .hero__img :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .hero__window :global(picture) { position: absolute; inset: 0; }
+  .hero__window :global(img) { width: 100%; height: 100%; object-fit: cover; transform-origin: 50% 70%; }
+  .hero__shade { position: absolute; inset: 0; background: linear-gradient(to top, rgb(18 10 13 / 0.85), rgb(18 10 13 / 0.05) 45%, rgb(18 10 13 / 0.4)); }
+  .hero__content { position: relative; height: 100%; display: grid; grid-template-rows: 1fr auto auto; padding-top: calc(var(--header-h) + 2rem); padding-bottom: 2rem; pointer-events: none; }
+  .hero__content a { pointer-events: auto; }
+  .hero__eyebrow { align-self: start; text-align: center; }
+  .hero__title { align-self: end; text-align: center; display: grid; justify-items: center; text-shadow: 0 10px 60px rgb(18 10 13 / 0.6); }
+  .hero__l1 { display: block; transform: translateX(-0.4em); }
+  .hero__l2 { display: block; color: var(--brass-2); transform: translateX(0.5em); }
+  .hero__meta { display: flex; justify-content: space-between; gap: 2rem; align-items: end; margin-top: 2rem; font-size: 0.9rem; color: var(--cream-2); }
+  .hero__meta p:first-child { max-width: 30ch; }
+  .hero__award { text-align: right; display: grid; gap: 0.3rem; }
+  .hero__scroll { position: absolute; left: 50%; bottom: 1.6rem; transform: translateX(-50%); display: grid; justify-items: center; gap: 0.6rem; font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--cream-dim); }
+  .hero__scroll i { width: 1px; height: 44px; background: linear-gradient(var(--cream), transparent); animation: drip 2.4s var(--ease) infinite; transform-origin: top; }
+  @keyframes drip { 0% { transform: scaleY(0); } 50% { transform: scaleY(1); } 100% { transform: scaleY(1); opacity: 0; } }
+  @media (max-width: 700px) {
+    .hero { height: 170vh; }
+    .hero__window { clip-path: inset(16% 12% 0% 12% round 40vw 40vw 0 0); }
+    .hero__meta { flex-direction: column; align-items: start; }
+    .hero__award { text-align: left; }
+    .hero__scroll { display: none; }
+  }
+
+  /* ── Chapter shells ── */
+  .ch { position: relative; padding-block: clamp(6rem, 13vw, 12rem); }
+  .ch__head { display: flex; align-items: center; gap: 1.5rem; margin-bottom: clamp(2.5rem, 5vw, 4rem); }
+  .ch__num { display: inline-flex; align-items: center; gap: 0.7rem; font-size: 0.7rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--cream-dim); margin-bottom: 1.5rem; }
+  .ch__head .ch__num { margin: 0; }
+  .ch__num .arabic { font-size: 1.6rem; color: var(--damask); letter-spacing: 0; line-height: 1; }
+
+  /* House */
+  .manifesto { font-size: clamp(1.9rem, 4.1vw, 4.2rem); line-height: 1.12; max-width: 22ch; font-weight: 300; }
+  .house { display: grid; grid-template-columns: repeat(12, 1fr); gap: 2rem; margin-top: clamp(4rem, 9vw, 8rem); align-items: start; }
+  .house figure { margin: 0; }
+  .house img { width: 100%; height: 100%; object-fit: cover; }
+  .house__a { grid-column: 1 / span 5; aspect-ratio: 4 / 5; }
+  .house__text { grid-column: 7 / span 5; align-self: center; display: grid; gap: 1.25rem; }
+  .house__sig { font-size: 1.4rem; color: var(--brass-2); }
+  :global(.house__rosette) { width: 64px; color: var(--damask); }
+  .house__b { grid-column: 4 / span 6; aspect-ratio: 16 / 10; overflow: hidden; margin-top: 2rem; }
+  .house__b-in { height: 120%; margin-top: -10%; }
+  .house__c { grid-column: 10 / span 3; aspect-ratio: 3 / 4; margin-top: 10rem; }
+  @media (max-width: 800px) {
+    .house { grid-template-columns: 1fr 1fr; }
+    .house__a { grid-column: 1 / -1; }
+    .house__text { grid-column: 1 / -1; }
+    .house__b { grid-column: 1 / -1; }
+    .house__c { grid-column: 2; margin-top: -4rem; }
+  }
+  .facts { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; margin-top: clamp(4rem, 8vw, 7rem); border-top: 1px solid var(--cream-faint); padding-top: 2rem; }
+  .facts li { display: grid; gap: 0.3rem; }
+  .facts__n { font-size: clamp(2.6rem, 5vw, 4.5rem); color: var(--brass-2); }
+  .facts__l { font-size: 0.8rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--cream-dim); }
+  @media (max-width: 700px) { .facts { grid-template-columns: 1fr 1fr; } }
+
+  /* Mezze horizontal */
+  .ch--mezze { padding-block: 0; background: var(--night-2); }
+  .mezze__pin { height: 100vh; height: 100svh; overflow: hidden; display: flex; align-items: center; }
+  .mezze__track { display: flex; align-items: center; gap: clamp(2rem, 4vw, 4.5rem); padding-inline: var(--gutter); will-change: transform; }
+  .mezze__intro { flex: 0 0 min(560px, 80vw); display: grid; gap: 1.25rem; }
+  .dish { flex: 0 0 auto; width: clamp(260px, 26vw, 420px); margin: 0; display: grid; gap: 1.25rem; }
+  .dish:nth-of-type(even) { margin-top: 12vh; }
+  .dish__img { aspect-ratio: 4 / 5; }
+  .dish__img :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform 1.4s var(--ease); }
+  .dish:hover .dish__img :global(img) { transform: scale(1.06); }
+  .dish figcaption { display: grid; grid-template-columns: auto 1fr; gap: 0.25rem 1rem; align-items: baseline; }
+  .dish__ar { grid-column: 1 / -1; font-size: 2.6rem; color: var(--damask); line-height: 1; justify-self: start; }
+  .dish__n { font-size: 0.7rem; letter-spacing: 0.2em; color: var(--brass); }
+  .dish strong { font-weight: 400; font-size: 1.5rem; }
+  .dish .muted { grid-column: 2; font-size: 0.9rem; }
+  .mezze__end { flex: 0 0 auto; padding-right: 10vw; }
+  @media (max-width: 800px) {
+    .mezze__pin { height: auto; padding-block: 6rem; }
+    .mezze__track { overflow-x: auto; scroll-snap-type: x mandatory; align-items: start; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .mezze__intro { flex-basis: 85vw; scroll-snap-align: start; }
+    .dish { width: 72vw; scroll-snap-align: center; }
+    .dish:nth-of-type(even) { margin-top: 3rem; }
+  }
+
+  /* Grill */
+  .ch--grill { overflow: hidden; }
+  .grill__bg { position: absolute; inset: 0; overflow: hidden; }
+  .grill__bg-in { position: absolute; inset: -10% 0; }
+  .grill__bg :global(img) { width: 100%; height: 100%; object-fit: cover; filter: saturate(1.1) brightness(0.5); }
+  .grill__bg::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 60%, transparent, rgb(18 10 13 / 0.8) 70%), linear-gradient(to bottom, var(--night), transparent 20%, transparent 80%, var(--night)); }
+  .grill__embers { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; mix-blend-mode: screen; }
+  .grill__grid { position: relative; z-index: 2; display: grid; grid-template-columns: repeat(12, 1fr); gap: 2rem; align-items: start; }
+  .grill__text { grid-column: 1 / span 6; display: grid; gap: 1.5rem; }
+  .grill__text p { max-width: 40ch; color: var(--cream-2); }
+  .grill__list { grid-column: 1 / span 6; list-style: none; padding: 0; margin-top: 2rem; border-top: 1px solid var(--cream-faint); }
+  .grill__list li { display: grid; gap: 0.2rem; padding: 1.1rem 0; border-bottom: 1px solid var(--cream-faint); }
+  .grill__list .display { font-size: clamp(1.3rem, 2vw, 1.8rem); }
+  .grill__list .muted { font-size: 0.88rem; }
+  .grill__side { grid-column: 8 / span 5; grid-row: 1 / span 2; aspect-ratio: 3 / 4; margin: 0; }
+  .grill__side2 { grid-column: 7 / span 3; grid-row: 3; aspect-ratio: 4 / 5; margin: -8rem 0 0; }
+  .grill__side :global(img), .grill__side2 :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  @media (max-width: 800px) {
+    .grill__text, .grill__list { grid-column: 1 / -1; }
+    .grill__side { grid-column: 3 / -1; grid-row: auto; }
+    .grill__side2 { grid-column: 1 / span 7; grid-row: auto; margin-top: -6rem; }
+  }
+
+  /* Tasting */
+  .tasting { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 6vw, 7rem); align-items: center; }
+  .tasting__img { aspect-ratio: 4 / 5; margin: 0; }
+  .tasting__img :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .tasting__card { position: relative; padding: clamp(2.5rem, 5vw, 4.5rem) clamp(1.5rem, 4vw, 3.5rem); border: 1px solid var(--cream-faint); border-radius: 50% 50% 0 0 / 22% 22% 0 0; text-align: center; display: grid; gap: 1.25rem; justify-items: center; background: linear-gradient(to bottom, rgb(92 17 23 / 0.25), transparent); }
+  .tasting__card .ch__num { margin-top: 3rem; margin-bottom: 0; }
+  .tasting__price { font-size: clamp(3rem, 6vw, 5rem); color: var(--brass-2); line-height: 1; }
+  .tasting__price small { font-family: var(--f-text); font-size: 0.8rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--cream-dim); }
+  .tasting__card p.muted { max-width: 52ch; font-size: 0.95rem; }
+  .tilde { width: 60px; color: var(--brass); }
+  .pairings { list-style: none; padding: 0; width: 100%; max-width: 420px; display: grid; gap: 0.5rem; text-align: left; }
+  .pairings li { display: flex; align-items: baseline; gap: 0.5rem; font-family: var(--f-display); font-size: 1.1rem; }
+  .pairings .dots { flex: 1; border-bottom: 1px dotted var(--cream-faint); transform: translateY(-4px); }
+  .tasting__cta { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1rem; }
+  @media (max-width: 800px) { .tasting { grid-template-columns: 1fr; } .tasting__img { width: 80%; } }
+
+  /* Bar */
+  .ch--bar { background: linear-gradient(to bottom, var(--night), var(--night-2)); overflow: hidden; }
+  .marquee { overflow: hidden; margin-bottom: clamp(4rem, 8vw, 7rem); border-block: 1px solid var(--cream-faint); padding-block: 1.25rem; }
+  .marquee__row { display: flex; width: max-content; font-size: clamp(2.4rem, 6vw, 5.5rem); white-space: nowrap; }
+  .marquee__row > span { display: flex; align-items: center; gap: 2.5rem; padding-right: 2.5rem; }
+  .marquee__row em { color: var(--cream-2); }
+  .marquee__row img { width: 0.9em; height: auto; opacity: 0.9; }
+  .bar { display: grid; grid-template-columns: repeat(12, 1fr); gap: 2rem; align-items: start; }
+  .bar__text { grid-column: 1 / span 5; display: grid; gap: 1.25rem; align-self: center; }
+  .bar__a { grid-column: 7 / span 4; aspect-ratio: 3 / 4; margin: 0; }
+  .bar__b { grid-column: 11 / span 2; aspect-ratio: 2 / 3; overflow: hidden; margin: 8rem 0 0; }
+  .bar__b > div { height: 120%; margin-top: -10%; }
+  .bar :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .cellar { grid-column: 2 / span 10; display: grid; grid-template-columns: 1fr 1.4fr; gap: clamp(2rem, 5vw, 5rem); margin-top: clamp(4rem, 8vw, 7rem); align-items: center; }
+  .cellar__img { aspect-ratio: 4 / 5; margin: 0; }
+  .cellar > div { display: grid; gap: 1rem; justify-items: start; }
+  .cellar__list { list-style: none; padding: 0; width: 100%; margin-bottom: 1.5rem; }
+  .cellar__list li { display: grid; gap: 0.1rem; padding: 0.9rem 0; border-bottom: 1px solid var(--cream-faint); }
+  .cellar__list .display { font-size: 1.35rem; }
+  .cellar__list .muted { font-size: 0.85rem; }
+  @media (max-width: 800px) {
+    .bar__text { grid-column: 1 / -1; }
+    .bar__a { grid-column: 1 / span 8; }
+    .bar__b { grid-column: 9 / -1; margin-top: 6rem; }
+    .cellar { grid-column: 1 / -1; grid-template-columns: 1fr; }
+    .cellar__img { width: 70%; }
+  }
+
+  /* Brunch */
+  .brunch { display: grid; grid-template-columns: repeat(12, 1fr); gap: 2rem; align-items: center; }
+  .brunch__a { grid-column: 1 / span 5; aspect-ratio: 3 / 4; margin: 0; }
+  .brunch__text { grid-column: 7 / span 5; display: grid; gap: 1.25rem; justify-items: start; }
+  .brunch__hours { display: flex; gap: 1rem; align-items: baseline; font-family: var(--f-display); font-size: 1.4rem; }
+  .brunch__b { grid-column: 9 / span 3; aspect-ratio: 3 / 4; overflow: hidden; margin: 0; }
+  .brunch__b > div { height: 120%; margin-top: -10%; }
+  .brunch :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  @media (max-width: 800px) {
+    .brunch__a { grid-column: 1 / span 10; }
+    .brunch__text { grid-column: 1 / -1; }
+    .brunch__b { grid-column: 6 / -1; }
+  }
+
+  /* Events */
+  .ch--events { min-height: 120vh; display: flex; align-items: flex-end; overflow: hidden; }
+  .events__media { position: absolute; inset: 0; clip-path: inset(10% 8% 10% 8% round 45vw 45vw 0 0); will-change: clip-path; }
+  .events__media :global(img) { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6); }
+  .events__media::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, var(--night) 5%, transparent 60%); }
+  .events__text { position: relative; display: grid; gap: 1.5rem; justify-items: start; }
+  .events__text p { max-width: 46ch; color: var(--cream-2); }
+
+  /* Honours */
+  .honours { padding-block: clamp(5rem, 10vw, 9rem); }
+  .honours__grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 3rem; align-items: center; }
+  .honours__list { list-style: none; padding: 0; margin-top: 1.5rem; }
+  .honours__list li { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding: 1.4rem 0; border-bottom: 1px solid var(--cream-faint); }
+  .honours__list .display { font-size: clamp(1.5rem, 3vw, 2.6rem); }
+  .honours__img { position: relative; aspect-ratio: 3 / 4; margin: 0; }
+  .honours__img :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .honours__img figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 4rem 1.5rem 1.5rem; font-size: 1.5rem; background: linear-gradient(transparent, rgb(18 10 13 / 0.85)); }
+  @media (max-width: 800px) { .honours__grid { grid-template-columns: 1fr; } .honours__img { width: 80%; justify-self: end; } }
+</style>

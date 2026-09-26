@@ -1,0 +1,122 @@
+---
+import { Image } from 'astro:assets';
+import { routes, t, type Lang } from '../i18n/ui';
+import { site } from '../data/site';
+import { tasting } from '../data/menus';
+import heroImg from '../assets/photos/evenements-prives.avif';
+import longueTable from '../assets/photos/longue-table.jpg';
+import mezzes from '../assets/photos/mezzes-cuivre.jpg';
+import bouchees from '../assets/photos/tartare-bouchees.jpg';
+import cocktails from '../assets/photos/cocktails-duo.avif';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+const s = t[lang];
+
+const occasions = fr
+  ? ['Anniversaires', 'Fiançailles & mariages', 'Repas d’affaires', 'Fêtes de famille', 'Lancements', 'Soirées de fin d’année']
+  : ['Birthdays', 'Engagements & weddings', 'Business dinners', 'Family celebrations', 'Launches', 'Holiday parties'];
+
+const offers = fr
+  ? [
+      { t: 'La longue table', d: 'Une grande tablée sous les lustres de cristal, pour réunir tout le monde autour des mêmes plats.', img: longueTable },
+      { t: 'Un festin à partager', d: `Mezzés, grillades sur charbon de bois et douceurs, ou le menu dégustation du chef (${tasting.price} $ par personne), avec accords vins, cocktails ou mocktails.`, img: mezzes },
+      { t: 'Cocktail dînatoire', d: 'Bouchées, mezzés et cocktails aux parfums de Damas pour les réceptions debout.', img: bouchees },
+    ]
+  : [
+      { t: 'The long table', d: 'One great table beneath the crystal chandeliers, to gather everyone around the same dishes.', img: longueTable },
+      { t: 'A feast to share', d: `Mezzes, charcoal grills and sweets, or the chef's tasting menu ($${tasting.price} per guest), with wine, cocktail or mocktail pairings.`, img: mezzes },
+      { t: 'Cocktail reception', d: 'Bites, mezzes and Damascus-scented cocktails for standing receptions.', img: bouchees },
+    ];
+---
+<section class="ehero">
+  <div class="ehero__media" data-reveal="arch">
+    <Image src={heroImg} alt={fr ? 'Salon privé dressé pour une longue tablée sous des lustres de cristal' : 'Private salon set for a long table beneath crystal chandeliers'} widths={[800, 1280, 1772]} sizes="100vw" loading="eager" fetchpriority="high" />
+  </div>
+  <div class="wrap ehero__text">
+    <p class="eyebrow">{s.nav.events}</p>
+    <h1 class="display h-xl" data-reveal="line">{fr ? <>Vos grandes <em>occasions</em></> : <>Your great <em>occasions</em></>}</h1>
+    <p class="lede" data-reveal="fade">
+      {fr
+        ? 'Faites de votre soirée un conte des Mille et Une Nuits : Damas accueille vos célébrations et réunions dans son décor de palais damascène.'
+        : 'Turn your evening into a tale from the Thousand and One Nights: Damas hosts your celebrations and gatherings in its Damascene palace setting.'}
+    </p>
+  </div>
+</section>
+
+<section class="occasions" aria-label={fr ? 'Occasions' : 'Occasions'}>
+  <div class="occasions__row display" data-reveal="fade">
+    {occasions.map((o) => (<span><em>{o}</em><i aria-hidden="true">✦</i></span>))}
+  </div>
+</section>
+
+<section class="offers wrap">
+  {offers.map((o, i) => (
+    <article class:list={['offer', { 'offer--rev': i % 2 }]}>
+      <figure class:list={['offer__img', i % 2 ? 'arch-soft' : 'arch']} data-reveal="arch">
+        <Image src={o.img} alt="" widths={[480, 900]} sizes="(max-width: 800px) 90vw, 40vw" loading="lazy" />
+      </figure>
+      <div class="offer__text">
+        <span class="offer__n">{String(i + 1).padStart(2, '0')}</span>
+        <h2 class="display h-l" data-reveal="line">{o.t}</h2>
+        <p class="muted" data-reveal="fade">{o.d}</p>
+      </div>
+    </article>
+  ))}
+</section>
+
+<section class="einquire">
+  <div class="wrap einquire__grid">
+    <figure class="einquire__img arch" data-reveal="arch">
+      <Image src={cocktails} alt={fr ? 'Deux cocktails aux pétales de rose' : 'Two cocktails with rose petals'} widths={[400, 780]} sizes="(max-width: 800px) 70vw, 30vw" loading="lazy" />
+    </figure>
+    <div class="einquire__text">
+      <h2 class="display h-l" data-reveal="line">{fr ? <>Parlons de <em>votre soirée</em></> : <>Let’s talk about <em>your evening</em></>}</h2>
+      <p class="muted" data-reveal="fade">
+        {fr
+          ? 'Dites-nous la date, le nombre d’invités et l’occasion : notre équipe vous proposera la formule et le menu qui vous ressemblent.'
+          : 'Tell us the date, the number of guests and the occasion: our team will suggest the format and menu that suit you.'}
+      </p>
+      <div class="einquire__ctas" data-reveal="fade">
+        <a class="btn btn--solid" href={`tel:${site.phone}`}>{s.phone} · {site.phoneDisplay}</a>
+        {site.email && <a class="btn" href={`mailto:${site.email}?subject=${encodeURIComponent(fr ? 'Événement privé' : 'Private event')}`}>{site.email}</a>}
+        <a class="btn" href={routes.menus[lang]}>{s.viewMenus}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ehero { position: relative; padding-top: calc(var(--header-h) + 1rem); }
+  .ehero__media { width: calc(100% - var(--gutter) * 2); margin-inline: auto; aspect-ratio: 16 / 8; border-radius: 45vw 45vw 0 0 / 30vw 30vw 0 0; overflow: hidden; }
+  .ehero__media :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .ehero__text { display: grid; gap: 1.5rem; margin-top: clamp(-8rem, -8vw, -3rem); position: relative; }
+  .ehero__text .lede { max-width: 36ch; }
+  @media (max-width: 700px) { .ehero__media { aspect-ratio: 4 / 5; } .ehero__text { margin-top: 2rem; } }
+
+  .occasions { overflow: hidden; margin-block: clamp(4rem, 8vw, 7rem); border-block: 1px solid var(--cream-faint); padding-block: 1.5rem; }
+  .occasions__row { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem 2rem; font-size: clamp(1.4rem, 3vw, 2.6rem); padding-inline: var(--gutter); }
+  .occasions__row span { display: inline-flex; align-items: center; gap: 2rem; }
+  .occasions__row i { font-style: normal; color: var(--damask); font-size: 0.5em; }
+  .occasions__row span:last-child i { display: none; }
+
+  .offers { display: grid; gap: clamp(5rem, 10vw, 9rem); padding-bottom: clamp(5rem, 10vw, 9rem); }
+  .offer { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 6vw, 6rem); align-items: center; }
+  .offer--rev .offer__img { order: 2; }
+  .offer__img { margin: 0; aspect-ratio: 4 / 5; max-width: 520px; width: 100%; }
+  .offer--rev .offer__img { justify-self: end; }
+  .offer__img :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .offer__text { display: grid; gap: 1.25rem; }
+  .offer__text p { max-width: 42ch; }
+  .offer__n { font-size: 0.72rem; letter-spacing: 0.2em; color: var(--brass); }
+  @media (max-width: 800px) { .offer { grid-template-columns: 1fr; } .offer--rev .offer__img { order: 0; } }
+
+  .einquire { background: var(--night-2); padding-block: clamp(5rem, 10vw, 9rem); }
+  .einquire__grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: clamp(2rem, 6vw, 6rem); align-items: center; }
+  .einquire__img { margin: 0; aspect-ratio: 4 / 5; }
+  .einquire__img :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .einquire__text { display: grid; gap: 1.5rem; }
+  .einquire__ctas { display: flex; flex-wrap: wrap; gap: 1rem; }
+  @media (max-width: 800px) { .einquire__grid { grid-template-columns: 1fr; } .einquire__img { width: 70%; } }
+</style>

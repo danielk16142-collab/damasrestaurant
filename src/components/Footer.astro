@@ -1,0 +1,86 @@
+---
+import { routes, t, type Lang } from '../i18n/ui';
+import { site } from '../data/site';
+import Hours from './Hours.astro';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const s = t[lang];
+const year = new Date().getFullYear();
+---
+<footer class="ftr">
+  <div class="ftr__cta wrap">
+    <p class="eyebrow">{lang === 'fr' ? 'La nuit vous attend' : 'The night awaits'}</p>
+    <a class="ftr__big display" href={site.reservationUrl} target="_blank" rel="noopener" data-cursor>
+      <span>{lang === 'fr' ? 'Réserver' : 'Reserve'}</span>
+      <em>{lang === 'fr' ? 'votre nuit' : 'your night'}</em>
+      <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M8 32 L32 8 M14 8 H32 V26" fill="none" stroke="currentColor" stroke-width="1.5" /></svg>
+    </a>
+  </div>
+
+  <div class="ftr__emblem" aria-hidden="true">
+    <img src="/brand/emblem-oxblood.svg" alt="" loading="lazy" width="895" height="658" />
+  </div>
+
+  <div class="ftr__grid wrap">
+    <div>
+      <h2 class="eyebrow">{s.address}</h2>
+      <address>
+        <a href={site.mapsUrl} target="_blank" rel="noopener" class="link-u">
+          {lang === 'fr' ? site.address.street : site.address.streetEn}<br />
+          {site.address.locality}, {site.address.region} {site.address.postalCode}
+        </a>
+      </address>
+    </div>
+    <div>
+      <h2 class="eyebrow">{s.hours}</h2>
+      <Hours lang={lang} />
+    </div>
+    <div>
+      <h2 class="eyebrow">{s.phone}</h2>
+      <p><a href={`tel:${site.phone}`} class="link-u">{site.phoneDisplay}</a></p>
+      {site.email && <p><a href={`mailto:${site.email}`} class="link-u">{site.email}</a></p>}
+      {site.instagram && <p><a href={site.instagram} target="_blank" rel="noopener" class="link-u">Instagram</a></p>}
+    </div>
+    <nav aria-label={lang === 'fr' ? 'Pied de page' : 'Footer'}>
+      <h2 class="eyebrow">Damas</h2>
+      <ul>
+        {(['home', 'story', 'menus', 'events', 'contact'] as const).map((k) => (
+          <li><a href={routes[k][lang]} class="link-u">{s.nav[k]}</a></li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+
+  <div class="ftr__base wrap">
+    <img src="/brand/wordmark-cream.svg" alt="Damas" width="160" height="50" loading="lazy" />
+    <p>{s.footerTag}</p>
+    <p>© {year} Restaurant Damas. {s.rights}</p>
+  </div>
+</footer>
+
+<style>
+  .ftr { position: relative; overflow: hidden; background: var(--night); padding-top: clamp(6rem, 14vw, 12rem); border-top: 1px solid var(--cream-faint); }
+  .ftr__cta { position: relative; z-index: 1; text-align: center; }
+  .ftr__big {
+    display: inline-flex; flex-wrap: wrap; justify-content: center; align-items: baseline; gap: 0 0.25em;
+    font-size: clamp(3rem, 10vw, 10rem); margin-top: 1.5rem; transition: color 0.5s;
+  }
+  .ftr__big em { color: var(--brass-2); }
+  .ftr__big svg { width: 0.4em; height: 0.4em; align-self: center; transition: transform 0.6s var(--ease); }
+  .ftr__big:hover { color: var(--damask); }
+  .ftr__big:hover svg { transform: translate(0.1em, -0.1em) rotate(0deg); }
+  .ftr__emblem { position: absolute; left: 50%; top: 2rem; width: min(1200px, 130vw); transform: translateX(-50%); opacity: 0.35; pointer-events: none; }
+  .ftr__grid {
+    position: relative; z-index: 1;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 2.5rem;
+    margin-top: clamp(5rem, 10vw, 9rem); padding-block: 3rem; border-top: 1px solid var(--cream-faint);
+    font-size: 0.95rem;
+  }
+  .ftr__grid h2 { margin-bottom: 1rem; }
+  .ftr__grid address { font-style: normal; }
+  .ftr__grid ul { list-style: none; padding: 0; display: grid; gap: 0.35rem; }
+  .ftr__base { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem 2rem; padding-block: 2rem 2.5rem; font-size: 0.8rem; color: var(--cream-dim); border-top: 1px solid var(--cream-faint); }
+  .ftr__base img { width: 110px; }
+  @media (max-width: 900px) { .ftr__grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 520px) { .ftr__grid { grid-template-columns: 1fr; } }
+</style>

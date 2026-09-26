@@ -1,0 +1,83 @@
+---
+import { t, type Lang } from '../i18n/ui';
+import type { Menu, L } from '../data/menus';
+interface Props { menu: Menu; lang: Lang; id: string }
+const { menu, lang, id } = Astro.props;
+const tr = (x: L) => x[lang];
+const s = t[lang];
+---
+<section class="panel" id={id} role="tabpanel" aria-labelledby={`tab-${id}`} data-panel={id}>
+  <header class="panel__head">
+    <h2 class="display h-l">{tr(menu.title)}</h2>
+    {menu.intro && <p class="muted">{tr(menu.intro)}</p>}
+    {menu.note && <p class="panel__note display"><em>{tr(menu.note)}</em></p>}
+  </header>
+
+  {menu.sections.map((sec, i) => (
+    <details class="acc" open={i === 0} data-acc>
+      <summary class="acc__sum">
+        <span class="acc__idx">{String(i + 1).padStart(2, '0')}</span>
+        <h3 class="acc__title display">{tr(sec.title)}</h3>
+        <span class="acc__count">{sec.items.length}</span>
+        <span class="acc__icon" aria-hidden="true"><i></i><i></i></span>
+      </summary>
+      <div class="acc__body" data-acc-body>
+        <ul class:list={['items', { 'items--1': sec.cols === 1 }]}>
+          {sec.items.map((it) => (
+            <li class="item">
+              <div class="item__row">
+                <span class="item__name">{tr(it.name)}</span>
+                <span class="item__dots" aria-hidden="true"></span>
+                {it.price && <span class="item__price">{it.price}</span>}
+              </div>
+              {it.desc && tr(it.desc) && <p class="item__desc">{tr(it.desc)}</p>}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </details>
+  ))}
+
+  {menu.pdf && (
+    <p class="panel__pdf"><a class="link-u" href={menu.pdf} target="_blank" rel="noopener">{s.downloadPdf} ↓</a></p>
+  )}
+</section>
+
+<style>
+  .panel__head { display: grid; gap: 1rem; max-width: 60ch; margin-bottom: clamp(2rem, 4vw, 3rem); }
+  .panel__note { color: var(--brass-2); font-size: 1.3rem; }
+  .panel__pdf { margin-top: 2.5rem; font-size: 0.8rem; letter-spacing: 0.18em; text-transform: uppercase; }
+
+  .acc { border-top: 1px solid var(--cream-faint); }
+  .acc:last-of-type { border-bottom: 1px solid var(--cream-faint); }
+  .acc__sum {
+    list-style: none; cursor: pointer;
+    display: grid; grid-template-columns: 3rem 1fr auto 2.5rem; align-items: center; gap: 1rem;
+    padding: clamp(1.25rem, 2.5vw, 2rem) 0;
+  }
+  .acc__sum::-webkit-details-marker { display: none; }
+  .acc__idx { font-size: 0.72rem; letter-spacing: 0.2em; color: var(--brass); }
+  .acc__title { font-size: clamp(1.6rem, 3.4vw, 3rem); font-weight: 300; line-height: 1.05; transition: color 0.4s, transform 0.6s var(--ease); }
+  .acc__sum:hover .acc__title { color: var(--brass-2); transform: translateX(0.3rem); }
+  .acc[open] .acc__title { font-style: italic; }
+  .acc__count { font-size: 0.72rem; letter-spacing: 0.16em; color: var(--cream-dim); }
+  .acc__icon { position: relative; width: 2.5rem; height: 2.5rem; border: 1px solid var(--cream-faint); border-radius: 50%; transition: background 0.4s, border-color 0.4s; }
+  .acc__icon i { position: absolute; left: 50%; top: 50%; width: 12px; height: 1px; margin-left: -6px; background: currentColor; transition: transform 0.6s var(--ease); }
+  .acc__icon i:last-child { transform: rotate(90deg); }
+  .acc[open] .acc__icon i:last-child { transform: rotate(0deg); }
+  .acc__sum:hover .acc__icon { background: var(--damask); border-color: var(--damask); }
+
+  .acc__body { overflow: hidden; }
+  .items { list-style: none; padding: 0 0 clamp(2rem, 4vw, 3rem) 4rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1.6rem 4rem; }
+  .items--1 { grid-template-columns: 1fr; max-width: 720px; }
+  .item__row { display: flex; align-items: baseline; gap: 0.6rem; }
+  .item__name { font-family: var(--f-display); font-size: clamp(1.1rem, 1.5vw, 1.3rem); font-weight: 400; }
+  .item__dots { flex: 1; border-bottom: 1px dotted var(--cream-faint); transform: translateY(-5px); min-width: 1.5rem; }
+  .item__price { font-family: var(--f-display); color: var(--brass-2); font-variant-numeric: lining-nums; white-space: nowrap; }
+  .item__desc { font-size: 0.9rem; color: var(--cream-dim); margin-top: 0.2rem; max-width: 46ch; }
+  @media (max-width: 800px) {
+    .acc__sum { grid-template-columns: 2rem 1fr 2.5rem; }
+    .acc__count { display: none; }
+    .items { grid-template-columns: 1fr; padding-left: 0; }
+  }
+</style>

@@ -1,0 +1,155 @@
+---
+import { Image } from 'astro:assets';
+import { t, type Lang } from '../i18n/ui';
+import { site } from '../data/site';
+import { dinner, brunch, desserts, drinks, tasting, levantWines, araks, winePdf, type Menu, type L } from '../data/menus';
+import MenuPanel from '../components/MenuPanel.astro';
+import Rosette from '../components/Rosette.astro';
+import heroImg from '../assets/photos/mezzes-table.avif';
+import tastingImg from '../assets/photos/table-partage.jpg';
+import cellarImg from '../assets/photos/vins-selection.avif';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const s = t[lang];
+const fr = lang === 'fr';
+const tr = (x: L) => x[lang];
+
+const tabs = [
+  { id: 'diner', label: { fr: 'À la carte', en: 'À la carte' } },
+  { id: 'degustation', label: { fr: 'Dégustation', en: 'Tasting' } },
+  { id: 'brunch', label: same('Brunch') },
+  { id: 'desserts', label: same('Desserts') },
+  { id: 'bar', label: { fr: 'Bar', en: 'Bar' } },
+  { id: 'vins', label: { fr: 'Vins', en: 'Wine' } },
+];
+function same(x: string): L { return { fr: x, en: x }; }
+const menus: Record<string, Menu> = { diner: dinner, brunch, desserts, bar: drinks };
+---
+<section class="mhero">
+  <div class="wrap mhero__grid">
+    <div class="mhero__text">
+      <p class="eyebrow">{fr ? 'Cuisine syrienne · Montréal' : 'Syrian cuisine · Montréal'}</p>
+      <h1 class="display h-xl" data-reveal="line">{fr ? <>Les <em>menus</em></> : <>The <em>menus</em></>}</h1>
+      <p class="muted" data-reveal="fade">
+        {fr
+          ? 'Mezzés à partager, grillades sur charbon de bois, menu dégustation, brunch du week-end et bar aux parfums de Damas.'
+          : 'Mezzes to share, charcoal grills, a tasting menu, weekend brunch and a bar scented with Damascus.'}
+      </p>
+    </div>
+    <figure class="mhero__img arch" data-reveal="arch">
+      <Image src={heroImg} alt={fr ? 'Mezzés servis dans des bols de cuivre martelé' : 'Mezzes served in hammered copper bowls'} widths={[400, 780]} sizes="(max-width: 800px) 70vw, 30vw" loading="eager" />
+    </figure>
+  </div>
+</section>
+
+<div class="switch" data-switch>
+  <div class="switch__inner" role="tablist" aria-label={fr ? 'Choisir un menu' : 'Choose a menu'}>
+    {tabs.map((tb, i) => (
+      <button role="tab" id={`tab-${tb.id}`} aria-controls={tb.id} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1} data-tab={tb.id} class="switch__btn">
+        {tr(tb.label)}
+      </button>
+    ))}
+    <span class="switch__ink" data-switch-ink aria-hidden="true"></span>
+  </div>
+</div>
+
+<div class="panels wrap" data-panels>
+  {['diner', 'brunch', 'desserts', 'bar'].map((id) => (
+    <MenuPanel menu={menus[id]} lang={lang} id={id} />
+  ))}
+
+  <section class="panel tasting-panel" id="degustation" role="tabpanel" aria-labelledby="tab-degustation" data-panel="degustation">
+    <div class="tasting-card">
+      <Rosette class="tasting-card__rosette" />
+      <h2 class="display h-l">{fr ? <>Menu <em>dégustation</em></> : <>Tasting <em>menu</em></>}</h2>
+      <p class="tasting-card__price display">{tasting.price} <small>$ {tr(tasting.per)}</small></p>
+      <p>{tr(tasting.text)}</p>
+      <ul class="tasting-card__pairings">
+        {tasting.pairings.map((p) => (<li><span>{tr(p.name)}</span><span class="dots"></span><span>+ {p.price}</span></li>))}
+      </ul>
+      <a class="btn btn--solid" href={site.reservationUrl} target="_blank" rel="noopener">{s.reserveLong}</a>
+    </div>
+    <figure class="tasting-img arch-soft">
+      <Image src={tastingImg} alt={fr ? 'Une table de partage garnie de mezzés et de grillades' : 'A sharing table laden with mezzes and grills'} widths={[480, 900]} sizes="(max-width: 800px) 90vw, 40vw" loading="lazy" />
+    </figure>
+  </section>
+
+  <section class="panel wine-panel" id="vins" role="tabpanel" aria-labelledby="tab-vins" data-panel="vins">
+    <div class="wine-panel__text">
+      <h2 class="display h-l">{fr ? <>La <em>cave</em></> : <>The <em>cellar</em></>}</h2>
+      <p class="muted">
+        {fr
+          ? 'Une carte généreuse de vins nature et de vignerons artisans, de la Champagne au Roussillon — et les vins rares du Levant, de Syrie et du Liban.'
+          : 'A generous list of natural wines and artisan growers, from Champagne to Roussillon — and the rare wines of the Levant, from Syria and Lebanon.'}
+      </p>
+      <h3 class="eyebrow">{fr ? 'Vins du Levant' : 'Wines of the Levant'}</h3>
+      <ul class="wine-list">
+        {levantWines.map((w) => (<li><span class="display">{w.name}</span><span class="muted">{w.grapes} · {tr(w.origin)}</span></li>))}
+      </ul>
+      <h3 class="eyebrow">Arak</h3>
+      <p class="muted">{araks.join(' · ')}</p>
+      <a class="btn btn--solid" href={winePdf} target="_blank" rel="noopener">{s.wineList} (PDF) ↓</a>
+    </div>
+    <figure class="wine-panel__img arch">
+      <Image src={cellarImg} alt={fr ? 'Sélection de bouteilles de la cave' : 'A selection of bottles from the cellar'} widths={[400, 780]} sizes="(max-width: 800px) 80vw, 34vw" loading="lazy" />
+    </figure>
+  </section>
+
+  <p class="panels__note muted">{s.prices} {s.allergies}</p>
+</div>
+
+<style>
+  .mhero { padding-top: calc(var(--header-h) + clamp(3rem, 8vw, 7rem)); padding-bottom: clamp(3rem, 6vw, 5rem); }
+  .mhero__grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 3rem; align-items: end; }
+  .mhero__text { display: grid; gap: 1.5rem; }
+  .mhero__text p.muted { max-width: 46ch; }
+  .mhero__img { aspect-ratio: 4 / 5; margin: 0; max-width: 380px; justify-self: end; width: 100%; }
+  .mhero__img :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  @media (max-width: 800px) { .mhero__grid { grid-template-columns: 1fr; } .mhero__img { justify-self: start; width: 70%; } }
+
+  /* Switcher (sticky tab bar) */
+  .switch { position: sticky; top: 0; z-index: 70; padding: calc(var(--header-h) - 8px) 0 1rem; margin-top: calc(-1 * var(--header-h) + 8px); background: linear-gradient(to bottom, var(--night) 70%, transparent); pointer-events: none; transition: padding 0.6s var(--ease); }
+  :global(.is-hidden-hdr) .switch { padding-top: 1rem; }
+  .switch__inner {
+    position: relative; pointer-events: auto;
+    display: flex; gap: 0.25rem; width: max-content; max-width: calc(100% - var(--gutter) * 2); margin-inline: auto;
+    padding: 0.35rem; border: 1px solid var(--cream-faint); border-radius: 999px; background: rgb(27 16 19 / 0.85);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    overflow-x: auto; scrollbar-width: none;
+  }
+  .switch__inner::-webkit-scrollbar { display: none; }
+  .switch__btn { position: relative; z-index: 1; flex: 0 0 auto; padding: 0.75em 1.35em; border-radius: 999px; font-size: 0.74rem; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 500; color: var(--cream-dim); transition: color 0.5s var(--ease); }
+  .switch__btn:hover { color: var(--cream); }
+  .switch__btn[aria-selected='true'] { color: var(--night); }
+  .switch__ink { position: absolute; z-index: 0; top: 0.35rem; bottom: 0.35rem; left: 0; width: 0; border-radius: 999px; background: var(--cream); transition: transform 0.7s var(--ease), width 0.7s var(--ease); }
+  :global(html:not(.js)) .switch { display: none; }
+
+  .panels { padding-block: clamp(2rem, 5vw, 4rem) clamp(5rem, 10vw, 8rem); min-height: 70vh; }
+  .panels__note { margin-top: 4rem; font-size: 0.85rem; text-align: center; }
+  :global(.js) .panel[hidden] { display: none; }
+
+  .tasting-panel { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(2rem, 6vw, 6rem); align-items: center; }
+  .tasting-card { text-align: center; display: grid; gap: 1.25rem; justify-items: center; padding: clamp(3rem, 6vw, 5rem) clamp(1.5rem, 4vw, 3.5rem); border: 1px solid var(--cream-faint); border-radius: 50% 50% 0 0 / 20% 20% 0 0; }
+  :global(.tasting-card__rosette) { width: 56px; color: var(--damask); }
+  .tasting-card__price { font-size: clamp(3rem, 6vw, 5rem); color: var(--brass-2); line-height: 1; }
+  .tasting-card__price small { font-family: var(--f-text); font-size: 0.8rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--cream-dim); }
+  .tasting-card p { max-width: 54ch; color: var(--cream-2); }
+  .tasting-card__pairings { list-style: none; padding: 0; width: 100%; max-width: 420px; display: grid; gap: 0.5rem; text-align: left; margin-bottom: 1rem; }
+  .tasting-card__pairings li { display: flex; align-items: baseline; gap: 0.5rem; font-family: var(--f-display); font-size: 1.1rem; }
+  .dots { flex: 1; border-bottom: 1px dotted var(--cream-faint); transform: translateY(-4px); }
+  .tasting-img { aspect-ratio: 4 / 5; margin: 0; }
+  .tasting-img :global(img) { width: 100%; height: 100%; object-fit: cover; }
+
+  .wine-panel { display: grid; grid-template-columns: 1.2fr 1fr; gap: clamp(2rem, 6vw, 6rem); align-items: center; }
+  .wine-panel__text { display: grid; gap: 1.2rem; justify-items: start; }
+  .wine-list { list-style: none; padding: 0; width: 100%; }
+  .wine-list li { display: grid; padding: 0.9rem 0; border-bottom: 1px solid var(--cream-faint); }
+  .wine-list .display { font-size: 1.4rem; }
+  .wine-list .muted { font-size: 0.85rem; }
+  .wine-panel__img { aspect-ratio: 4 / 5; margin: 0; }
+  .wine-panel__img :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  @media (max-width: 800px) {
+    .tasting-panel, .wine-panel { grid-template-columns: 1fr; }
+  }
+</style>
