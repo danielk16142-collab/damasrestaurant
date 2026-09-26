@@ -5,8 +5,8 @@
 // language in italics beneath when it differs, as on the printed menus.
 import type { Section } from '../lib/menus';
 import { useT, type Lang } from '../lib/i18n';
-interface Props { section: Section; lang: Lang; index: number; open?: boolean }
-const { section, lang, index, open = false } = Astro.props;
+interface Props { section: Section; lang: Lang; index: number; open?: boolean; unit?: 'items' | 'refs' }
+const { section, lang, index, open = false, unit = 'items' } = Astro.props;
 const t = useT(lang);
 const alt = lang === 'fr' ? 'en' : 'fr';
 const roman = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x', 'xi', 'xii', 'xiii', 'xiv', 'xv'][index] ?? String(index + 1);
@@ -15,7 +15,7 @@ const roman = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x', 'xi'
   <summary class="msec__head">
     <span class="msec__num">{roman}.</span>
     <h2 class="msec__title">{section.title[lang]}</h2>
-    <span class="msec__count">{t.items(section.items.length)}</span>
+    <span class="msec__count">{t[unit](section.items.length)}</span>
     <span class="msec__toggle" aria-hidden="true"><i></i><i></i></span>
   </summary>
   <div class="msec__body">

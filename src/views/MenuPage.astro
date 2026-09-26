@@ -29,6 +29,7 @@ const images: Record<string, ImageMetadata> = {
 const foodCount = menuKey === 'menu-dinner' ? 3 : menu.sections.length;
 const food = menu.sections.slice(0, foodCount);
 const rest = menu.sections.slice(foodCount);
+const unit = menuKey === 'menu-wine' ? 'refs' : 'items';
 
 const seo = {
   'menu-dinner': fr
@@ -66,7 +67,7 @@ const jsonLd = [breadcrumbLd(lang, [{ key: 'menus', name: 'Menus' }, { key: menu
   <MenuSwitcher lang={lang} current={menuKey} />
 
   <div class="wrap mbody">
-    {food.map((s, i) => <MenuSection section={s} lang={lang} index={i} open={i === 0} />)}
+    {food.map((s, i) => <MenuSection section={s} lang={lang} index={i} open={i === 0} unit={unit} />)}
 
     {page.tasting && (
       <section class="tcard" id="degustation" data-reveal>
@@ -81,7 +82,7 @@ const jsonLd = [breadcrumbLd(lang, [{ key: 'menus', name: 'Menus' }, { key: menu
       </section>
     )}
 
-    {rest.map((s, i) => <MenuSection section={s} lang={lang} index={food.length + i} />)}
+    {rest.map((s, i) => <MenuSection section={s} lang={lang} index={food.length + i} unit={unit} />)}
 
     {menuKey === 'menu-wine' && (
       <p class="mbody__full" data-reveal>

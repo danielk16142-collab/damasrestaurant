@@ -105,6 +105,7 @@ const fr = {
   allergyNote: 'Avisez votre serveur de toute allergie ou restriction alimentaire.',
   openSection: 'Afficher',
   items: (n: number) => `${n} ${n > 1 ? 'plats' : 'plat'}`,
+  refs: (n: number) => `${n} ${n > 1 ? 'références' : 'référence'}`,
   live: {
     now: (t: string) => `Il est ${t} à Outremont`,
     openUntil: (t: string) => `Ouvert ce soir jusqu’à ${t}`,
@@ -180,6 +181,7 @@ const en: Dict = {
   allergyNote: 'Please tell your server about any allergies or dietary restrictions.',
   openSection: 'Show',
   items: (n: number) => `${n} ${n > 1 ? 'items' : 'item'}`,
+  refs: (n: number) => `${n} ${n > 1 ? 'references' : 'reference'}`,
   live: {
     now: (t: string) => `It’s ${t} in Outremont`,
     openUntil: (t: string) => `Open tonight until ${t}`,
