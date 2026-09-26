@@ -77,7 +77,7 @@ Ask in rounds, with the question tool if available (multiple-choice, up to 4 que
 
 **If the deploy target is Wix,** the standard is a **brand-new Wix Headless project for each client** (never an Editor/template/AI-built site, never reusing an existing site), with only the chosen modules installed; see `references/wix.md`. **Ask which Wix backend modules the client will use** (multi-select), because each one replaces part of the kit and needs the matching Wix app installed on their site. Pre-select the likely ones from the industry guide and let them adjust. The options and what each replaces are in `references/wix.md`: CMS (listings, treatments, projects, menus as collections) · Forms + Contacts/CRM (the enquiry form) · Bookings (the booking widget) · Restaurants (menus, online ordering, reservations) · Stores · Events & tickets · Pricing plans / memberships · Blog · Members (login areas) · Portfolio. Also ask whether it's hosted on Wix (Wix-managed headless) or elsewhere with Wix only as the backend, and whether the Wix connector is authorised in their claude.ai connector settings; nothing Wix-side can be set up until it is.
 
-Then read `references/verticals.md` and the matching `references/industries/<industry>.md` **before asking the rest**, so the follow-up questions fit the industry (e.g. a restaurant gets asked about its reservation tool, a landscaper about service areas, a clinic about its scheduling system).
+Then read `references/verticals.md`, the matching `references/industries/<industry>.md` **and every past project brief in `references/briefs/<industry>/`** **before asking the rest**, so the follow-up questions fit the industry (e.g. a restaurant gets asked about its reservation tool, a landscaper about service areas, a clinic about its scheduling system).
 
 **Round 3: the details.** Many answers will already be in the conversation, so ask only for what's missing, in one short message:
 
@@ -162,7 +162,7 @@ Carry out the approved plan: restyle and build the sections it lists, then work 
 
 Use the host agreed in the plan; `references/deploy.md` has step-by-step instructions for each. Summary: **Vercel** via GitHub import (automatic deploys and preview links); **Hostinger** via `new_site.py <site> --add-hostinger`, which adds `.htaccess` plus a GitHub Action that builds and uploads over FTP on every push; **Cloudflare Pages** via GitHub import like Vercel; **Wix** when the client needs its CMS, CRM or bookings; follow `references/wix.md` for the chosen modules. Vercel's old no-login deploy endpoint no longer works. Never ask the user to paste tokens into chat.
 
-After launch, work through the handover checklist in `quality-bar.md` §7 (client owns the accounts, Search Console and analytics, form tests, editing guide, launch summary), then add a dated note to the industry guide's "Lessons from real projects" section (see `references/verticals.md`).
+After launch, work through the handover checklist in `quality-bar.md` §7 (client owns the accounts, Search Console and analytics, form tests, editing guide, launch summary), then **write the project brief**: copy `references/briefs/_TEMPLATE.md` to `references/briefs/<industry>/<client-slug>.md` and fill it in (references, concept, reusable patterns, every client correction, pitfalls, open items). Add a dated one-line summary linking to it in the industry guide's "Lessons from real projects" section; move any pattern that has now worked for two clients into the guide's main sections; and add industry-agnostic lessons to `quality-bar.md` or `architecture.md`. See `references/briefs/README.md`. Record client corrections as they come in during the build, not from memory at the end.
 
 ## How the kit works (read before changing structure)
 
@@ -177,6 +177,7 @@ After launch, work through the handover checklist in `quality-bar.md` §7 (clien
 | `references/seo.md` + `assets/seo-brief-template.md` | the SEO brief (the user's or yours), SEO build and checks |
 | `references/architecture.md` | before adding sections: the motion attribute API (`data-reveal`, `data-split`, `data-clip`, `data-parallax`, `data-words`, `data-count`, `data-magnetic`, `data-cursor`, `data-hscroll`), components, tokens and known pitfalls |
 | `references/verticals.md`, `references/industries/*` | the brief and plan for each industry |
+| `references/briefs/<industry>/*` | before planning (past builds in that industry: what worked, what clients corrected) and at handover (write the new one) |
 | `references/rebrand-checklist.md` | step 4 |
 | `references/deploy.md`, `references/wix.md` | hosting and the Wix backend |
 

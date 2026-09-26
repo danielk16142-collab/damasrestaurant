@@ -35,4 +35,4 @@ When the brief is an industry with no guide:
 2. Copy `industries/_TEMPLATE.md` to `industries/<industry>.md` and fill it in. Show the user the key points as part of the plan.
 3. Add a row to the table above.
 
-After every project, whatever the industry, add a dated line to that guide's "Lessons from real projects" section: what the client wanted, the references they liked, what worked, and what to change next time. This is how the kit improves as the portfolio grows. Tell the user you've done it.
+After every project, whatever the industry, write a full project brief in `briefs/<industry>/<client-slug>.md` (from `briefs/_TEMPLATE.md`) and add a dated line to that guide's "Lessons from real projects" section linking to it: what the client wanted, the references they liked, what worked, what they corrected, and what to change next time. When a pattern has worked for two clients, promote it into the guide's main sections. This is how the kit improves as the portfolio grows. Tell the user you've done it. See `briefs/README.md`.
