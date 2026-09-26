@@ -51,7 +51,7 @@ const otherLang = other(lang);
   </div>
 </header>
 
-<div id="menu" class="menu" inert>
+<div id="menu" class="menu" inert data-lenis-prevent>
   <Emblem class="menu__emblem" color="oxblood" loading="lazy" />
   <div class="menu__inner wrap">
     <nav aria-label={t.mainNav}>
@@ -98,7 +98,8 @@ const otherLang = other(lang);
     -webkit-backdrop-filter: blur(14px) saturate(1.2);
   }
   :global(html[data-scroll-dir='down']:not(.menu-open)) .nav { transform: translateY(-100%); }
-  :global(html.menu-open) .nav { background: transparent; backdrop-filter: none; }
+  /* Solid once the curtain is down, so links scrolled beneath the bar stay legible */
+  :global(html.menu-open) .nav { background: var(--ink-2); backdrop-filter: none; transition: background-color 0.3s ease 0.7s; }
   /* Paper pages (menus, legal): ink navigation, paper glass on scroll */
   :global(html[data-tone='paper']:not(.menu-open)) .nav { color: var(--ink); }
   :global(html[data-tone='paper'][data-scrolled]:not(.menu-open)) .nav { background: rgb(239 230 218 / 0.86); box-shadow: 0 1px 0 var(--line-light); }
@@ -195,6 +196,8 @@ const otherLang = other(lang);
     visibility: hidden;
     transition: clip-path 1s var(--ease-in-out), visibility 0s 1s;
     overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
   }
   :global(html.menu-open) .menu {
     clip-path: inset(0 0 0 0 round 0 0 0 0);
@@ -222,7 +225,7 @@ const otherLang = other(lang);
     align-items: center;
     gap: 3rem;
     padding-top: 6.5rem;
-    padding-bottom: 3rem;
+    padding-bottom: calc(3rem + env(safe-area-inset-bottom));
   }
   .menu__inner > * { min-width: 0; }
   .menu__list li { overflow: hidden; border-bottom: 1px solid var(--line-dark); }
