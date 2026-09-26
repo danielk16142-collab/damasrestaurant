@@ -18,6 +18,7 @@ const { image, alt, lang, eyebrow } = Astro.props;
     <div class="ahero__content wrap">
       <p class="eyebrow ahero__eyebrow" data-reveal-load>{eyebrow}</p>
       <h1 class="ahero__title" data-split="load" data-delay="0.15"><slot name="title" /></h1>
+      {Astro.slots.has('lede') && <p class="ahero__lede" data-reveal-load><slot name="lede" /></p>}
       <div class="ahero__foot" data-reveal-load>
         <LiveEvening lang={lang} class="ahero__live" />
         <div class="ahero__actions"><slot name="actions" /></div>
@@ -49,7 +50,7 @@ const { image, alt, lang, eyebrow } = Astro.props;
     position: relative;
     height: 100%;
     display: grid;
-    grid-template-rows: auto 1fr auto auto;
+    grid-template-rows: auto 1fr auto auto auto;
     padding-top: 6.5rem;
     padding-bottom: clamp(1.5rem, 4vh, 3rem);
     pointer-events: none;
@@ -66,8 +67,21 @@ const { image, alt, lang, eyebrow } = Astro.props;
     letter-spacing: -0.025em;
     text-shadow: 0 8px 50px rgb(18 10 13 / 0.6);
   }
-  .ahero__foot {
+  .ahero__lede {
     grid-row: 4;
+    justify-self: center;
+    text-align: center;
+    max-width: 52ch;
+    line-height: 1.4;
+    margin-top: clamp(0.75rem, 2vh, 1.25rem);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--step-1);
+    color: rgb(239 230 218 / 0.9);
+    text-shadow: 0 4px 30px rgb(18 10 13 / 0.7);
+  }
+  .ahero__foot {
+    grid-row: 5;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
@@ -84,6 +98,7 @@ const { image, alt, lang, eyebrow } = Astro.props;
     .ahero__window { clip-path: inset(11% 9% 34% 9% round 40vw 40vw 0 0); }
     .ahero__aside { display: none; }
     .ahero__title { font-size: min(var(--step-6), 10.5svh); }
+    .ahero__lede { font-size: var(--step-0); max-width: 34ch; }
     .ahero__foot { justify-content: center; text-align: center; margin-top: 0.75rem; padding-top: 0.9rem; }
   }
   @media (max-width: 760px) {
@@ -111,6 +126,7 @@ const { image, alt, lang, eyebrow } = Astro.props;
     const tl = gsap.timeline({ scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom bottom', scrub: 0.8 } });
     tl.fromTo(win, { clipPath: from }, { clipPath: 'inset(0% 0% 0% 0% round 0vw 0vw 0vw 0vw)', ease: 'none' }, 0)
       .to(hero.querySelector('.ahero__eyebrow'), { opacity: 0, ease: 'none', duration: 0.3 }, 0)
-      .to(hero.querySelector('.ahero__title'), { yPercent: -18, ease: 'none' }, 0);
+      .to(hero.querySelector('.ahero__title'), { yPercent: -18, ease: 'none' }, 0)
+      .to(hero.querySelector('.ahero__lede'), { opacity: 0, ease: 'none', duration: 0.3 }, 0);
   }
 </script>

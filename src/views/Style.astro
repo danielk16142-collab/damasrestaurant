@@ -38,7 +38,7 @@ const cocktails = drinks.sections[0].items.map((i) => i.name[lang]);
   <ArchHero image={heroImg} alt={fr ? 'Salon de Damas sous des lustres de perles' : 'A Damas salon beneath beaded chandeliers'} lang={lang} eyebrow={fr ? 'Outremont · Montréal' : 'Outremont · Montréal'}>
     <Fragment slot="title">{fr ? <>Un voyage vers la Syrie <em>le temps d’un soir</em></> : <>A journey to Syria, <em>for one evening</em></>}</Fragment>
     <Fragment slot="actions">
-      <a href={url('reserve', lang)} class="btn btn--accent" data-magnetic>{t.reserveTable}</a>
+      <a href={url('reserve', lang)} class="btn btn--accent">{t.reserveTable}</a>
       <a href={url('menus', lang)} class="btn btn--ghost">{t.seeMenus}</a>
     </Fragment>
     <Fragment slot="aside"><span class="eyebrow">Guide MICHELIN</span><span>Bib Gourmand 2025</span></Fragment>
@@ -79,7 +79,7 @@ const cocktails = drinks.sections[0].items.map((i) => i.name[lang]);
   <section class="section wrap tile">
     <p class="eyebrow" data-reveal>03 · {fr ? 'Boutons et liens' : 'Buttons and links'}</p>
     <div class="buttons" data-reveal>
-      <a href="#" class="btn btn--accent" data-magnetic>{t.reserveTable} <span class="arrow">→</span></a>
+      <a href="#" class="btn btn--accent">{t.reserveTable} <span class="arrow">→</span></a>
       <a href="#" class="btn btn--ghost">{t.seeMenus}</a>
       <a href="#" class="btn btn--light">{fr ? 'Offrir une soirée' : 'Give an evening'}</a>
       <button class="btn btn--accent" disabled>{fr ? 'Envoi…' : 'Sending…'}</button>

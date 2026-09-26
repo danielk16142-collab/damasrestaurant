@@ -74,6 +74,7 @@ const c = fr
       description: 'Une soirée syrienne enchantée à Outremont, avenue Van Horne : mezzés, grillades au charbon de bois, menu dégustation et belle cave. Bib Gourmand MICHELIN.',
       heroAlt: 'La grande salle de Damas sous son plafond rouge et ses lanternes de verre ciselé',
       h1: ['Un voyage vers la Syrie', 'le temps d’un soir'],
+      lede: 'Une soirée syrienne enchantée au cœur chic et gastronomique d’Outremont, sur l’avenue Van Horne.',
       salle: {
         hour: '17 h 30', chapter: 'La salle',
         title: ['La', 'salle'],
@@ -96,6 +97,7 @@ const c = fr
       description: 'An enchanted Syrian evening in Outremont, on Van Horne Avenue: mezze, charcoal grills, a tasting menu and a generous cellar. MICHELIN Guide Bib Gourmand.',
       heroAlt: 'The Damas main dining room beneath its red ceiling and cut-glass lanterns',
       h1: ['A journey to Syria', 'for one evening'],
+      lede: 'An enchanted Syrian evening in the chic, gourmet heart of Outremont, on Van Horne Avenue.',
       salle: {
         hour: '5:30 pm', chapter: 'The room',
         title: ['The', 'room'],
@@ -119,8 +121,9 @@ const c = fr
 
   <ArchHero image={heroImg} alt={c.heroAlt} lang={lang} eyebrow="Outremont · Montréal">
     <Fragment slot="title">{c.h1[0]}{' '}<em>{c.h1[1]}</em></Fragment>
+    <Fragment slot="lede">{c.lede}</Fragment>
     <Fragment slot="actions">
-      <a href={url('reserve', lang)} class="btn btn--accent" data-magnetic>{t.reserveTable}</a>
+      <a href={url('reserve', lang)} class="btn btn--accent">{t.reserveTable}</a>
       <a href={url('menus', lang)} class="btn btn--ghost">{t.seeMenus}</a>
     </Fragment>
     <Fragment slot="aside">

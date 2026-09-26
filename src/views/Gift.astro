@@ -27,7 +27,7 @@ const description = fr
         <h1 data-split="load">{fr ? <>Offrir <em>une soirée</em></> : <>Give <em>an evening</em></>}</h1>
         <p class="lede" data-reveal-load>{fr ? 'Vous aimez Damas ? Vos proches apprécieront sûrement une soirée chez nous, eux aussi. Offrez-leur un monde de saveurs, au montant de votre choix.' : 'Love Damas? We bet your loved ones will enjoy an evening with us, too. Give them a world of flavours, for the amount of your choice.'}</p>
         <div class="gift__actions" data-reveal-load>
-          <a href={integrations.giftCardUrl(lang)} class="btn btn--accent" target="_blank" rel="noopener" data-magnetic>{fr ? 'Offrir une carte' : 'Send a gift card'} <span class="arrow">↗</span></a>
+          <a href={integrations.giftCardUrl(lang)} class="btn btn--accent" target="_blank" rel="noopener">{fr ? 'Offrir une carte' : 'Send a gift card'} <span class="arrow">↗</span></a>
           <a href={url('menus', lang)} class="link">{t.seeMenus}</a>
         </div>
         <p class="gift__note muted" data-reveal-load>{fr ? 'Achat sécurisé chez notre partenaire Treater ; la carte est envoyée par courriel.' : 'Secure purchase through our partner Treater; the card is sent by email.'}</p>

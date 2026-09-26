@@ -7,7 +7,7 @@ interface Props { lang: Lang }
 const { lang } = Astro.props;
 const t = useT(lang);
 ---
-<a href={url('reserve', lang)} class="rfloat" data-magnetic data-reserve-float>
+<a href={url('reserve', lang)} class="rfloat" data-reserve-float>
   <span class="rfloat__dot" aria-hidden="true"></span>{t.reserveTable}
 </a>
 <nav class="rbar" aria-label={t.reserve}>

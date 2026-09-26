@@ -42,7 +42,7 @@ const otherLang = other(lang);
       ))}
     </nav>
     <div class="nav__actions">
-      <a href={url('reserve', lang)} class="btn btn--accent nav__cta" data-magnetic>{t.reserve}</a>
+      <a href={url('reserve', lang)} class="btn btn--accent nav__cta">{t.reserve}</a>
       <a href={routes[page][otherLang]} class="nav__lang" hreflang={otherLang} lang={otherLang} aria-label={t.langSwitchLabel}>{t.langSwitchShort}</a>
       <button class="nav__burger" aria-expanded="false" aria-controls="menu" aria-label={t.openMenu} data-open={t.openMenu} data-close={t.closeMenu}>
         <span></span><span></span>
