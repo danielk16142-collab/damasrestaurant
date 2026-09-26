@@ -1,0 +1,7 @@
+---
+// The tulip-and-carnation emblem from the Damas brand square. It's a large path
+// (≈140 KB), so it ships as a cached static file per colour rather than inline.
+interface Props { class?: string; color?: 'red' | 'brass' | 'cream' | 'oxblood'; loading?: 'lazy' | 'eager' }
+const { class: cls, color = 'red', loading = 'lazy' } = Astro.props;
+---
+<img class={cls} src={`/brand/emblem-${color}.svg`} alt="" width="895" height="658" loading={loading} decoding="async" />

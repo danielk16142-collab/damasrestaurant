@@ -1,0 +1,10 @@
+---
+// The Damas wordmark, traced from the brand artwork (tools/trace-logo.mjs).
+// Inline so it takes currentColor; aria-hidden because links around it carry the label.
+import raw from '../assets/brand/wordmark.svg?raw';
+interface Props { class?: string }
+const { class: cls } = Astro.props;
+const viewBox = raw.match(/viewBox="([^"]+)"/)![1];
+const d = raw.match(/ d="([^"]+)"/)![1];
+---
+<svg class={cls} viewBox={viewBox} aria-hidden="true" focusable="false"><path fill="currentColor" d={d} /></svg>

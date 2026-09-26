@@ -1,12 +1,14 @@
 ---
-import Base from '../layouts/Base.astro';
-import View from '../views/Home.astro';
-import { meta, breadcrumb } from '../data/seo';
-const lang = 'fr' as const;
-const page = 'home' as const;
-const m = meta[page][lang];
-const jsonLd = [breadcrumb(page, lang)].filter(Boolean) as Record<string, unknown>[];
+// "/" → "/fr/" (a 308 in vercel.json; this page covers static previews).
 ---
-<Base lang={lang} page={page} title={m.title} description={m.description} jsonLd={jsonLd} intro>
-  <View lang={lang} />
-</Base>
+<!doctype html>
+<html lang="fr-CA">
+  <head>
+    <meta charset="utf-8" />
+    <title>Restaurant Damas</title>
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href="https://www.damas.ca/fr/" />
+    <meta http-equiv="refresh" content="0; url=/fr/" />
+  </head>
+  <body><a href="/fr/">Restaurant Damas</a></body>
+</html>

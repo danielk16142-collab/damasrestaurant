@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /fr/style/
+Disallow: /en/style/
+
+Sitemap: https://www.damas.ca/sitemap-index.xml

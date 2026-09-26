@@ -1,0 +1,14 @@
+---
+import Wordmark from './Wordmark.astro';
+import { url, useT, type Lang } from '../lib/i18n';
+interface Props { class?: string; lang: Lang }
+const { class: cls, lang } = Astro.props;
+---
+<a href={url('home', lang)} class:list={['logo', cls]} aria-label={useT(lang).home}>
+  <Wordmark class="logo__word" />
+</a>
+<style>
+  .logo { display: inline-flex; align-items: center; color: var(--paper); transition: color 0.4s; }
+  .logo:hover { color: var(--accent); }
+  .logo :global(.logo__word) { width: clamp(5.25rem, 4.5rem + 2.5vw, 7rem); height: auto; }
+</style>

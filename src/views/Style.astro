@@ -1,0 +1,169 @@
+---
+// Style tile (premium-site-kit quality-bar §2): type, colours, buttons, image
+// treatments, the menu switcher + dropdown and one motion section, for sign-off
+// before full pages. Not indexed.
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import ArchHero from '../components/ArchHero.astro';
+import MenuSwitcher from '../components/MenuSwitcher.astro';
+import MenuSection from '../components/MenuSection.astro';
+import Rosette from '../components/Rosette.astro';
+import Emblem from '../components/Emblem.astro';
+import { dinner, drinks } from '../lib/menus';
+import { site } from '../lib/content';
+import { url, useT, type Lang } from '../lib/i18n';
+import heroImg from '../assets/photos/salon-lanternes.jpg';
+import archImg from '../assets/photos/moucharabieh.jpg';
+import parallaxImg from '../assets/photos/salle-plafond.jpg';
+import cardImg from '../assets/photos/mezzes-cuivre.jpg';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useT(lang);
+const fr = lang === 'fr';
+
+const swatches = [
+  { name: 'Night', token: '--ink', hex: '#120A0D', note: fr ? 'Fond principal' : 'Main ground' },
+  { name: 'Cream', token: '--paper', hex: '#EFE6DA', note: '15.8 : 1' },
+  { name: 'Amber', token: '--accent', hex: '#E8A54B', note: '9.2 : 1' },
+  { name: 'Brass', token: '--brass', hex: '#B98B4E', note: '6.4 : 1' },
+  { name: 'Taupe', token: '--mist', hex: '#A99C8F', note: '7.3 : 1' },
+  { name: 'Oxblood', token: '--oxblood', hex: '#3E0F1C', note: fr ? 'Pied de page, salons' : 'Footer, salons' },
+  { name: 'Damask', token: '--damask', hex: '#D1232A', note: fr ? 'Ornement seulement' : 'Ornament only' },
+];
+const steps = [6, 5, 4, 3, 2, 1, 0, -1, -2];
+const cocktails = drinks.sections[0].items.map((i) => i.name[lang]);
+---
+<Base lang={lang} page="style" title={`Style tile — ${site.name}`} description="Style tile" noindex>
+  <ArchHero image={heroImg} alt={fr ? 'Salon de Damas sous des lustres de perles' : 'A Damas salon beneath beaded chandeliers'} lang={lang} eyebrow={fr ? 'Outremont · Montréal' : 'Outremont · Montréal'}>
+    <Fragment slot="title">{fr ? <>Un voyage vers la Syrie <em>le temps d’un soir</em></> : <>A journey to Syria, <em>for one evening</em></>}</Fragment>
+    <Fragment slot="actions">
+      <a href={url('reserve', lang)} class="btn btn--accent" data-magnetic>{t.reserveTable}</a>
+      <a href={url('menus', lang)} class="btn btn--ghost">{t.seeMenus}</a>
+    </Fragment>
+    <Fragment slot="aside"><span class="eyebrow">Guide MICHELIN</span><span>Bib Gourmand 2025</span></Fragment>
+  </ArchHero>
+
+  <section class="section wrap tile">
+    <p class="eyebrow" data-reveal>01 · {fr ? 'Couleurs' : 'Colours'}</p>
+    <ul class="swatches" role="list">
+      {swatches.map((s) => (
+        <li data-reveal>
+          <span class="swatch" style={`background:${s.hex}`}></span>
+          <strong>{s.name}</strong>
+          <code>{s.token} · {s.hex}</code>
+          <span class="muted">{s.note}</span>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="section wrap tile">
+    <p class="eyebrow" data-reveal>02 · Typographie — EB Garamond · Karla · <span class="arabic" lang="ar">عارف رقعة</span></p>
+    <div class="specimen">
+      {steps.map((n) => (
+        <div class="spec" data-reveal>
+          <code>--step-{n}</code>
+          {n >= 1
+            ? <p class="spec__display" style={`font-size:var(--step-${n})`}>{fr ? <>Une nuit <em>à Damas</em></> : <>A night <em>in Damascus</em></>}</p>
+            : <p style={`font-size:var(--step-${n})`}>{fr ? 'Des plats frais, épicés et composés, où les légumes, les fruits et même les fleurs jouent un rôle essentiel.' : 'Fresh, spiced, composed dishes, where vegetables, fruit and even flowers play a central role.'}</p>}
+        </div>
+      ))}
+    </div>
+    <div class="ar-row" data-reveal>
+      <span class="ar-accent" lang="ar">١ ٢ ٣ ٤ ٥ ٦ ٧</span>
+      <span class="ar-accent" lang="ar">كبّة · فتّوش · محمّرة · كنافة</span>
+    </div>
+  </section>
+
+  <section class="section wrap tile">
+    <p class="eyebrow" data-reveal>03 · {fr ? 'Boutons et liens' : 'Buttons and links'}</p>
+    <div class="buttons" data-reveal>
+      <a href="#" class="btn btn--accent" data-magnetic>{t.reserveTable} <span class="arrow">→</span></a>
+      <a href="#" class="btn btn--ghost">{t.seeMenus}</a>
+      <a href="#" class="btn btn--light">{fr ? 'Offrir une soirée' : 'Give an evening'}</a>
+      <button class="btn btn--accent" disabled>{fr ? 'Envoi…' : 'Sending…'}</button>
+      <a href="#" class="link">{t.downloadPdf} ↓</a>
+    </div>
+  </section>
+
+  <section class="section wrap tile" data-blooms>
+    <p class="eyebrow" data-reveal>04 · {fr ? 'Images : arche, parallaxe, survol' : 'Images: arch, parallax, hover'}</p>
+    <div class="imgs">
+      <figure class="arch-frame" data-clip><Image src={archImg} alt="" widths={[480, 800]} sizes="(max-width: 800px) 80vw, 30vw" /></figure>
+      <figure class="par-frame media" data-parallax="10"><Image src={parallaxImg} alt="" widths={[640, 1100]} sizes="(max-width: 800px) 90vw, 40vw" /></figure>
+      <figure class="card-frame"><Image src={cardImg} alt="" widths={[400, 700]} sizes="(max-width: 800px) 70vw, 22vw" /><figcaption><span class="arabic ar-accent" lang="ar">مازة</span>{fr ? 'Plateau de mezzés du chef' : 'Chef’s mezzes platter'}</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="paper menus-tile">
+    <div class="section wrap">
+      <p class="eyebrow" data-reveal>05 · {fr ? 'Menus : sélecteur et menus déroulants' : 'Menus: switcher and dropdowns'}</p>
+    </div>
+    <MenuSwitcher lang={lang} current="menu-dinner" />
+    <div class="wrap menus-tile__list">
+      <MenuSection section={dinner.sections[0]} lang={lang} index={0} open />
+      <MenuSection section={dinner.sections[1]} lang={lang} index={1} />
+    </div>
+  </section>
+
+  <section class="section wrap tile" data-blooms>
+    <p class="eyebrow" data-reveal>06 · {fr ? 'Mouvement' : 'Motion'}</p>
+    <Rosette class="tile__rosette" />
+    <p class="statement" data-words>{fr
+      ? 'Au restaurant Damas, un microcosme au confort unique vous accueillera avec des couleurs chaudes, des velours, du bois sculpté et des lumières multicolores.'
+      : 'At Damas, a uniquely comfortable little world welcomes you with warm colours, velvet, carved wood and lights of every colour.'}</p>
+    <div class="numerals">
+      <p><span class="numeral num" data-count="2010" data-nogroup>2010</span><span class="eyebrow">{fr ? 'Ouverture' : 'Opened'}</span></p>
+      <p><span class="numeral num" data-count="100">100</span><span class="eyebrow">{fr ? 'Places' : 'Seats'}</span></p>
+      <p><span class="numeral num" data-count="70">70</span><span class="eyebrow">{fr ? 'En terrasse' : 'On the terrace'}</span></p>
+    </div>
+  </section>
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee__row">{[0, 1].map(() => <span>{cocktails.map((c) => <><em>{c}</em><i>✦</i></>)}</span>)}</div>
+  </div>
+  <Emblem class="tile__emblem" color="oxblood" />
+</Base>
+
+<style>
+  .tile { display: grid; gap: 2.5rem; }
+  .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); gap: 1.5rem; }
+  .swatches li { display: grid; gap: 0.35rem; }
+  .swatch { aspect-ratio: 4 / 3; border-radius: var(--radius); box-shadow: inset 0 0 0 1px rgb(239 230 218 / 0.15); }
+  .swatches code, .spec code { font-size: var(--step--2); color: var(--mist); }
+  .specimen { display: grid; gap: 1.25rem; }
+  .spec { display: grid; grid-template-columns: 6rem minmax(0, 1fr); gap: 1.5rem; align-items: baseline; border-top: 1px solid var(--line-dark); padding-top: 1rem; }
+  .spec p { max-width: 62ch; }
+  .spec__display { font-family: var(--font-display); line-height: 1.08; letter-spacing: -0.015em; }
+  .spec__display em { font-style: italic; color: var(--accent); }
+  .ar-row { display: flex; flex-wrap: wrap; gap: 2rem; font-size: var(--step-3); }
+  .buttons { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; }
+  .imgs { display: grid; grid-template-columns: 1fr 1.3fr 0.8fr; gap: 2rem; align-items: end; }
+  .imgs figure { margin: 0; }
+  .arch-frame { aspect-ratio: 3 / 4; border-radius: 50% 50% 0 0 / 30% 30% 0 0; overflow: hidden; }
+  .arch-frame :global(img), .card-frame :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .par-frame { aspect-ratio: 16 / 11; }
+  .card-frame { display: grid; gap: 1rem; }
+  .card-frame :global(img) { aspect-ratio: 4 / 5; border-radius: 50% 50% 0 0 / 24% 24% 0 0; transition: transform 1.4s var(--ease-out); }
+  .card-frame:hover :global(img) { transform: scale(1.05); }
+  .card-frame figcaption { display: grid; gap: 0.4rem; font-family: var(--font-display); font-size: var(--step-1); }
+  .card-frame .ar-accent { font-size: var(--step-3); justify-self: start; }
+  .menus-tile { padding-bottom: var(--section); }
+  .menus-tile .section { padding-bottom: 1rem; }
+  .menus-tile__list { margin-top: 2rem; }
+  :global(.tile__rosette) { width: 72px; color: var(--damask); }
+  .statement { font-family: var(--font-display); font-size: var(--step-4); line-height: 1.15; max-width: 24ch; }
+  .numerals { display: flex; flex-wrap: wrap; gap: 2rem 5rem; }
+  .numerals p { display: grid; gap: 0.5rem; }
+  .numeral { font-size: var(--step-6); line-height: 0.9; color: var(--accent); font-style: italic; }
+  .marquee { overflow: hidden; border-block: 1px solid var(--line-dark); padding-block: 1.5rem; }
+  .marquee__row { display: flex; width: max-content; animation: marquee 50s linear infinite; }
+  .marquee__row:hover { animation-play-state: paused; }
+  .marquee__row span { display: flex; align-items: center; gap: 2.5rem; padding-right: 2.5rem; font-family: var(--font-display); font-size: var(--step-5); white-space: nowrap; }
+  .marquee__row em { color: transparent; -webkit-text-stroke: 1px var(--accent); font-style: italic; }
+  .marquee__row i { font-style: normal; font-size: 0.4em; color: var(--damask); }
+  @keyframes marquee { to { transform: translateX(-50%); } }
+  :global(.tile__emblem) { width: min(900px, 90vw); margin: var(--section) auto; opacity: 0.8; }
+  @media (max-width: 800px) { .imgs { grid-template-columns: 1fr; } .spec { grid-template-columns: 1fr; gap: 0.25rem; } }
+  @media (prefers-reduced-motion: reduce) { .marquee__row { animation: none; } }
+</style>

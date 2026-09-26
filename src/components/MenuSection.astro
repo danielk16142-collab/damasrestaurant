@@ -1,0 +1,109 @@
+---
+// One menu section as a dropdown (U3, after Nocturne): roman numeral, title,
+// item count and a round + / × toggle; inside, each dish with a dotted leader
+// to its price. The dish name shows in the page language, with the other
+// language in italics beneath when it differs, as on the printed menus.
+import type { Section } from '../lib/menus';
+import { useT, type Lang } from '../lib/i18n';
+interface Props { section: Section; lang: Lang; index: number; open?: boolean }
+const { section, lang, index, open = false } = Astro.props;
+const t = useT(lang);
+const alt = lang === 'fr' ? 'en' : 'fr';
+const roman = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x', 'xi', 'xii', 'xiii', 'xiv', 'xv'][index] ?? String(index + 1);
+---
+<details class="msec" open={open} id={section.id} data-msec>
+  <summary class="msec__head">
+    <span class="msec__num">{roman}.</span>
+    <h2 class="msec__title">{section.title[lang]}</h2>
+    <span class="msec__count">{t.items(section.items.length)}</span>
+    <span class="msec__toggle" aria-hidden="true"><i></i><i></i></span>
+  </summary>
+  <div class="msec__body">
+    <div>
+      <ul class:list={['msec__list', { 'msec__list--one': section.cols === 1 }]} role="list">
+        {section.items.map((it) => (
+          <li class="dish">
+            <div class="dish__row">
+              <h3 class="dish__name">{it.name[lang]}</h3>
+              <span class="dish__dots" aria-hidden="true"></span>
+              {it.price && <span class="dish__price num">{it.price}</span>}
+            </div>
+            {it.name[alt] !== it.name[lang] && <p class="dish__alt" lang={alt === 'fr' ? 'fr-CA' : 'en-CA'}>{it.name[alt]}</p>}
+            {it.desc?.[lang] && <p class="dish__desc">{it.desc[lang]}</p>}
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</details>
+
+<style>
+  .msec { border-top: 1px solid var(--line-light); }
+  .msec:last-of-type { border-bottom: 1px solid var(--line-light); }
+  .msec__head {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr) auto 2.75rem;
+    align-items: center;
+    gap: 1rem;
+    padding-block: clamp(1.25rem, 2.5vw, 2rem);
+    cursor: pointer;
+    list-style: none;
+  }
+  .msec__head::-webkit-details-marker { display: none; }
+  .msec__num { font-family: var(--font-display); font-style: italic; font-size: var(--step-1); color: var(--accent-deep); }
+  .msec__title { font-size: var(--step-3); line-height: 1.1; transition: color 0.4s, transform 0.6s var(--ease-out); }
+  .msec__head:hover .msec__title { color: var(--accent-deep); transform: translateX(0.25rem); }
+  .msec[open] .msec__title { font-style: italic; }
+  .msec__count { font-size: var(--step--2); font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--stone); white-space: nowrap; }
+  .msec__toggle {
+    position: relative;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1px var(--line-light);
+    transition: background 0.4s, box-shadow 0.4s, transform 0.6s var(--ease-out);
+  }
+  .msec__toggle i { position: absolute; left: 50%; top: 50%; width: 12px; height: 1px; margin-left: -6px; background: currentColor; transition: transform 0.6s var(--ease-out); }
+  .msec__toggle i:last-child { transform: rotate(90deg); }
+  .msec[open] .msec__toggle { transform: rotate(45deg); background: var(--ink); color: var(--paper); box-shadow: none; }
+  .msec__head:hover .msec__toggle { box-shadow: inset 0 0 0 1px var(--ink); }
+
+  .msec__body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.7s var(--ease-out); }
+  .msec__body > div { overflow: hidden; min-height: 0; }
+  .msec[open] .msec__body { grid-template-rows: 1fr; }
+  .msec__list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.75rem 4rem; padding: 0 0 clamp(2rem, 4vw, 3rem) 4rem; }
+  .msec__list--one { grid-template-columns: minmax(0, 46rem); }
+  .dish__row { display: flex; align-items: baseline; gap: 0.6rem; }
+  .dish__name { font-size: var(--step-1); line-height: 1.2; letter-spacing: 0; min-width: 0; }
+  .dish__dots { flex: 1; min-width: 1.5rem; border-bottom: 1px dotted rgb(18 10 13 / 0.3); transform: translateY(-0.3em); }
+  .dish__price { font-size: var(--step-1); color: var(--accent-deep); white-space: nowrap; }
+  .dish__alt { font-family: var(--font-display); font-style: italic; color: var(--stone); margin-top: 0.1rem; }
+  .dish__desc { color: var(--stone); font-size: var(--step--1); margin-top: 0.3rem; max-width: 46ch; }
+  @media (max-width: 800px) {
+    .msec__head { grid-template-columns: 2.25rem minmax(0, 1fr) 2.75rem; }
+    .msec__count { display: none; }
+    .msec__list { grid-template-columns: minmax(0, 1fr); padding-left: 0; }
+  }
+</style>
+
+<script>
+  // <details> closes instantly; delay the close so the height can animate.
+  document.querySelectorAll<HTMLDetailsElement>('[data-msec]').forEach((d) => {
+    const summary = d.querySelector('summary')!;
+    const body = d.querySelector<HTMLElement>('.msec__body')!;
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    summary.addEventListener('click', (e) => {
+      if (reduce) return;
+      e.preventDefault();
+      if (d.open) {
+        body.style.gridTemplateRows = '0fr';
+        setTimeout(() => { d.open = false; body.style.gridTemplateRows = ''; window.dispatchEvent(new Event('damas:layout')); }, 500);
+      } else {
+        d.open = true;
+        body.style.gridTemplateRows = '0fr';
+        requestAnimationFrame(() => requestAnimationFrame(() => { body.style.gridTemplateRows = ''; }));
+        setTimeout(() => window.dispatchEvent(new Event('damas:layout')), 750);
+      }
+    });
+  });
+</script>

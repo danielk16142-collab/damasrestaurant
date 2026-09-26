@@ -1,0 +1,64 @@
+---
+/**
+ * Shared layout for /privacy, /cookies and /terms (see references/legal.md).
+ * Sections are plain <section><h2 id>…</h2>…</section> in the default slot;
+ * pass `toc` to list them in a sticky contents column.
+ */
+import Base from '../layouts/Base.astro';
+import PageHero from './PageHero.astro';
+import { legal } from '../lib/content';
+
+interface Props {
+  title: string;
+  description: string;
+  toc?: { id: string; label: string }[];
+}
+const { title, description, toc = [] } = Astro.props;
+---
+<Base title={title} description={description}>
+  <PageHero eyebrow="Legal">
+    <Fragment slot="title">{title}</Fragment>
+    <p class="muted">Last updated {legal.updated}</p>
+  </PageHero>
+
+  <div class="legal wrap">
+    {toc.length > 0 && (
+      <nav class="legal__toc" aria-label="On this page">
+        <p class="eyebrow">On this page</p>
+        <ol role="list">{toc.map((t) => <li><a href={`#${t.id}`}>{t.label}</a></li>)}</ol>
+      </nav>
+    )}
+    <article class="legal__body">
+      <slot />
+    </article>
+  </div>
+</Base>
+
+<style>
+  .legal {
+    display: grid;
+    grid-template-columns: minmax(12rem, 1fr) minmax(0, 3fr);
+    gap: 4rem;
+    padding-block: var(--section);
+  }
+  .legal__toc { position: sticky; top: 7rem; align-self: start; }
+  .legal__toc ol { display: grid; gap: 0.6rem; margin-top: 1.2rem; font-size: var(--step--1); }
+  .legal__toc a { color: var(--stone); transition: color 0.3s; }
+  .legal__toc a:hover { color: var(--ink); }
+  .legal__body { max-width: 68ch; min-width: 0; }
+  .legal__body :global(section + section) { margin-top: 3rem; }
+  .legal__body :global(h2) { font-size: var(--step-2); margin-bottom: 1rem; scroll-margin-top: 7rem; }
+  .legal__body :global(p),
+  .legal__body :global(li) { color: var(--stone); }
+  .legal__body :global(p + p),
+  .legal__body :global(ul) { margin-top: 0.9rem; }
+  .legal__body :global(ul) { padding-left: 1.2rem; display: grid; gap: 0.4rem; }
+  .legal__body :global(a) { text-decoration: underline; text-underline-offset: 3px; }
+  .legal__body :global(table) { display: block; overflow-x: auto; width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: var(--step--1); }
+  .legal__body :global(th),
+  .legal__body :global(td) { text-align: left; padding: 0.7rem 0.5rem; border-bottom: 1px solid var(--line-light); vertical-align: top; }
+  @media (max-width: 860px) {
+    .legal { grid-template-columns: 1fr; }
+    .legal__toc { display: none; }
+  }
+</style>

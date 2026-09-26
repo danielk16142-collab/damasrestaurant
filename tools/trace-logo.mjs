@@ -1,5 +1,5 @@
 // One-off: vectorize the Damas wordmark + floral emblem from the brand square.
-// Usage: node scripts/trace-logo.mjs  → writes src/assets/brand/*.svg
+// Usage: node tools/trace-logo.mjs  → writes src/assets/brand/*.svg
 import sharp from 'sharp';
 import potrace from 'potrace';
 import fs from 'fs';
@@ -27,7 +27,7 @@ function bbox(d) {
   const xs = nums.filter((_, i) => i % 2 === 0), ys = nums.filter((_, i) => i % 2 === 1);
   return [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)];
 }
-const word = await traceBand(4, (v) => v > 185, { turdSize: 40, optTolerance: 0.3 });
+const word = await traceBand(3, (v) => v > 185, { turdSize: 60, optTolerance: 1.2, alphaMax: 1.1 });
 const flora = await traceBand(2, (v, h) => v > 50 && v <= 185 && h < 8, { turdSize: 400, optTolerance: 1.2, alphaMax: 1.1 });
 const [x0, y0, x1, y1] = bbox(word);
 const pad = 4;
@@ -35,5 +35,5 @@ const r = (n) => Math.round(n * 10) / 10;
 const wvb = [x0 - pad, y0 - pad, x1 - x0 + pad * 2, y1 - y0 + pad * 2].map(r).join(" ");
 fs.writeFileSync('src/assets/brand/wordmark.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${wvb}"><path fill="currentColor" d="${word}"/></svg>\n`);
 const [fx0, fy0, fx1, fy1] = bbox(flora);
-fs.writeFileSync('src/assets/brand/emblem.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${fx0 - pad} ${fy0 - pad} ${fx1 - fx0 + pad * 2} ${fy1 - fy0 + pad * 2}"><path fill="currentColor" fill-rule="evenodd" d="${flora}"/></svg>\n`);
+if (!process.env.WORD_ONLY) fs.writeFileSync('src/assets/brand/emblem.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${fx0 - pad} ${fy0 - pad} ${fx1 - fx0 + pad * 2} ${fy1 - fy0 + pad * 2}"><path fill="currentColor" fill-rule="evenodd" d="${flora}"/></svg>\n`);
 console.log('wordmark', word.length, wvb, '| emblem', flora.length);

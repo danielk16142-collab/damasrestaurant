@@ -7,7 +7,7 @@ export type Dish = { name: L; desc?: L; price?: string };
 export type Section = { id: string; title: L; items: Dish[]; cols?: 1 | 2 };
 export type Menu = { id: string; title: L; intro?: L; note?: L; pdf?: string; sections: Section[] };
 
-const same = (s: string): L => ({ fr: s, en: s });
+export const same = (s: string): L => ({ fr: s, en: s });
 
 export const dinner: Menu = {
   id: 'diner',
@@ -16,7 +16,7 @@ export const dinner: Menu = {
     fr: 'Les mezzés se partagent au centre de la table, à la syrienne, avant les spécialités et les grillades sur charbon de bois.',
     en: 'Mezzes are shared at the centre of the table, the Syrian way, before the specialties and the charcoal grills.',
   },
-  pdf: '/menus/damas-menu-diner.pdf',
+  pdf: '/menus/diner.pdf',
   sections: [
     {
       id: 'mezzes-froids',
@@ -148,7 +148,7 @@ export const brunch: Menu = {
     en: 'On weekends, the house wakes up to morning mezzes, the bread oven and the grill.',
   },
   note: { fr: 'Menu dégustation brunch 75 · Accord vin 55', en: 'Brunch tasting menu 75 · Wine pairing 55' },
-  pdf: '/menus/damas-menu-brunch.pdf',
+  pdf: '/menus/brunch.pdf',
   sections: [
     {
       id: 'brunch-mezzes',
@@ -208,7 +208,7 @@ export const brunch: Menu = {
 export const desserts: Menu = {
   id: 'desserts',
   title: same('Desserts'),
-  pdf: '/menus/damas-desserts.pdf',
+  pdf: '/menus/desserts.pdf',
   sections: [
     {
       id: 'desserts-carte',
@@ -300,4 +300,142 @@ export const levantWines = [
 ];
 export const araks = ['Massaya', 'Kefraya', 'Al-Karram', 'Brun', 'Ksarak', 'Ixsir'];
 
-export const winePdf = '/menus/damas-carte-des-vins.pdf';
+export const winePdf = '/menus/vins.pdf';
+
+export const brunchDrinks: Menu = {
+  id: 'brunch-boissons',
+  title: { fr: 'Boissons du brunch', en: 'Brunch drinks' },
+  pdf: '/menus/brunch-boissons.pdf',
+  sections: [
+    {
+      id: 'brunch-cocktails',
+      title: same('Cocktails'),
+      items: [
+        { name: { fr: 'Mimosa gingembre', en: 'Ginger mimosa' }, price: '15' },
+        { name: { fr: 'Thé miel fizz', en: 'Honey tea fizz' }, price: '17' },
+        { name: same('Silk Road Caesar'), desc: { fr: 'Bloody Caesar au za’atar', en: 'Bloody Caesar with za’atar' }, price: '18' },
+        { name: { fr: 'Negroni infusé au café', en: 'Coffee Negroni' }, price: '18' },
+        { name: { fr: 'Arak pamplemousse', en: 'Arak grapefruit' }, price: '18' },
+        { name: { fr: 'Espresso martini framboise', en: 'Raspberry espresso martini' }, price: '20' },
+        { name: { fr: 'Hibiscus Sipper au gin', en: 'Hibiscus Sipper with gin' }, price: '22' },
+        { name: same('Aleppo Tequila Sour'), price: '22' },
+        { name: { fr: 'Beet al-Sham au gin', en: 'Beet al-Sham with gin' }, price: '25' },
+      ],
+    },
+    {
+      id: 'brunch-mocktails',
+      title: { fr: 'Sans alcool', en: 'Zero proof' },
+      items: [
+        { name: same('Hibiscus'), price: '14' },
+        { name: same('Aleppo Sour'), price: '14' },
+        { name: same('Gingembre Rose'), price: '14' },
+        { name: { fr: 'Chaï glacé', en: 'Iced chai' }, price: '11' },
+        { name: { fr: 'Qamar al-Din abricot', en: 'Qamar al-Din apricot' }, price: '10' },
+      ],
+    },
+    {
+      id: 'jus',
+      title: { fr: 'Jus frais', en: 'Fresh juices' },
+      items: [
+        { name: same('Orange'), price: '9' },
+        { name: { fr: 'Pamplemousse', en: 'Grapefruit' }, price: '9' },
+        { name: { fr: 'Betterave', en: 'Beet' }, price: '10' },
+        { name: { fr: 'Carotte et curcuma', en: 'Carrot turmeric' }, price: '10' },
+        { name: same('Smoothie'), price: '11' },
+      ],
+    },
+    {
+      id: 'cafes-signatures',
+      title: { fr: 'Cafés signatures', en: 'Signature coffees' },
+      items: [
+        { name: { fr: 'Cappuccino au baklava', en: 'Baklava cappuccino' }, price: '7' },
+        { name: { fr: 'Cappuccino rose', en: 'Rose cappuccino' }, price: '7' },
+        { name: { fr: 'Cappuccino à la cardamome', en: 'Cardamom cappuccino' }, price: '7' },
+        { name: { fr: 'Latte à la pistache', en: 'Pistachio latte' }, price: '7' },
+        { name: { fr: 'Latte caramel', en: 'Caramel latte' }, price: '7' },
+        { name: { fr: 'Matcha à la fleur d’oranger', en: 'Orange blossom matcha' }, price: '9' },
+      ],
+    },
+    {
+      id: 'cafes-classiques',
+      title: { fr: 'Cafés classiques', en: 'Classic coffees' },
+      items: [
+        { name: same('Espresso / Americano'), price: '4' },
+        { name: same('Macchiato / Cortado'), price: '5' },
+        { name: same('Latte'), price: '6' },
+        { name: same('Cappuccino'), price: '6' },
+        { name: same('Mocha'), price: '7' },
+        { name: same('Matcha'), price: '8' },
+      ],
+    },
+    {
+      id: 'brunch-bieres',
+      title: { fr: 'Bières et canettes', en: 'Beer & cans' },
+      items: [
+        { name: same('961 Pilsner'), desc: { fr: 'Liban', en: 'Lebanon' }, price: '13' },
+        { name: same('961 Lager'), desc: { fr: 'Liban', en: 'Lebanon' }, price: '13' },
+        { name: same('961 LPA'), desc: { fr: 'Liban', en: 'Lebanon' }, price: '13' },
+        { name: same('Wills Ghost Farm IPA'), desc: same('Montréal'), price: '15' },
+        { name: same('Desrochers Beez Pourpre'), desc: same('Laurentides'), price: '13' },
+        { name: { fr: 'Pit Caribou sans alcool', en: 'Pit Caribou non-alcoholic' }, desc: same('Gaspé · 0,5 %'), price: '12' },
+        { name: same('Fin Soda Poire'), desc: same('Montréal · 0 %'), price: '12' },
+        { name: { fr: 'Eau d’Épinette Harrington', en: 'Harrington spruce soda' }, desc: same('Laurentides · 0 %'), price: '12' },
+      ],
+    },
+  ],
+};
+
+/** The five menus, in switcher order. `key` is the route key in i18n.ts. */
+export type MenuPage = {
+  key: 'menu-dinner' | 'menu-brunch' | 'menu-brunch-drinks' | 'menu-desserts' | 'menu-wine';
+  label: L;
+  lede: L;
+  pdf: string;
+  menu?: Menu;
+  tasting?: boolean;
+};
+
+/** Dinner combines the food, the tasting menu and the bar, like the printed dinner menu. */
+export const dinnerFull: Menu = {
+  ...dinner,
+  title: { fr: 'Dîner', en: 'Dinner' },
+  sections: [...dinner.sections, ...drinks.sections],
+};
+
+export const menuPages: MenuPage[] = [
+  {
+    key: 'menu-dinner',
+    label: { fr: 'Dîner', en: 'Dinner' },
+    lede: { fr: 'Cocktails, mezze, grillades et menu dégustation.', en: 'Cocktails, mezze, grills and tasting menu.' },
+    pdf: '/menus/diner.pdf',
+    menu: dinnerFull,
+    tasting: true,
+  },
+  {
+    key: 'menu-brunch',
+    label: same('Brunch'),
+    lede: { fr: 'Samedi et dimanche.', en: 'Saturday and Sunday.' },
+    pdf: '/menus/brunch.pdf',
+    menu: brunch,
+  },
+  {
+    key: 'menu-brunch-drinks',
+    label: { fr: 'Boissons du brunch', en: 'Brunch drinks' },
+    lede: { fr: 'Cafés, cocktails et sans alcool.', en: 'Coffees, cocktails and zero proof.' },
+    pdf: '/menus/brunch-boissons.pdf',
+    menu: brunchDrinks,
+  },
+  {
+    key: 'menu-desserts',
+    label: same('Desserts'),
+    lede: { fr: 'Eau de rose, fleur d’oranger, cardamome.', en: 'Rosewater, orange blossom, cardamom.' },
+    pdf: '/menus/desserts.pdf',
+    menu: desserts,
+  },
+  {
+    key: 'menu-wine',
+    label: { fr: 'Vins', en: 'Wine' },
+    lede: { fr: 'Cave syrienne, libanaise et d’ailleurs.', en: 'Syrian, Lebanese and beyond.' },
+    pdf: '/menus/vins.pdf',
+  },
+];

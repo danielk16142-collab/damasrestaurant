@@ -1,0 +1,68 @@
+---
+// "Il est 19 h 42 à Outremont · Ouvert ce soir jusqu'à 22 h" (after Flor Porto's
+// local-time line). Computed in the browser in Montréal time from site.hours;
+// the server renders the plain hours so it reads correctly without JS.
+import { site } from '../lib/content';
+import { dict, fmtTime, type Lang } from '../lib/i18n';
+interface Props { lang: Lang; class?: string }
+const { lang, class: cls } = Astro.props;
+const fallback = `${dict[lang].dinner} · ${dict[lang].everyDay.toLowerCase()} ${lang === 'fr' ? 'dès' : 'from'} ${fmtTime(site.hours.dinner.opens, lang)}`;
+---
+<p class:list={['live', cls]} data-live={lang} data-hours={JSON.stringify(site.hours)} aria-live="off">
+  <span class="live__dot" aria-hidden="true"></span>
+  <span class="live__text">{fallback}</span>
+</p>
+
+<script>
+  import { dict, fmtTime, type Lang } from '../lib/i18n';
+  type Slot = { days: number[]; opens: string; closes: string };
+  type Hours = { dinner: Slot; brunch: Slot; closedDates: string[] };
+  const mins = (hhmm: string) => { const [h, m] = hhmm.split(':').map(Number); return h * 60 + m; };
+
+  function montreal() {
+    const parts = Object.fromEntries(
+      new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Toronto', hour12: false, weekday: 'short', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })
+        .formatToParts(new Date()).map((p) => [p.type, p.value]),
+    );
+    const day = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(parts.weekday);
+    const h = Number(parts.hour) % 24;
+    return { day, h, m: Number(parts.minute), md: `${parts.month}-${parts.day}` };
+  }
+
+  function render(el: HTMLElement) {
+    const lang = el.dataset.live as Lang;
+    const t = dict[lang].live;
+    const hours = JSON.parse(el.dataset.hours!) as Hours;
+    const now = montreal();
+    const nowMin = now.h * 60 + now.m;
+    const time = fmtTime(`${now.h}:${String(now.m).padStart(2, '0')}`, lang);
+    const closedToday = hours.closedDates.includes(now.md);
+    const inSlot = (s: Slot) => s.days.includes(now.day) && nowMin >= mins(s.opens) && nowMin < mins(s.closes);
+    let status: string;
+    let open = false;
+    if (closedToday) status = t.closedToday;
+    else if (inSlot(hours.brunch)) { status = t.brunchNow(fmtTime(hours.brunch.closes, lang)); open = true; }
+    else if (inSlot(hours.dinner)) { status = t.openUntil(fmtTime(hours.dinner.closes, lang)); open = true; }
+    else if (hours.dinner.days.includes(now.day) && nowMin < mins(hours.dinner.opens)) status = t.opensAt(fmtTime(hours.dinner.opens, lang));
+    else {
+      const tomorrow = (now.day + 1) % 7;
+      const first = hours.brunch.days.includes(tomorrow) ? hours.brunch.opens : hours.dinner.opens;
+      status = t.tomorrow(fmtTime(first, lang));
+    }
+    el.querySelector('.live__text')!.textContent = `${t.now(time)} · ${status}`;
+    el.classList.toggle('is-open', open);
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-live]').forEach((el) => {
+    render(el);
+    setInterval(() => render(el), 30_000);
+  });
+</script>
+
+<style>
+  .live { display: inline-flex; align-items: center; justify-content: center; gap: 0.7rem; text-wrap: balance; font-size: var(--step--1); letter-spacing: 0.04em; }
+  .live__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--mist); flex: none; }
+  .live.is-open .live__dot { background: var(--accent); box-shadow: 0 0 0 0 rgb(232 165 75 / 0.6); animation: live-pulse 2.4s ease-out infinite; }
+  @keyframes live-pulse { 70% { box-shadow: 0 0 0 9px rgb(232 165 75 / 0); } 100% { box-shadow: 0 0 0 0 rgb(232 165 75 / 0); } }
+  @media (prefers-reduced-motion: reduce) { .live.is-open .live__dot { animation: none; } }
+</style>

@@ -1,23 +1,26 @@
 ---
-import { t, fmtTime, type Lang } from '../i18n/ui';
-import { site } from '../data/site';
-interface Props { lang: Lang }
-const { lang } = Astro.props;
-const s = t[lang];
+import { site } from '../lib/content';
+import { fmtTime, useT, type Lang } from '../lib/i18n';
+interface Props { lang: Lang; class?: string }
+const { lang, class: cls } = Astro.props;
+const t = useT(lang);
 const { dinner, brunch } = site.hours;
 ---
-<dl class="hours">
+<dl class:list={['hours', cls]}>
   <div>
-    <dt>{s.dinner}</dt>
-    <dd>{s.dinnerDays}, {s.from} {fmtTime(dinner.opens, lang)}</dd>
+    <dt>{t.dinner}</dt>
+    <dd>{t.everyDay}<br /><span class="num">{fmtTime(dinner.opens, lang)} – {fmtTime(dinner.closes, lang)}</span></dd>
   </div>
   <div>
-    <dt>{s.brunch}</dt>
-    <dd>{s.brunchDays}, {fmtTime(brunch.opens, lang)} – {fmtTime(brunch.closes, lang)}</dd>
+    <dt>{t.brunch}</dt>
+    <dd>{t.weekend}<br /><span class="num">{fmtTime(brunch.opens, lang)} – {fmtTime(brunch.closes, lang)}</span></dd>
   </div>
+  <p class="hours__note">{t.closedNewYear}</p>
 </dl>
 <style>
-  .hours { display: grid; gap: 0.5rem; }
-  .hours dt { font-family: var(--f-display); font-size: 1.15rem; font-weight: 400; }
-  .hours dd { margin: 0; color: var(--cream-dim); }
+  .hours { display: grid; gap: 0.9rem; }
+  .hours dt { font-size: var(--step--2); font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; }
+  .hours dd { margin: 0.2rem 0 0; }
+  .hours__note { color: var(--mist); font-size: var(--step--1); }
+  :global(.paper) .hours__note { color: var(--stone); }
 </style>

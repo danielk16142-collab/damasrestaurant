@@ -1,86 +1,134 @@
 ---
-import { routes, t, type Lang } from '../i18n/ui';
-import { site } from '../data/site';
+// Footer on oxblood (as on damas.ca): a giant "Réserver votre nuit", then
+// address, hours, links and follow, the emblem glowing behind, and legal links.
+import Emblem from './Emblem.astro';
+import Wordmark from './Wordmark.astro';
 import Hours from './Hours.astro';
+import { consent, site, integrations } from '../lib/content';
+import { url, useT, type Lang } from '../lib/i18n';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
-const s = t[lang];
+const t = useT(lang);
 const year = new Date().getFullYear();
 ---
-<footer class="ftr">
-  <div class="ftr__cta wrap">
-    <p class="eyebrow">{lang === 'fr' ? 'La nuit vous attend' : 'The night awaits'}</p>
-    <a class="ftr__big display" href={site.reservationUrl} target="_blank" rel="noopener" data-cursor>
-      <span>{lang === 'fr' ? 'Réserver' : 'Reserve'}</span>
-      <em>{lang === 'fr' ? 'votre nuit' : 'your night'}</em>
-      <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M8 32 L32 8 M14 8 H32 V26" fill="none" stroke="currentColor" stroke-width="1.5" /></svg>
-    </a>
-  </div>
-
-  <div class="ftr__emblem" aria-hidden="true">
-    <img src="/brand/emblem-oxblood.svg" alt="" loading="lazy" width="895" height="658" />
-  </div>
-
-  <div class="ftr__grid wrap">
-    <div>
-      <h2 class="eyebrow">{s.address}</h2>
-      <address>
-        <a href={site.mapsUrl} target="_blank" rel="noopener" class="link-u">
-          {lang === 'fr' ? site.address.street : site.address.streetEn}<br />
-          {site.address.locality}, {site.address.region} {site.address.postalCode}
-        </a>
-      </address>
+<footer class="footer oxblood">
+  <Emblem class="footer__emblem" color="red" />
+  <div class="wrap">
+    <div class="footer__cta">
+      <p class="eyebrow" data-reveal>{t.footerEyebrow}</p>
+      <a href={url('reserve', lang)} class="footer__big">
+        <span data-split>{t.footerCta[0]} <em>{t.footerCta[1]}</em></span>
+        <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M9 31 L31 9 M14 9 H31 V26" fill="none" stroke="currentColor" stroke-width="1.4" /></svg>
+      </a>
     </div>
-    <div>
-      <h2 class="eyebrow">{s.hours}</h2>
-      <Hours lang={lang} />
-    </div>
-    <div>
-      <h2 class="eyebrow">{s.phone}</h2>
-      <p><a href={`tel:${site.phone}`} class="link-u">{site.phoneDisplay}</a></p>
-      {site.email && <p><a href={`mailto:${site.email}`} class="link-u">{site.email}</a></p>}
-      {site.instagram && <p><a href={site.instagram} target="_blank" rel="noopener" class="link-u">Instagram</a></p>}
-    </div>
-    <nav aria-label={lang === 'fr' ? 'Pied de page' : 'Footer'}>
-      <h2 class="eyebrow">Damas</h2>
-      <ul>
-        {(['home', 'story', 'menus', 'events', 'contact'] as const).map((k) => (
-          <li><a href={routes[k][lang]} class="link-u">{s.nav[k]}</a></li>
-        ))}
-      </ul>
-    </nav>
-  </div>
 
-  <div class="ftr__base wrap">
-    <img src="/brand/wordmark-cream.svg" alt="Damas" width="160" height="50" loading="lazy" />
-    <p>{s.footerTag}</p>
-    <p>© {year} Restaurant Damas. {s.rights}</p>
+    <div class="footer__cols">
+      <div>
+        <p class="eyebrow">Damas</p>
+        <address>
+          <a href={site.mapsUrl} target="_blank" rel="noopener">{site.address.street[lang]}<br />{site.address.city} ({site.address.region}) {site.address.postalCode}</a>
+          <a href={`tel:${site.phoneIntl}`} class="num">{site.phone}</a>
+          <a href={`mailto:${site.email}`}>{site.email}</a>
+        </address>
+      </div>
+      <div>
+        <p class="eyebrow">{t.hours}</p>
+        <Hours lang={lang} />
+      </div>
+      <div>
+        <p class="eyebrow">{t.visit}</p>
+        <ul role="list">
+          <li><a href={url('menus', lang)}>{t.nav.menus}</a></li>
+          <li><a href={url('story', lang)}>{t.navLong.story}</a></li>
+          <li><a href={url('events', lang)}>{t.navLong.events}</a></li>
+          <li><a href={url('gift', lang)}>{t.nav.gift}</a></li>
+          <li><a href={url('delivery', lang)}>{t.delivery} · Folfol</a></li>
+          <li><a href={url('reserve', lang)}>{t.reserve}</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="eyebrow">{t.follow}</p>
+        <ul role="list">
+          <li><a href={site.social.instagram} target="_blank" rel="noopener">Instagram</a></li>
+          <li><a href={site.social.facebook} target="_blank" rel="noopener">Facebook</a></li>
+          <li><a href={integrations.opentableUrl} target="_blank" rel="noopener">OpenTable</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__brand" aria-hidden="true"><Wordmark class="footer__word" /></div>
+
+    <div class="footer__base">
+      <p>© {year} {site.name}. {t.rights}</p>
+      <nav class="footer__legal" aria-label={t.legal}>
+        <a href={url('privacy', lang)}>{t.privacy}</a>
+        <a href={url('cookies', lang)}>{t.cookies}</a>
+        <a href={url('terms', lang)}>{t.terms}</a>
+        <a href={url('accessibility', lang)}>{t.accessibility}</a>
+        {(consent.analytics || consent.marketing) && <button type="button" data-cookie-settings>Cookies</button>}
+      </nav>
+      <p><a href="#main" class="footer__top-link">{t.backToTop}</a></p>
+    </div>
   </div>
 </footer>
 
 <style>
-  .ftr { position: relative; overflow: hidden; background: var(--night); padding-top: clamp(6rem, 14vw, 12rem); border-top: 1px solid var(--cream-faint); }
-  .ftr__cta { position: relative; z-index: 1; text-align: center; }
-  .ftr__big {
-    display: inline-flex; flex-wrap: wrap; justify-content: center; align-items: baseline; gap: 0 0.25em;
-    font-size: clamp(3rem, 10vw, 10rem); margin-top: 1.5rem; transition: color 0.5s;
+  .footer { position: relative; padding-top: var(--section); overflow: hidden; isolation: isolate; }
+  .footer :global(.footer__emblem) {
+    position: absolute;
+    z-index: -1;
+    left: 50%;
+    top: 3rem;
+    width: min(1400px, 160vw);
+    transform: translateX(-50%);
+    opacity: 0.12;
+    pointer-events: none;
   }
-  .ftr__big em { color: var(--brass-2); }
-  .ftr__big svg { width: 0.4em; height: 0.4em; align-self: center; transition: transform 0.6s var(--ease); }
-  .ftr__big:hover { color: var(--damask); }
-  .ftr__big:hover svg { transform: translate(0.1em, -0.1em) rotate(0deg); }
-  .ftr__emblem { position: absolute; left: 50%; top: 2rem; width: min(1200px, 130vw); transform: translateX(-50%); opacity: 0.35; pointer-events: none; }
-  .ftr__grid {
-    position: relative; z-index: 1;
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 2.5rem;
-    margin-top: clamp(5rem, 10vw, 9rem); padding-block: 3rem; border-top: 1px solid var(--cream-faint);
-    font-size: 0.95rem;
+  .footer__cta { display: grid; justify-items: center; text-align: center; gap: 1.5rem; padding-bottom: clamp(4rem, 8vw, 7rem); }
+  .footer__big {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    font-family: var(--font-display);
+    font-size: var(--step-6);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    transition: color 0.5s;
   }
-  .ftr__grid h2 { margin-bottom: 1rem; }
-  .ftr__grid address { font-style: normal; }
-  .ftr__grid ul { list-style: none; padding: 0; display: grid; gap: 0.35rem; }
-  .ftr__base { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem 2rem; padding-block: 2rem 2.5rem; font-size: 0.8rem; color: var(--cream-dim); border-top: 1px solid var(--cream-faint); }
-  .ftr__base img { width: 110px; }
-  @media (max-width: 900px) { .ftr__grid { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 520px) { .ftr__grid { grid-template-columns: 1fr; } }
+  .footer__big em { font-style: italic; color: var(--accent); }
+  .footer__big svg { width: 0.35em; height: 0.35em; flex: none; transition: transform 0.6s var(--ease-out); }
+  .footer__big:hover svg { transform: translate(0.08em, -0.08em); }
+  .footer__big:hover { color: var(--accent-soft); }
+
+  .footer__cols {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 2.5rem;
+    padding-block: 3.5rem;
+    border-top: 1px solid rgb(239 230 218 / 0.14);
+  }
+  .footer__cols .eyebrow { margin-bottom: 1.3rem; }
+  .footer__cols ul, .footer__cols address { display: grid; gap: 0.45rem; font-style: normal; }
+  .footer__cols a { color: rgb(239 230 218 / 0.85); transition: color 0.3s; }
+  .footer__cols a:hover { color: var(--accent); }
+
+  .footer__brand { color: rgb(239 230 218 / 0.9); padding-block: 1rem 2rem; }
+  .footer__brand :global(.footer__word) { width: 100%; height: auto; }
+  .footer__base {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem 2rem;
+    padding-block: 2rem;
+    border-top: 1px solid rgb(239 230 218 / 0.14);
+    font-size: var(--step--1);
+    color: var(--mist);
+  }
+  .footer__legal { display: flex; flex-wrap: wrap; gap: 0.4rem 1.5rem; }
+  .footer__legal a, .footer__legal button, .footer__top-link { color: inherit; transition: color 0.3s; }
+  .footer__legal a:hover, .footer__legal button:hover, .footer__top-link:hover { color: var(--accent); }
+
+  @media (max-width: 960px) { .footer__cols { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 480px) { .footer__cols { grid-template-columns: 1fr; } }
 </style>
