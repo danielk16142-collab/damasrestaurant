@@ -9,7 +9,7 @@ export default defineConfig({
   integrations: [
     react(),
     sitemap({
-      filter: (page) => !page.includes('/style/'),
+      filter: (page) => !page.includes('/style/') && page !== 'https://www.damas.ca/',
       i18n: { defaultLocale: 'fr', locales: { fr: 'fr-CA', en: 'en-CA' } },
     }),
   ],

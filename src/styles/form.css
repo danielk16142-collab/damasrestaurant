@@ -40,7 +40,7 @@
 .intent:hover { border-color: var(--ink); }
 .intent[aria-pressed='true'] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 .intent__title { font-family: var(--font-display); font-size: var(--step-2); line-height: 1.15; }
-.intent__text { font-size: var(--step--1); color: var(--stone); }
+.intent__text { font-size: var(--step-0); color: var(--stone); }
 .intent[aria-pressed='true'] .intent__text { color: var(--mist); }
 .intent__arrow { position: absolute; top: 1.3rem; right: 1.4rem; transition: transform 0.4s var(--ease-out); }
 .intent:hover .intent__arrow { transform: translateX(4px); color: var(--accent-deep); }
@@ -77,14 +77,14 @@
 select.input { appearance: none; cursor: pointer; }
 .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.75rem 2rem; }
 @media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } }
-.check { display: flex; gap: 0.8rem; align-items: flex-start; font-size: var(--step--1); color: var(--stone); cursor: pointer; }
+.check { display: flex; gap: 0.8rem; align-items: flex-start; font-size: var(--step-0); color: var(--stone); cursor: pointer; }
 .check input { accent-color: var(--ink); width: 1.1rem; height: 1.1rem; margin-top: 0.15rem; flex: none; }
-.iform__error { color: #a4452c; font-size: var(--step--1); }
+.iform__error { color: #a4452c; font-size: var(--step-0); }
 .iform__nav { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding-top: 1.5rem; border-top: 1px solid var(--line-light); }
 .iform--done { gap: 1.25rem; animation: step-in 0.8s var(--ease-out) both; }
 .iform--done .iform__title { font-size: var(--step-4); }
 .iform__done-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem; margin-top: 1rem; }
 
 
-.iform__notice { font-size: var(--step--1); color: var(--stone); padding: 0.9rem 1.1rem; border-left: 2px solid var(--accent-deep); background: rgb(18 10 13 / 0.04); }
+.iform__notice { font-size: var(--step-0); color: var(--stone); padding: 0.4rem 0 0.4rem 1.1rem; border-left: 2px solid var(--accent-deep); }
 .iform__title em { font-style: italic; color: var(--accent-deep); }

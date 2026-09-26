@@ -71,7 +71,7 @@ const cocktails = drinks.sections.find((s) => s.id === 'cocktails')!.items.map((
 const c = fr
   ? {
       title: 'Restaurant Damas — cuisine syrienne à Outremont, Montréal',
-      description: 'Une soirée syrienne enchantée au cœur d’Outremont, avenue Van Horne : mezzés, grillades sur charbon de bois, menu dégustation et cave généreuse. Bib Gourmand MICHELIN.',
+      description: 'Une soirée syrienne enchantée à Outremont, avenue Van Horne : mezzés, grillades au charbon de bois, menu dégustation et belle cave. Bib Gourmand MICHELIN.',
       heroAlt: 'Un salon de Damas sous des lustres de perles rouges, banquettes turquoise',
       h1: ['Un voyage vers la Syrie', 'le temps d’un soir'],
       salle: {
@@ -382,7 +382,7 @@ const c = fr
   }
 
   /* Les mezzés: pinned horizontal track ≥900px, swipe row below */
-  .mezze { background: var(--ink-2); }
+  .mezze { background: var(--ink-2); overflow: hidden; }
   .mezze__track { display: flex; align-items: center; gap: clamp(2rem, 4vw, 4.5rem); min-height: 100svh; padding: 6rem var(--gutter) 4rem; }
   .mezze__intro { flex: 0 0 min(34rem, 80vw); display: grid; gap: 1.25rem; justify-items: start; }
   .mezze__intro h2 { font-size: var(--step-5); }
@@ -395,7 +395,7 @@ const c = fr
   .plate__ar { grid-column: 1 / -1; font-size: var(--step-3); justify-self: start; }
   .plate__n { font-size: var(--step--2); letter-spacing: 0.2em; color: var(--brass); }
   .plate strong { font-family: var(--font-display); font-weight: 400; font-size: var(--step-1); }
-  .plate .muted { grid-column: 2; font-size: var(--step--1); }
+  .plate .muted { grid-column: 2; font-size: var(--step-0); }
   @media (max-width: 899px) {
     .mezze__track { min-height: 0; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter); align-items: start; scrollbar-width: none; }
     .mezze__track::-webkit-scrollbar { display: none; }
@@ -421,7 +421,7 @@ const c = fr
   .sig__name { font-family: var(--font-display); font-size: var(--step-2); line-height: 1.15; transition: color 0.4s; }
   .sig__row:hover .sig__name { color: var(--accent); font-style: italic; }
   .sig__price { font-family: var(--font-display); font-size: var(--step-1); color: var(--accent); }
-  .sig__desc { grid-column: 2 / -1; font-size: var(--step--1); color: rgb(239 230 218 / 0.75); }
+  .sig__desc { grid-column: 2 / -1; font-size: var(--step-0); color: rgb(239 230 218 / 0.75); }
   .sig__float { position: fixed; left: 0; top: 0; z-index: 5; width: 16rem; aspect-ratio: 4 / 5; pointer-events: none; border-radius: 50% 50% 0 0 / 28% 28% 0 0; overflow: hidden; opacity: 0; transform: scale(0.85); transition: opacity 0.4s, transform 0.6s var(--ease-out); }
   .sig__float.is-on { opacity: 1; transform: scale(1); }
   .sig__float :global(.sig__img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.4s; }
@@ -457,6 +457,7 @@ const c = fr
   .bar__grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 2rem; align-items: start; }
   .bar__text { grid-column: 1 / span 5; display: grid; gap: 1.25rem; align-self: center; }
   .bar__text h2 { font-size: var(--step-5); }
+  .bar__text p { max-width: 46ch; }
   .bar__a { grid-column: 7 / span 4; aspect-ratio: 3 / 4; }
   .bar__b { grid-column: 11 / span 2; aspect-ratio: 2 / 3; margin: 8rem 0 0; }
   .cellar { grid-column: 2 / span 10; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: clamp(2rem, 5vw, 5rem); margin-top: clamp(4rem, 8vw, 7rem); align-items: center; }
@@ -464,12 +465,14 @@ const c = fr
   .cellar__text { display: grid; gap: 1rem; justify-items: start; }
   .cellar__list { width: 100%; margin-bottom: 1rem; }
   .cellar__list li { display: grid; padding-block: 0.8rem; border-bottom: 1px solid var(--line-dark); }
-  .cellar__name { font-family: var(--font-display); font-size: var(--step-1); }
-  .cellar__list .muted { font-size: var(--step--1); }
+  .cellar__name { font-family: var(--font-display); font-size: var(--step-1); overflow-wrap: anywhere; }
+  .cellar__text, .bar__text, .brunch__text { min-width: 0; }
+  .cellar__list .muted { font-size: var(--step-0); }
   @media (max-width: 800px) {
+    .bar__grid { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 1.5rem 1rem; }
     .bar__text { grid-column: 1 / -1; }
-    .bar__a { grid-column: 1 / span 8; }
-    .bar__b { grid-column: 9 / -1; margin-top: 5rem; }
+    .bar__a { grid-column: 1; }
+    .bar__b { grid-column: 2; margin-top: 5rem; }
     .cellar { grid-column: 1 / -1; grid-template-columns: 1fr; }
     .cellar__img { width: 70%; }
   }
@@ -481,9 +484,10 @@ const c = fr
   .brunch__text h2 { font-size: var(--step-5); }
   .brunch__b { grid-column: 9 / span 3; aspect-ratio: 3 / 4; }
   @media (max-width: 800px) {
-    .brunch__a { grid-column: 1 / span 10; }
+    .brunch__grid { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 1.5rem 1rem; }
+    .brunch__a { grid-column: 1 / -1; width: 85%; }
     .brunch__text { grid-column: 1 / -1; }
-    .brunch__b { grid-column: 6 / -1; }
+    .brunch__b { grid-column: 2; }
   }
 
   /* Les salons */

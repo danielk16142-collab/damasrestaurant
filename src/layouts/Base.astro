@@ -67,11 +67,11 @@ const graphs = [restaurantLd(lang), ...jsonLd];
     </script>
     <slot name="head" />
   </head>
-  <body class:list={[tone === 'paper' && 'paper']}>
+  <body>
     <a class="skip-link" href="#main">{t.skip}</a>
     <slot name="intro" />
     <Nav lang={lang} page={page ?? 'home'} />
-    <main id="main">
+    <main id="main" class:list={[tone === 'paper' && 'paper']}>
       <slot />
     </main>
     <Footer lang={lang} />

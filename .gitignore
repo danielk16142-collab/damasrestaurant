@@ -1,8 +1,8 @@
-node_modules/
-dist/
-.astro/
-.vercel/
-.env*
 .DS_Store
-type-check/
+.astro/
 .claude/
+.env*
+.vercel/
+dist/
+node_modules/
+type-check/

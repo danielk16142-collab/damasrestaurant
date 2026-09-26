@@ -381,3 +381,9 @@ html.js-motion [data-draw-line] { transform: scaleX(0); }
 @media (min-width: 1101px) {
   html[data-page='home'] main .wrap { padding-right: calc(var(--gutter) + 2.75rem); }
 }
+
+/* A dark or oxblood section nested in a paper page resets the paper colours */
+.paper .dark .eyebrow, .paper .oxblood .eyebrow { color: var(--brass); }
+.paper .oxblood .eyebrow { color: var(--accent); }
+.paper .dark :is(.display, h1, h2, h3) em, .paper .oxblood :is(.display, h1, h2, h3) em { color: var(--accent); }
+.paper .dark .muted, .paper .oxblood .muted { color: var(--mist); }

@@ -129,12 +129,17 @@ function initParallax() {
 
 function initWords() {
   document.querySelectorAll<HTMLElement>('[data-words]').forEach((el) => {
-    const split = SplitText.create(el, { type: 'words' });
+    // aria 'none': the text stays plain for screen readers (an aria-label on <p> isn't allowed).
+    // Brighten from the muted colour to the text colour rather than from near-transparent,
+    // so every word passes contrast at every moment of the scroll.
+    const split = SplitText.create(el, { type: 'words', aria: 'none' });
+    const to = getComputedStyle(el).color;
+    const from = getComputedStyle(document.documentElement).getPropertyValue('--mist').trim() || '#a99c8f';
     gsap.fromTo(
       split.words,
-      { opacity: 0.14 },
+      { color: from },
       {
-        opacity: 1,
+        color: to,
         stagger: 0.1,
         ease: 'none',
         scrollTrigger: { trigger: el, start: 'top 80%', end: 'bottom 50%', scrub: true },
