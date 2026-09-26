@@ -1,7 +1,7 @@
 ---
 // Home: "Une nuit à Damas". The evening unfolds hour by hour; each chapter is a
 // room of the house. Copy builds on Damas's own words from damas.ca.
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Intro from '../components/Intro.astro';
 import ArchHero from '../components/ArchHero.astro';
@@ -67,6 +67,9 @@ const signatures = [
   { dish: pick('Grillades mixtes pour deux'), img: grillades },
 ];
 const cocktails = drinks.sections.find((s) => s.id === 'cocktails')!.items.map((i) => i.name[lang]);
+
+// Phones get the vertical shot of the same salon (art direction)
+const salonsTallSrcset = (await Promise.all([480, 800, 1200].map((w) => getImage({ src: longueTable, width: w, format: 'avif' })))).map((r, i) => `${r.src} ${[480, 800, 1200][i]}w`).join(', ');
 
 const c = fr
   ? {
@@ -323,7 +326,10 @@ const c = fr
   <!-- Les salons -->
   <section class="salons oxblood" data-chapter={c.salons.chapter} data-hour={c.salons.hour}>
     <div class="salons__media" data-salons>
-      <Image src={salons} alt={fr ? 'Salon privé dressé pour une longue tablée sous des lustres de cristal' : 'Private salon set for a long table beneath crystal chandeliers'} widths={[800, 1280, 1772]} sizes="100vw" />
+      <picture>
+        <source media="(max-width: 760px)" srcset={salonsTallSrcset} sizes="100vw" type="image/avif" />
+        <Image src={salons} alt={fr ? 'Salon privé dressé pour une longue tablée' : 'Private salon set for a long table'} widths={[800, 1280, 1772]} sizes="100vw" />
+      </picture>
     </div>
     <div class="wrap salons__text">
       <header class="chap">
@@ -496,6 +502,7 @@ const c = fr
   /* Les salons */
   .salons { position: relative; min-height: 115svh; display: flex; align-items: flex-end; overflow: hidden; isolation: isolate; padding-bottom: var(--section); }
   .salons__media { position: absolute; inset: 0; z-index: -1; clip-path: inset(8% 8% 20% 8% round 45vw 45vw 0 0); }
+  .salons__media :global(picture) { position: absolute; inset: 0; }
   .salons__media :global(img) { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6); }
   .salons__media::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, var(--oxblood) 8%, transparent 60%); }
   .salons__text { display: grid; gap: 1.25rem; justify-items: start; }
