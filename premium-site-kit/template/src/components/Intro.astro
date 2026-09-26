@@ -1,0 +1,68 @@
+---
+// First-visit intro: the monogram rises like a building, a gold line draws
+// beneath it, then the curtain lifts. Plays once per browser session.
+import Monogram from './Monogram.astro';
+---
+<div class="intro" aria-hidden="true">
+  <div class="intro__center">
+    <div class="intro__mark"><Monogram /></div>
+    <span class="intro__line"></span>
+    <span class="intro__word">VÉRTICE</span>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    var root = document.documentElement;
+    var intro = document.querySelector('.intro');
+    var seen = false;
+    try { seen = sessionStorage.getItem('vertice-intro') === '1'; sessionStorage.setItem('vertice-intro', '1'); } catch (e) {}
+    var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (seen || reduce) { intro.remove(); return; }
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    window.scrollTo(0, 0);
+    root.dataset.intro = '2.3';
+    root.classList.add('intro-playing');
+    setTimeout(function () { root.classList.remove('intro-playing'); intro.remove(); }, 3400);
+  })();
+</script>
+
+<style>
+  .intro {
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    display: grid;
+    place-items: center;
+    background: var(--ink);
+    color: var(--accent);
+    animation: intro-lift 1.1s var(--ease-in-out) 2.1s forwards;
+  }
+  .intro__center { display: grid; justify-items: center; gap: 1.6rem; }
+  .intro__mark {
+    width: clamp(7rem, 16vw, 11rem);
+    clip-path: inset(100% 0 0 0);
+    animation: intro-rise 1.3s var(--ease-out) 0.2s forwards;
+  }
+  .intro__mark :global(svg) { width: 100%; height: auto; }
+  .intro__line {
+    width: clamp(7rem, 16vw, 11rem);
+    height: 1px;
+    background: var(--accent);
+    transform: scaleX(0);
+    animation: intro-line 1s var(--ease-in-out) 0.8s forwards;
+  }
+  .intro__word {
+    font-family: Georgia, serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.6em;
+    margin-right: -0.6em;
+    opacity: 0;
+    animation: intro-fade 0.9s ease 1.2s forwards;
+  }
+  @keyframes intro-rise { to { clip-path: inset(0 0 0 0); } }
+  @keyframes intro-line { to { transform: scaleX(1); } }
+  @keyframes intro-fade { to { opacity: 1; } }
+  @keyframes intro-lift { to { clip-path: inset(0 0 100% 0); } }
+  :global(html.intro-playing) { overflow: hidden; }
+</style>

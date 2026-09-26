@@ -1,0 +1,451 @@
+---
+import { Image, getImage } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import PropertyCard from '../../components/PropertyCard.astro';
+import Monogram from '../../components/Monogram.astro';
+import {
+  formatPrice,
+  formatPriceFull,
+  getNeighbourhood,
+  getProperties,
+  site,
+  type Property,
+} from '../../lib/content';
+
+export async function getStaticPaths() {
+  const properties = await getProperties();
+  return properties.filter((p) => p.hasDetailPage).map((p) => ({ params: { slug: p.slug }, props: { property: p } }));
+}
+
+const { property: p } = Astro.props as { property: Property };
+const area = (await getNeighbourhood(p.neighbourhood))!;
+const all = await getProperties();
+const similar = all.filter((o) => o.slug !== p.slug && o.status !== 'Sold').sort((a, b) => Math.abs(a.price - p.price) - Math.abs(b.price - p.price)).slice(0, 3);
+
+// Full-size images for the lightbox.
+const lightbox = await Promise.all(
+  p.gallery.map(async (g) => {
+    const img = await getImage({ src: g.src, width: 1672, format: 'webp' });
+    const thumb = await getImage({ src: g.src, width: 240, format: 'webp' });
+    return { src: img.src, thumb: thumb.src, alt: g.alt, room: g.room };
+  }),
+);
+const og = await getImage({ src: p.hero, width: 1200, format: 'jpg' });
+const g = p.gallery;
+const viewingHref = `/contact?intent=viewing&property=${p.slug}`;
+---
+<Base title={p.name} description={`${p.name}: ${p.beds} bed, ${p.baths} bath home in ${area.name}, Nashville. ${p.summary}`} image={og.src}>
+  <!-- HERO -->
+  <section class="phd dark on-image">
+    <div class="phd__media media">
+      <Image src={p.hero} alt={p.heroAlt} widths={[800, 1280, 1672]} sizes="100vw" loading="eager" fetchpriority="high" style={`view-transition-name: prop-${p.slug}`} />
+    </div>
+    <div class="phd__shade"></div>
+    <div class="phd__content wrap">
+      <a href="/properties" class="phd__back link" data-reveal-load>← All properties</a>
+      <div class="phd__head">
+        <div>
+          <p class="eyebrow" data-reveal-load>{area.name} · {p.type}</p>
+          <h1 class="phd__title" data-split="load" data-delay="0.15">{p.name.replace(/^The /, '')}</h1>
+          <p class="phd__addr" data-reveal-load>{p.address}</p>
+        </div>
+        <div class="phd__price" data-reveal-load>
+          <span class="status-pill" data-status={p.status}>{p.status}</span>
+          <p class="num">{formatPriceFull(p.price)}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FACTS -->
+  <section class="facts">
+    <div class="wrap">
+      <dl class="facts__list">
+        <div data-reveal><dt>Bedrooms</dt><dd class="num" data-count={p.beds}>{p.beds}</dd></div>
+        <div data-reveal><dt>Bathrooms</dt><dd class="num" data-count={p.baths} data-decimals={p.baths % 1 ? 1 : 0}>{p.baths}</dd></div>
+        <div data-reveal><dt>Interior</dt><dd class="num"><span data-count={p.sqft}>{p.sqft.toLocaleString('en-US')}</span><small>sq ft</small></dd></div>
+        <div data-reveal><dt>Lot</dt><dd class="num"><span data-count={p.lotAcres} data-decimals="1">{p.lotAcres}</span><small>acres</small></dd></div>
+        <div data-reveal><dt>Built</dt><dd class="num">{p.yearBuilt}</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- OVERVIEW + STICKY PANEL -->
+  <section class="section overview">
+    <div class="wrap overview__grid">
+      <div class="overview__main">
+        <p class="eyebrow" data-reveal>The residence</p>
+        <h2 class="overview__title" data-split>{p.summary.split(',')[0]}<em>.</em></h2>
+        <div class="prose overview__prose" data-reveal>
+          {p.description.map((para) => <p>{para}</p>)}
+        </div>
+        <h3 class="overview__sub" data-reveal>Highlights</h3>
+        <ul class="features" role="list">
+          {p.features.map((f) => <li data-reveal>{f}</li>)}
+        </ul>
+      </div>
+
+      <aside class="panel" aria-label="Book a viewing">
+        <div class="panel__inner">
+          <p class="eyebrow">Private viewing</p>
+          <p class="panel__price num">{formatPrice(p.price)}</p>
+          <p class="muted">Viewings are by appointment, in person or by live video walkthrough.</p>
+          <a href={viewingHref} class="btn btn--accent panel__btn" data-magnetic>Book a viewing <span class="arrow">→</span></a>
+          <a href="/contact#book" class="btn btn--ghost panel__btn">Schedule a video call</a>
+          <div class="panel__agent">
+            <span class="panel__avatar"><Monogram /></span>
+            <div>
+              <strong>Elena Marsh</strong>
+              <span class="muted">Listing partner · <a href={`tel:${site.phone.replace(/\D/g, '')}`}>{site.phone}</a></span>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section class="gallery section dark">
+    <div class="wrap">
+      <div class="gallery__head">
+        <p class="eyebrow" data-reveal>Room by room</p>
+        <h2 data-split>Inside the <em>home</em></h2>
+        <p class="muted gallery__hint" data-reveal>{g.length} photographs. Select any image to view full screen.</p>
+      </div>
+      <div class="gallery__grid">
+        {g.map((img, i) => (
+          <button class={`gallery__item gallery__item--${i}`} data-index={i} data-cursor="Open" aria-label={`Open photo ${i + 1} of ${g.length}: ${img.room}`}>
+            <span class="gallery__frame media" data-clip>
+              <Image src={img.src} alt={img.alt} widths={[600, 1000, 1400]} sizes={i === 0 || i === 6 ? '(min-width: 900px) 90vw, 100vw' : '(min-width: 900px) 45vw, 100vw'} />
+            </span>
+            <span class="gallery__caption"><span class="num">0{i + 1}</span> {img.room}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ESTIMATOR + LOCATION -->
+  <section class="section">
+    <div class="wrap duo">
+      <div class="calc" data-reveal data-price={p.price}>
+        <p class="eyebrow">Payment estimate</p>
+        <p class="calc__out"><span class="num" data-calc-monthly>$0</span><small>/ month</small></p>
+        <p class="muted calc__note">Principal and interest on a 30-year fixed loan. An estimate only, not a lending offer.</p>
+        <label class="calc__row">
+          <span>Down payment <output data-calc-down-out>20%</output></span>
+          <input type="range" min="10" max="60" step="5" value="20" data-calc-down />
+        </label>
+        <label class="calc__row">
+          <span>Interest rate <output data-calc-rate-out>6.5%</output></span>
+          <input type="range" min="4" max="9" step="0.125" value="6.5" data-calc-rate />
+        </label>
+      </div>
+
+      <a href={`/neighbourhoods#${area.slug}`} class="loc" data-cursor="Explore">
+        <div class="loc__media media" data-clip>
+          <Image src={area.image} alt={area.imageAlt} widths={[600, 1000]} sizes="(min-width: 900px) 45vw, 100vw" />
+        </div>
+        <div class="loc__body">
+          <p class="eyebrow">The neighbourhood</p>
+          <h3>{area.name}</h3>
+          <p class="muted">{area.description}</p>
+          <p class="loc__stats"><span><span class="num">{area.driveToDowntown}</span> to downtown</span><span><span class="num">{area.medianPrice}</span> median</span></p>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- SIMILAR -->
+  <section class="section bone similar">
+    <div class="wrap">
+      <div class="similar__head">
+        <h2 data-split>You may also <em>like</em></h2>
+        <a href="/properties" class="link" data-reveal>All properties →</a>
+      </div>
+      <div class="similar__grid">
+        {similar.map((s) => <div data-reveal><PropertyCard property={s} sizes="(min-width: 900px) 30vw, 90vw" /></div>)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Mobile sticky bar -->
+  <div class="mbar">
+    <div><span class="muted">Offered at</span><strong class="num">{formatPrice(p.price)}</strong></div>
+    <a href={viewingHref} class="btn btn--accent">Book a viewing</a>
+  </div>
+
+  <!-- LIGHTBOX -->
+  <dialog class="lb" aria-label="Photo viewer">
+    <div class="lb__top">
+      <p class="lb__count num"><span data-lb-index>01</span> / 0{g.length}</p>
+      <p class="lb__room" data-lb-room></p>
+      <button class="lb__close" data-lb-close aria-label="Close photo viewer">Close ✕</button>
+    </div>
+    <div class="lb__stage">
+      <img data-lb-img alt="" />
+    </div>
+    <button class="lb__nav lb__nav--prev" data-lb-prev aria-label="Previous photo">←</button>
+    <button class="lb__nav lb__nav--next" data-lb-next aria-label="Next photo">→</button>
+    <div class="lb__thumbs">
+      {lightbox.map((l, i) => <button data-lb-thumb={i} aria-label={`Show ${l.room}`}><img src={l.thumb} alt="" loading="lazy" /></button>)}
+    </div>
+  </dialog>
+  <script type="application/json" id="lb-data" set:html={JSON.stringify(lightbox)} />
+</Base>
+
+<style>
+  /* Hero */
+  .phd { position: relative; min-height: 100svh; display: flex; align-items: flex-end; overflow: hidden; }
+  .phd__media { position: absolute; inset: 0; }
+  .phd__shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgb(8 8 8 / 0.5), rgb(8 8 8 / 0) 25%), linear-gradient(0deg, rgb(8 8 8 / 0.9), rgb(8 8 8 / 0.2) 50%, rgb(8 8 8 / 0) 75%); }
+  .phd__content { position: relative; padding-top: 8rem; padding-bottom: clamp(2.5rem, 5vw, 4rem); }
+  .phd__back { margin-bottom: 2rem; }
+  .phd__head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 2rem; }
+  .phd__title { font-size: min(var(--step-6), 20svh); line-height: 0.9; letter-spacing: -0.035em; margin-top: 1.25rem; }
+  .phd__addr { margin-top: 1.25rem; color: rgb(247 243 236 / 0.8); }
+  .phd__price { display: grid; justify-items: end; gap: 0.75rem; }
+  .phd__price .num { font-size: var(--step-3); }
+
+  /* Facts */
+  .facts { border-bottom: 1px solid var(--line-light); }
+  .facts__list { display: grid; grid-template-columns: repeat(5, 1fr); }
+  .facts__list div { padding: clamp(1.5rem, 3vw, 2.5rem) 1.25rem; display: flex; flex-direction: column-reverse; gap: 0.4rem; border-left: 1px solid var(--line-light); }
+  .facts__list div:first-child { border-left: 0; padding-left: 0; }
+  .facts dt { font-size: var(--step--2); font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--stone); }
+  .facts dd { font-size: var(--step-3); line-height: 1; white-space: nowrap; }
+  .facts dd small { font-family: var(--font-body); font-size: 0.8rem; margin-left: 0.4rem; color: var(--stone); }
+  @media (max-width: 800px) {
+    .facts__list { grid-template-columns: repeat(2, 1fr); }
+    .facts__list div { border-left: 0; padding-left: 0; border-top: 1px solid var(--line-light); }
+    .facts__list div:first-child { border-top: 0; }
+    .facts__list div:nth-child(2) { border-top: 0; }
+  }
+
+  /* Overview */
+  .overview__grid { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(18rem, 1fr); gap: clamp(2rem, 6vw, 7rem); align-items: start; }
+  .overview__title { margin: 1.5rem 0 2.5rem; max-width: 18ch; font-size: var(--step-4); }
+  .overview__prose { font-size: var(--step-1); line-height: 1.65; }
+  .overview__sub { margin: 4rem 0 1.5rem; font-size: var(--step-2); }
+  .features { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--line-light); }
+  .features li { padding: 1rem 0; border-bottom: 1px solid var(--line-light); display: flex; gap: 0.9rem; align-items: baseline; }
+  .features li:nth-child(odd) { padding-right: 1.5rem; }
+  .features li::before { content: ''; width: 5px; height: 5px; background: var(--accent); transform: rotate(45deg) translateY(-2px); flex: none; }
+  .panel { position: sticky; top: 6.5rem; }
+  .panel__inner { display: grid; gap: 1rem; padding: clamp(1.5rem, 3vw, 2.5rem); background: var(--bone); }
+  .panel__price { font-size: var(--step-4); line-height: 1; }
+  .panel__btn { width: 100%; }
+  .panel__agent { display: flex; align-items: center; gap: 1rem; margin-top: 1rem; padding-top: 1.25rem; border-top: 1px solid var(--line-light); font-size: 0.9rem; }
+  .panel__agent > div { display: grid; }
+  .panel__avatar { width: 3.25rem; height: 3.25rem; border-radius: 50%; background: var(--ink); color: var(--accent); display: grid; place-items: center; flex: none; }
+  .panel__avatar :global(svg) { width: 60%; }
+  @media (max-width: 960px) {
+    .overview__grid { grid-template-columns: 1fr; }
+    .panel { position: static; }
+    .features { grid-template-columns: 1fr; }
+  }
+
+  /* Gallery: editorial mosaic */
+  .gallery__head { display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 2rem; align-items: end; margin-bottom: clamp(2.5rem, 5vw, 4.5rem); }
+  .gallery__hint { font-size: 0.9rem; justify-self: end; max-width: 22ch; text-align: right; }
+  .gallery__grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: clamp(0.75rem, 1.5vw, 1.5rem); row-gap: clamp(2rem, 4vw, 3.5rem); }
+  .gallery__item { display: grid; gap: 0.9rem; align-content: start; text-align: left; color: inherit; }
+  .gallery__frame { display: block; }
+  .gallery__frame :global(img) { transition: transform 1.4s var(--ease-out); }
+  .gallery__item:hover .gallery__frame :global(img) { transform: scale(1.04); }
+  .gallery__caption { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--mist); }
+  .gallery__caption .num { color: var(--accent); margin-right: 0.6rem; }
+  .gallery__item--0 { grid-column: 1 / -1; }
+  .gallery__item--0 .gallery__frame { aspect-ratio: 21 / 9; }
+  .gallery__item--1 { grid-column: 1 / 8; }
+  .gallery__item--1 .gallery__frame { aspect-ratio: 16 / 10; }
+  .gallery__item--2 { grid-column: 8 / -1; align-self: end; }
+  .gallery__item--2 .gallery__frame { aspect-ratio: 4 / 5; }
+  .gallery__item--3 { grid-column: 2 / 7; }
+  .gallery__item--3 .gallery__frame { aspect-ratio: 4 / 5; }
+  .gallery__item--4 { grid-column: 7 / -1; margin-top: 18%; }
+  .gallery__item--4 .gallery__frame { aspect-ratio: 16 / 11; }
+  .gallery__item--5 { grid-column: 1 / 6; }
+  .gallery__item--5 .gallery__frame { aspect-ratio: 1; }
+  .gallery__item--6 { grid-column: 6 / -1; align-self: end; }
+  .gallery__item--6 .gallery__frame { aspect-ratio: 16 / 10; }
+  @media (max-width: 800px) {
+    .gallery__head { grid-template-columns: 1fr; }
+    .gallery__hint { justify-self: start; text-align: left; }
+    .gallery__grid [class*='gallery__item--'] { grid-column: 1 / -1; margin-top: 0; }
+    .gallery__grid [class*='gallery__item--'] .gallery__frame { aspect-ratio: 4 / 3; }
+  }
+
+  /* Estimator + location */
+  .duo { display: grid; grid-template-columns: 1fr 1.3fr; gap: clamp(2rem, 5vw, 5rem); align-items: stretch; }
+  .calc { display: grid; gap: 1.25rem; align-content: start; padding: clamp(1.5rem, 3vw, 2.5rem); border: 1px solid var(--line-light); }
+  .calc__out { font-family: var(--font-display); font-size: var(--step-5); line-height: 1; }
+  .calc__out small { font-family: var(--font-body); font-size: 0.9rem; color: var(--stone); margin-left: 0.5rem; }
+  .calc__note { font-size: 0.875rem; }
+  .calc__row { display: grid; gap: 0.75rem; padding-top: 1rem; border-top: 1px solid var(--line-light); }
+  .calc__row span { display: flex; justify-content: space-between; font-size: 0.9rem; }
+  .calc__row output { font-weight: 600; }
+  .calc input[type='range'] { appearance: none; width: 100%; height: 1px; background: var(--sand); outline: none; }
+  .calc input[type='range']::-webkit-slider-thumb { appearance: none; width: 1.1rem; height: 1.1rem; border-radius: 50%; background: var(--ink); border: 3px solid var(--accent); cursor: grab; }
+  .calc input[type='range']::-moz-range-thumb { width: 1rem; height: 1rem; border-radius: 50%; background: var(--ink); border: 3px solid var(--accent); cursor: grab; }
+  .loc { display: grid; grid-template-columns: 1fr 1fr; background: var(--ink); color: var(--paper); }
+  .loc__media { min-height: 20rem; }
+  .loc__media :global(img) { position: absolute; inset: 0; transition: transform 1.4s var(--ease-out); }
+  .loc:hover .loc__media :global(img) { transform: scale(1.05); }
+  .loc__body { padding: clamp(1.5rem, 3vw, 2.5rem); display: grid; gap: 1rem; align-content: end; }
+  .loc__body h3 { font-size: var(--step-3); }
+  .loc__body .muted { color: var(--mist); }
+  .loc__stats { display: flex; gap: 1.5rem; font-size: 0.85rem; color: var(--accent); }
+  @media (max-width: 960px) {
+    .duo { grid-template-columns: 1fr; }
+    .loc { grid-template-columns: 1fr; }
+  }
+
+  /* Similar */
+  .similar__head { display: flex; justify-content: space-between; align-items: end; gap: 2rem; margin-bottom: 3rem; }
+  .similar__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1rem, 2vw, 2rem); }
+  @media (max-width: 900px) { .similar__grid { grid-template-columns: 1fr; } }
+
+  /* Mobile bar */
+  .mbar { display: none; }
+  @media (max-width: 960px) {
+    :global(body) { padding-bottom: 5rem; }
+    .mbar {
+      position: fixed; left: 0.75rem; right: 0.75rem; bottom: 0.75rem; z-index: 80;
+      display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+      padding: 0.6rem 0.6rem 0.6rem 1.25rem; border-radius: 999px;
+      background: rgb(8 8 8 / 0.9); backdrop-filter: blur(12px); color: var(--paper);
+    }
+    .mbar > div { display: grid; line-height: 1.2; font-size: 0.75rem; }
+    .mbar strong { font-size: 1.15rem; font-weight: 400; }
+    .mbar .btn { min-height: 2.8rem; }
+  }
+
+  /* Lightbox */
+  .lb {
+    width: 100vw; height: 100dvh; max-width: none; max-height: none;
+    margin: 0; padding: 0; border: 0;
+    background: var(--ink); color: var(--paper);
+    display: none; grid-template-rows: auto 1fr auto;
+  }
+  .lb[open] { display: grid; animation: lb-in 0.6s var(--ease-out); }
+  .lb::backdrop { background: var(--ink); }
+  @keyframes lb-in { from { opacity: 0; } }
+  .lb__top { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.25rem var(--gutter); }
+  .lb__count { font-size: 1.1rem; color: var(--accent); }
+  .lb__room { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; }
+  .lb__close { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; }
+  .lb__close:hover { color: var(--accent); }
+  .lb__stage { position: relative; display: grid; place-items: center; min-height: 0; padding-inline: clamp(1rem, 7vw, 7rem); overflow: hidden; touch-action: pan-y; }
+  .lb__stage img { max-width: 100%; max-height: 100%; object-fit: contain; user-select: none; -webkit-user-drag: none; }
+  .lb__nav {
+    position: absolute; top: 50%; translate: 0 -50%;
+    width: 3.5rem; height: 3.5rem; border-radius: 50%;
+    box-shadow: inset 0 0 0 1px rgb(247 243 236 / 0.3);
+    font-size: 1.2rem; transition: background 0.3s, color 0.3s;
+  }
+  .lb__nav:hover { background: var(--accent); color: var(--ink); box-shadow: none; }
+  .lb__nav--prev { left: var(--gutter); }
+  .lb__nav--next { right: var(--gutter); }
+  .lb__thumbs { display: flex; justify-content: center; gap: 0.5rem; padding: 1rem var(--gutter) 1.25rem; overflow-x: auto; }
+  .lb__thumbs button { flex: none; width: 5rem; aspect-ratio: 16 / 10; opacity: 0.4; transition: opacity 0.3s; outline-offset: 2px; }
+  .lb__thumbs button[aria-current='true'] { opacity: 1; outline: 1px solid var(--accent); }
+  .lb__thumbs img { width: 100%; height: 100%; object-fit: cover; }
+  @media (max-width: 700px) {
+    .lb__nav { display: none; }
+    .lb__thumbs { justify-content: flex-start; }
+  }
+</style>
+
+<script>
+  import { gsap } from '../../scripts/motion';
+
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!reduce) {
+    gsap.fromTo('.phd [data-reveal-load]', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 1.3, ease: 'expo.out', stagger: 0.1, delay: 0.4 });
+    gsap.to('.phd__media', { yPercent: 15, ease: 'none', scrollTrigger: { trigger: '.phd', start: 'top top', end: 'bottom top', scrub: true } });
+  }
+
+  /* Lightbox ------------------------------------------------------------- */
+  type Slide = { src: string; alt: string; room: string };
+  const slides: Slide[] = JSON.parse(document.getElementById('lb-data')!.textContent || '[]');
+  const dialog = document.querySelector<HTMLDialogElement>('.lb')!;
+  const img = dialog.querySelector<HTMLImageElement>('[data-lb-img]')!;
+  const idxEl = dialog.querySelector<HTMLElement>('[data-lb-index]')!;
+  const roomEl = dialog.querySelector<HTMLElement>('[data-lb-room]')!;
+  const thumbs = dialog.querySelectorAll<HTMLButtonElement>('[data-lb-thumb]');
+  let index = 0;
+
+  const show = (i: number, dir = 0) => {
+    index = (i + slides.length) % slides.length;
+    const s = slides[index];
+    const swap = () => {
+      img.src = s.src;
+      img.alt = s.alt;
+      idxEl.textContent = String(index + 1).padStart(2, '0');
+      roomEl.textContent = s.room;
+      thumbs.forEach((t, j) => t.setAttribute('aria-current', String(j === index)));
+    };
+    if (reduce || dir === 0) {
+      swap();
+      return;
+    }
+    gsap.to(img, {
+      opacity: 0, x: -40 * dir, duration: 0.25, ease: 'power2.in',
+      onComplete: () => {
+        swap();
+        gsap.fromTo(img, { opacity: 0, x: 40 * dir }, { opacity: 1, x: 0, duration: 0.6, ease: 'expo.out' });
+      },
+    });
+  };
+  const open = (i: number) => {
+    show(i);
+    dialog.showModal();
+    window.__lenis?.stop();
+  };
+  dialog.addEventListener('close', () => window.__lenis?.start());
+
+  document.querySelectorAll<HTMLButtonElement>('.gallery__item').forEach((b) => b.addEventListener('click', () => open(Number(b.dataset.index))));
+  dialog.querySelector('[data-lb-close]')!.addEventListener('click', () => dialog.close());
+  dialog.querySelector('[data-lb-prev]')!.addEventListener('click', () => show(index - 1, -1));
+  dialog.querySelector('[data-lb-next]')!.addEventListener('click', () => show(index + 1, 1));
+  thumbs.forEach((t) => t.addEventListener('click', () => { const i = Number(t.dataset.lbThumb); show(i, i > index ? 1 : -1); }));
+  dialog.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') show(index + 1, 1);
+    if (e.key === 'ArrowLeft') show(index - 1, -1);
+  });
+  // Swipe
+  let startX = 0;
+  const stage = dialog.querySelector<HTMLElement>('.lb__stage')!;
+  stage.addEventListener('pointerdown', (e) => (startX = e.clientX));
+  stage.addEventListener('pointerup', (e) => {
+    const dx = e.clientX - startX;
+    if (Math.abs(dx) > 50) show(index + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1);
+  });
+
+  /* Payment estimator ---------------------------------------------------- */
+  const calc = document.querySelector<HTMLElement>('.calc');
+  if (calc) {
+    const price = Number(calc.dataset.price);
+    const down = calc.querySelector<HTMLInputElement>('[data-calc-down]')!;
+    const rate = calc.querySelector<HTMLInputElement>('[data-calc-rate]')!;
+    const out = calc.querySelector<HTMLElement>('[data-calc-monthly]')!;
+    const state = { v: 0 };
+    const compute = () => {
+      const principal = price * (1 - Number(down.value) / 100);
+      const r = Number(rate.value) / 100 / 12;
+      const n = 360;
+      const monthly = (principal * r) / (1 - Math.pow(1 + r, -n));
+      calc.querySelector('[data-calc-down-out]')!.textContent = `${down.value}%`;
+      calc.querySelector('[data-calc-rate-out]')!.textContent = `${Number(rate.value).toFixed(3).replace(/0+$/, '').replace(/\.$/, '')}%`;
+      gsap.to(state, {
+        v: monthly, duration: reduce ? 0 : 0.8, ease: 'expo.out', overwrite: true,
+        onUpdate: () => (out.textContent = `$${Math.round(state.v).toLocaleString('en-US')}`),
+      });
+    };
+    down.addEventListener('input', compute);
+    rate.addEventListener('input', compute);
+    compute();
+  }
+</script>

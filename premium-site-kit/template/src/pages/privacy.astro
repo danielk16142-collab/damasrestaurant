@@ -1,0 +1,94 @@
+---
+/*
+ * Privacy policy skeleton (global baseline: GDPR + Quebec Law 25 level).
+ * Fill every [[...]], describe only what the site really collects, and delete
+ * regional sections that don't apply. For Colombia retitle it
+ * "Política de Tratamiento de Datos Personales". See references/legal.md.
+ */
+import LegalPage from '../components/LegalPage.astro';
+import { legal, site } from '../lib/content';
+
+const toc = [
+  { id: 'who', label: 'Who we are' },
+  { id: 'collect', label: 'What we collect' },
+  { id: 'why', label: 'Why we use it' },
+  { id: 'share', label: 'Who processes it' },
+  { id: 'keep', label: 'How long we keep it' },
+  { id: 'rights', label: 'Your rights' },
+  { id: 'cookies', label: 'Cookies' },
+  { id: 'security', label: 'Security' },
+  { id: 'changes', label: 'Changes' },
+  { id: 'contact', label: 'Contact' },
+];
+---
+<LegalPage title="Privacy policy" description={`How ${site.name} collects, uses and protects your personal information.`} toc={toc}>
+  <section>
+    <h2 id="who">Who we are</h2>
+    <p>This website is run by {legal.entity}, {legal.address} (“we”, “us”). We are responsible for the personal information collected through it.</p>
+    <p>The person responsible for the protection of personal information is {legal.privacyContact}, reachable at <a href={`mailto:${legal.privacyEmail}`}>{legal.privacyEmail}</a>.</p>
+  </section>
+
+  <section>
+    <h2 id="collect">What we collect</h2>
+    <ul>
+      <li><strong>Information you send us</strong> through the enquiry form: [[name, email, phone, message, budget, preferred dates]].</li>
+      <li><strong>[[Newsletter]]:</strong> your email address, only if you tick the subscription box.</li>
+      <li><strong>Technical information</strong> needed to deliver the site, such as your IP address and browser type, kept in our host’s server logs.</li>
+      <li><strong>Usage information</strong> from analytics cookies, only if you accept them (see Cookies).</li>
+    </ul>
+    <p>We don’t knowingly collect information from children under [[13/16]].</p>
+  </section>
+
+  <section>
+    <h2 id="why">Why we use it</h2>
+    <ul>
+      <li>To answer your enquiry and provide the service you ask for (basis: your request and our steps before a contract).</li>
+      <li>To send the newsletter you subscribed to (basis: your consent, which you can withdraw at any time).</li>
+      <li>To keep the site secure and working (basis: our legitimate interest).</li>
+      <li>To understand how the site is used, only with your consent.</li>
+    </ul>
+    <p>We don’t sell your personal information, and we don’t use it to make automated decisions about you.</p>
+  </section>
+
+  <section>
+    <h2 id="share">Who processes it</h2>
+    <p>We use these service providers, who process information on our behalf and under our instructions:</p>
+    <table>
+      <thead><tr><th>Provider</th><th>Purpose</th><th>Location</th></tr></thead>
+      <tbody>{legal.processors.map((p) => <tr><td>{p.name}</td><td>{p.purpose}</td><td>{p.location}</td></tr>)}</tbody>
+    </table>
+    <p>Some providers store information outside [[your province/country]]. When that happens we make sure it receives protection equivalent to the law that applies to you.</p>
+  </section>
+
+  <section>
+    <h2 id="keep">How long we keep it</h2>
+    <p>Enquiries: [[24 months]] after our last exchange, unless you become a client. Newsletter: until you unsubscribe. Server logs: [[30 days]]. Then we delete or anonymise it.</p>
+  </section>
+
+  <section>
+    <h2 id="rights">Your rights</h2>
+    <p>You can ask to access, correct or delete your information, withdraw your consent, object to its use, or receive a copy in a portable format. Write to <a href={`mailto:${legal.privacyEmail}`}>{legal.privacyEmail}</a>; we answer within 30 days.</p>
+    <p>You can also complain to your data protection authority: [[Commission d’accès à l’information du Québec / Office of the Privacy Commissioner of Canada / your EU authority / Superintendencia de Industria y Comercio]].</p>
+    <p>[[California residents: you have the right to know, delete and correct, and to opt out of the sale or sharing of personal information. We honour Global Privacy Control signals.]]</p>
+  </section>
+
+  <section>
+    <h2 id="cookies">Cookies</h2>
+    <p>See our <a href="/cookies">cookie policy</a> for what we store in your browser and how to change your choice.</p>
+  </section>
+
+  <section>
+    <h2 id="security">Security</h2>
+    <p>The site is served over HTTPS, access to enquiries is limited to the people who handle them, and our providers apply industry-standard safeguards. If a breach puts you at risk, we’ll tell you and the authorities as the law requires.</p>
+  </section>
+
+  <section>
+    <h2 id="changes">Changes</h2>
+    <p>We’ll update this page when our practices change and show the date at the top. Significant changes will be announced on the site.</p>
+  </section>
+
+  <section>
+    <h2 id="contact">Contact</h2>
+    <p>{legal.entity}, {legal.address}. <a href={`mailto:${legal.privacyEmail}`}>{legal.privacyEmail}</a></p>
+  </section>
+</LegalPage>

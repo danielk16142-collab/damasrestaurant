@@ -1,0 +1,50 @@
+---
+/*
+ * Terms and conditions skeleton. Fill every [[...]]; add booking/cancellation,
+ * payment or returns sections when the site takes bookings or payments.
+ * See references/legal.md.
+ */
+import LegalPage from '../components/LegalPage.astro';
+import { legal, site } from '../lib/content';
+---
+<LegalPage title="Terms and conditions" description={`The terms that apply when you use the ${site.name} website.`}>
+  <section>
+    <h2 id="about">About these terms</h2>
+    <p>This website is run by {legal.entity}, {legal.address}. By using it you agree to these terms. If you don’t agree, please don’t use the site.</p>
+  </section>
+
+  <section>
+    <h2 id="use">Using the site</h2>
+    <p>You may use the site for personal, lawful purposes. Don’t try to disrupt it, access parts that aren’t public, or copy its content in bulk.</p>
+  </section>
+
+  <section>
+    <h2 id="info">Information on the site</h2>
+    <p>We keep the information accurate and up to date, but it’s general and may change without notice. [[Listings, prices, availability, menus and treatments]] are indicative until confirmed in writing. Nothing on the site is [[professional, medical, legal or financial]] advice.</p>
+  </section>
+
+  <section>
+    <h2 id="ip">Intellectual property</h2>
+    <p>The text, photos, logo and design belong to {legal.entity} or its licensors. Please ask before reusing them.</p>
+  </section>
+
+  <section>
+    <h2 id="links">Links to other sites</h2>
+    <p>We link to other websites for convenience. We aren’t responsible for their content or privacy practices.</p>
+  </section>
+
+  <section>
+    <h2 id="liability">Liability</h2>
+    <p>To the extent the law allows, we aren’t liable for indirect losses arising from use of the site. Nothing in these terms limits rights you have as a consumer that can’t be excluded by law.</p>
+  </section>
+
+  <section>
+    <h2 id="law">Governing law</h2>
+    <p>These terms are governed by the laws of {legal.governingLaw}, and its courts have jurisdiction.</p>
+  </section>
+
+  <section>
+    <h2 id="contact">Contact</h2>
+    <p>Questions about these terms: <a href={`mailto:${site.email}`}>{site.email}</a>.</p>
+  </section>
+</LegalPage>

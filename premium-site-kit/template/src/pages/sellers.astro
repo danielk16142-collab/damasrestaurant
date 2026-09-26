@@ -1,0 +1,101 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Process from '../components/Process.astro';
+import Faq from '../components/Faq.astro';
+import CtaBand from '../components/CtaBand.astro';
+import heroImg from '../assets/img/family/backyard.jpg';
+import bathImg from '../assets/img/family/primary-bath.jpg';
+import bedroomImg from '../assets/img/family/primary-bedroom.jpg';
+import frontImg from '../assets/img/family/front.jpg';
+import ctaImg from '../assets/img/aerial.jpg';
+
+const steps = [
+  { title: 'Valuation', text: 'A written valuation within 48 hours, based on recent public and private sales, with a clear pricing strategy.' },
+  { title: 'Preparation', text: 'Styling advice, trusted trades and a short list of improvements worth making, and ones that aren’t.' },
+  { title: 'Editorial launch', text: 'Architectural photography, film and a dedicated property page like this one, shown first to our private buyer list.' },
+  { title: 'Viewings and offers', text: 'Accompanied viewings only. Every offer is qualified, and we present them side by side so the choice is clear.' },
+  { title: 'Closing', text: 'We manage inspections, appraisal and the attorneys through to closing, with weekly updates throughout.' },
+];
+
+const faqs = [
+  { q: 'What does a valuation cost?', a: 'Nothing. Our valuations are free and come with no obligation to list with us.' },
+  { q: 'Can I sell privately, without a public listing?', a: 'Yes. Many of our sellers start with a quiet, off-market launch to our buyer list and only go public if needed.' },
+  { q: 'What is your fee?', a: 'Our fee is agreed in writing before we start and is only paid when your home sells. It includes photography, film and marketing.' },
+  { q: 'How long does it take to sell?', a: 'Our homes average 18 days to contract. Pricing, presentation and timing matter more than the season.' },
+];
+---
+<Base title="For Sellers" description="Sell your Nashville home with Vértice: a free valuation in 48 hours, editorial marketing and negotiation that protects your price.">
+  <PageHero eyebrow="For sellers" image={heroImg} imageAlt="Rear garden with a lit pool and outdoor fireplace at dusk">
+    <Fragment slot="title">Sell with <em>intention.</em></Fragment>
+    <p>Editorial marketing, a qualified buyer list and negotiation that protects your price.</p>
+    <a href="/contact?intent=sell" class="btn btn--accent" data-magnetic>Get a valuation <span class="arrow">→</span></a>
+  </PageHero>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="market__head">
+        <p class="eyebrow" data-reveal>How we market</p>
+        <h2 data-split>Every home gets a <em>story,</em> not just a listing.</h2>
+      </div>
+      <div class="market">
+        <figure class="market__item">
+          <div class="media" data-clip><Image src={frontImg} alt="Front of a family home photographed at golden hour" widths={[500, 900]} sizes="(min-width: 900px) 33vw, 100vw" /></div>
+          <figcaption data-reveal><span class="num">01</span> Architectural photography and film</figcaption>
+        </figure>
+        <figure class="market__item market__item--offset">
+          <div class="media" data-clip><Image src={bedroomImg} alt="Primary bedroom styled for photography" widths={[500, 900]} sizes="(min-width: 900px) 33vw, 100vw" /></div>
+          <figcaption data-reveal><span class="num">02</span> Styling and preparation</figcaption>
+        </figure>
+        <figure class="market__item">
+          <div class="media" data-clip><Image src={bathImg} alt="Spa bathroom with a freestanding tub" widths={[500, 900]} sizes="(min-width: 900px) 33vw, 100vw" /></div>
+          <figcaption data-reveal><span class="num">03</span> A dedicated property page</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="valuation" class="section dark valuation">
+    <div class="wrap valuation__grid">
+      <div>
+        <p class="eyebrow" data-reveal>Free valuation</p>
+        <h2 data-split>What is your home <em>worth</em> today?</h2>
+      </div>
+      <div class="valuation__body">
+        <p class="lede muted" data-reveal>Tell us a little about your home. A partner will visit or review it remotely and send a written valuation within 48 hours.</p>
+        <dl class="valuation__stats">
+          <div data-reveal><dt>Average sale vs asking</dt><dd class="num" data-count="101.8" data-decimals="1" data-suffix="%">101.8%</dd></div>
+          <div data-reveal><dt>Average days to contract</dt><dd class="num" data-count="18">18</dd></div>
+        </dl>
+        <a href="/contact?intent=sell" class="btn btn--accent" data-reveal data-magnetic>Request a valuation <span class="arrow">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <Process eyebrow="The process" steps={steps}>A calm, <em>clear</em> sale</Process>
+  <Faq items={faqs} />
+  <CtaBand eyebrow="Thinking of selling?" href="/contact?intent=sell" label="Start with a valuation" image={ctaImg}>Let’s talk about <em>timing.</em></CtaBand>
+</Base>
+
+<style>
+  .market__head { display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; align-items: start; margin-bottom: clamp(3rem, 6vw, 5rem); }
+  .market__head h2 { max-width: 16ch; }
+  .market { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1rem, 2.5vw, 2.5rem); align-items: start; }
+  .market__item .media { aspect-ratio: 3 / 4; }
+  .market__item--offset { margin-top: 20%; }
+  .market__item figcaption { margin-top: 1rem; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; }
+  .market__item .num { color: var(--accent-deep); margin-right: 0.6rem; }
+  .valuation__grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: clamp(2rem, 6vw, 6rem); align-items: end; }
+  .valuation__grid h2 { margin-top: 1.25rem; max-width: 12ch; }
+  .valuation__body { display: grid; gap: 2rem; justify-items: start; }
+  .valuation__stats { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; width: 100%; }
+  .valuation__stats div { display: flex; flex-direction: column-reverse; gap: 0.4rem; border-top: 1px solid var(--line-dark); padding-top: 1rem; }
+  .valuation__stats dt { color: var(--mist); font-size: 0.9rem; }
+  .valuation__stats dd { font-size: var(--step-4); line-height: 1; color: var(--accent); }
+  @media (max-width: 860px) {
+    .market__head, .valuation__grid { grid-template-columns: 1fr; }
+    .market { grid-template-columns: 1fr; }
+    .market__item--offset { margin-top: 0; }
+  }
+</style>

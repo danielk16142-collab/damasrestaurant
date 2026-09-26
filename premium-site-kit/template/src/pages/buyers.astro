@@ -1,0 +1,66 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Process from '../components/Process.astro';
+import Faq from '../components/Faq.astro';
+import CtaBand from '../components/CtaBand.astro';
+import heroImg from '../assets/img/family/living.jpg';
+import kitchenImg from '../assets/img/family/kitchen.jpg';
+import ctaImg from '../assets/img/family/backyard.jpg';
+
+const steps = [
+  { title: 'A proper brief', text: 'A 30-minute call to understand how you live: schools, commute, light, space to entertain, the things you won’t compromise on.' },
+  { title: 'A private short list', text: 'We search listed homes, our off-market network and homes whose owners might sell for the right buyer. You see a short list, not a feed.' },
+  { title: 'Viewings, done properly', text: 'In person or on live video, with honest notes on each home, including what the listing doesn’t mention.' },
+  { title: 'Offer and negotiation', text: 'Pricing guided by recent private sales, and terms that make your offer the one sellers choose.' },
+  { title: 'Through to keys', text: 'Inspections, lenders, attorneys and movers, coordinated for you. We stay in touch long after closing day.' },
+];
+
+const faqs = [
+  { q: 'Do I pay Vértice to represent me as a buyer?', a: 'Our buyer fee is agreed up front and, in most cases, is paid from the transaction. We walk through the exact numbers on our first call, before you commit to anything.' },
+  { q: 'How do off-market homes work?', a: 'Many owners prefer a quiet sale. We keep a private register of homes that are available, or would be for the right buyer, and introduce them only to qualified clients.' },
+  { q: 'Can you help if I’m relocating from out of state?', a: 'Yes. We organise neighbourhood tours, school visits and video viewings, and can often narrow things down before you fly in.' },
+  { q: 'How quickly can we move?', a: 'With financing in place, most clients go from first call to accepted offer in three to eight weeks. Private sales can move faster.' },
+];
+---
+<Base title="For Buyers" description="Buy a luxury home in Nashville with Vértice: private search, off-market access, honest advice and strong negotiation.">
+  <PageHero eyebrow="For buyers" image={heroImg} imageAlt="Open-plan living room flowing into a kitchen and dining area">
+    <Fragment slot="title">The right home, <em>found</em> quietly.</Fragment>
+    <p>Private search, off-market access and honest advice, from the first call to the day you get the keys.</p>
+    <a href="/contact?intent=buy" class="btn btn--accent" data-magnetic>Start your search <span class="arrow">→</span></a>
+  </PageHero>
+
+  <section class="section">
+    <div class="wrap edge">
+      <div class="edge__text">
+        <p class="eyebrow" data-reveal>Why Vértice</p>
+        <h2 data-split>Fewer homes. <em>Better</em> homes.</h2>
+        <p class="lede muted" data-reveal>Around a third of the homes we help clients buy are never publicly listed. The rest we know inside out, often before the photographs are taken.</p>
+        <ul class="edge__points" role="list">
+          <li data-reveal><span class="num" data-count="34" data-suffix="%">34%</span> of our buyer purchases were off-market</li>
+          <li data-reveal><span class="num" data-count="3.1" data-decimals="1" data-suffix="%">3.1%</span> average saving against asking price</li>
+          <li data-reveal><span class="num" data-count="6" data-suffix=" wks">6 wks</span> median from first call to accepted offer</li>
+        </ul>
+      </div>
+      <div class="edge__media media" data-clip>
+        <Image src={kitchenImg} alt="Sage-green kitchen with a long island and pendant lights" widths={[600, 1000]} sizes="(min-width: 900px) 45vw, 100vw" />
+      </div>
+    </div>
+  </section>
+
+  <Process eyebrow="How it works" steps={steps}>From brief <em>to keys</em></Process>
+  <Faq items={faqs} />
+  <CtaBand eyebrow="Ready when you are" href="/contact?intent=buy" label="Share your brief" image={ctaImg}>Tell us what <em>home</em> looks like.</CtaBand>
+</Base>
+
+<style>
+  .edge { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 6vw, 7rem); align-items: center; }
+  .edge__text { display: grid; gap: 1.75rem; justify-items: start; }
+  .edge__text h2 { max-width: 12ch; }
+  .edge__points { width: 100%; border-top: 1px solid var(--line-light); }
+  .edge__points li { display: flex; align-items: baseline; gap: 1.25rem; padding-block: 1.1rem; border-bottom: 1px solid var(--line-light); color: var(--stone); }
+  .edge__points .num { font-size: var(--step-3); color: var(--ink); min-width: 5.5ch; }
+  .edge__media { aspect-ratio: 4 / 5; }
+  @media (max-width: 860px) { .edge { grid-template-columns: 1fr; } }
+</style>

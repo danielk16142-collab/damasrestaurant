@@ -1,0 +1,69 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import InquiryForm from '../components/InquiryForm';
+import BookingDemo from '../components/BookingDemo';
+import { getNeighbourhoods, getProperties, propertyTypes, site } from '../lib/content';
+import heroImg from '../assets/img/gulch-interior.jpg';
+
+const areas = (await getNeighbourhoods()).map((n) => ({ slug: n.slug, name: n.name }));
+const properties = (await getProperties()).filter((p) => p.status !== 'Sold').map((p) => ({ slug: p.slug, name: p.name }));
+---
+<Base title="Contact" description="Talk to Vértice about buying, selling or viewing a home in Nashville. Send a short brief or book a video call.">
+  <PageHero eyebrow="Contact" image={heroImg} imageAlt="Penthouse living room with a fireplace and city views" size="short">
+    <Fragment slot="title">Let’s <em>talk.</em></Fragment>
+    <p>Tell us what you need in two minutes, or book a call at a time that suits you.</p>
+    <a href="#book" class="link">Book a call ↓</a>
+  </PageHero>
+
+  <section class="section">
+    <div class="wrap contact">
+      <aside class="contact__info">
+        <p class="eyebrow" data-reveal>Direct</p>
+        <ul role="list" class="contact__list">
+          <li data-reveal><span>Phone</span><a href={`tel:${site.phone.replace(/\D/g, '')}`}>{site.phone}</a></li>
+          <li data-reveal><span>Email</span><a href={`mailto:${site.email}`}>{site.email}</a></li>
+          <li data-reveal><span>Studio</span><p>{site.address}</p></li>
+          <li data-reveal><span>Hours</span><p>{site.hours}</p></li>
+        </ul>
+        <p class="contact__promise" data-reveal>Every enquiry is answered by a partner, not a call centre, within one business day.</p>
+      </aside>
+      <div class="contact__form" data-reveal>
+        <InquiryForm client:load areas={areas} types={propertyTypes} properties={properties} />
+      </div>
+    </div>
+  </section>
+
+  <section id="book" class="section dark">
+    <div class="wrap">
+      <div class="book-head">
+        <div>
+          <p class="eyebrow" data-reveal>Book a call</p>
+          <h2 data-split>Thirty minutes, <em>no obligation.</em></h2>
+        </div>
+        <p class="muted" data-reveal>Pick a time for a video call with a partner. We’ll talk through your plans, the market and next steps.</p>
+      </div>
+      <div data-reveal>
+        <BookingDemo client:visible />
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .contact { display: grid; grid-template-columns: minmax(16rem, 1fr) minmax(0, 2fr); gap: clamp(2.5rem, 7vw, 8rem); align-items: start; }
+  .contact__info { position: sticky; top: 7rem; display: grid; gap: 2rem; }
+  .contact__list { display: grid; gap: 1.5rem; }
+  .contact__list li { display: grid; gap: 0.3rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--line-light); }
+  .contact__list span { font-size: var(--step--2); font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent-deep); }
+  .contact__list a, .contact__list p { font-size: var(--step-1); }
+  .contact__list a:hover { color: var(--accent-deep); }
+  .contact__promise { font-family: var(--font-display); font-style: italic; font-size: var(--step-2); line-height: 1.2; }
+  .book-head { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; align-items: end; margin-bottom: clamp(2rem, 4vw, 3.5rem); }
+  .book-head h2 { max-width: 14ch; margin-top: 1.25rem; }
+  @media (max-width: 900px) {
+    .contact { grid-template-columns: 1fr; }
+    .contact__info { position: static; order: 2; }
+    .book-head { grid-template-columns: 1fr; }
+  }
+</style>

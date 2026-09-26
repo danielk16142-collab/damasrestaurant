@@ -1,0 +1,573 @@
+---
+import { Image, getImage } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Intro from '../components/Intro.astro';
+import PropertyCard from '../components/PropertyCard.astro';
+import { getFeaturedProperties, getNeighbourhoods, propertyTypes } from '../lib/content';
+
+import heroImg from '../assets/img/belle-meade-estate.jpg';
+import cityImg from '../assets/img/nashville-city.jpg';
+import interiorImg from '../assets/img/gulch-interior.jpg';
+import aerialImg from '../assets/img/aerial.jpg';
+import kitchenImg from '../assets/img/family/kitchen.jpg';
+import backyardImg from '../assets/img/family/backyard.jpg';
+import brentwoodImg from '../assets/img/brentwood-street.jpg';
+import greenHillsImg from '../assets/img/green-hills-modern.jpg';
+
+const featured = await getFeaturedProperties();
+const neighbourhoods = await getNeighbourhoods();
+
+const services = [
+  { title: 'Buying', text: 'A private search built around your brief, with access to homes that are never publicly listed.', href: '/buyers', img: kitchenImg },
+  { title: 'Selling', text: 'Editorial photography, a considered launch, and negotiation that protects your price.', href: '/sellers', img: backyardImg },
+  { title: 'Valuation', text: 'A written valuation within 48 hours, based on recent private and public sales.', href: '/sellers#valuation', img: greenHillsImg },
+  { title: 'Relocation', text: 'Moving to Nashville? We handle schools, neighbourhood tours and a short list of homes before you land.', href: '/contact?intent=relocate', img: brentwoodImg },
+];
+const serviceImgs = await Promise.all(services.map((s) => getImage({ src: s.img, width: 640, format: 'webp' })));
+
+const testimonials = [
+  { quote: 'They found us a home in Belle Meade before it ever reached the market. Calm, discreet and fast when it mattered.', name: 'Katherine & James W.', detail: 'Bought in Belle Meade' },
+  { quote: 'The launch felt like a magazine feature. We had three strong offers in the first week and sold above asking.', name: 'Daniel R.', detail: 'Sold in Green Hills' },
+  { quote: 'We relocated from London with two kids and a dog. Vértice made it feel like we had friends here already.', name: 'The Harrington family', detail: 'Relocated to Brentwood' },
+];
+---
+<Base
+  title="Home"
+  description="Vértice represents a short list of Nashville's finest homes in Belle Meade, Green Hills, Brentwood, 12 South and The Gulch. Buy, sell or get a private valuation."
+>
+  <Intro />
+
+  <!-- HERO -->
+  <section class="hero dark on-image">
+    <div class="hero__media media">
+      <Image src={heroImg} alt="Limestone estate with tall arched windows glowing at dusk" widths={[800, 1280, 1672]} sizes="100vw" loading="eager" fetchpriority="high" />
+    </div>
+    <div class="hero__shade"></div>
+
+    <div class="hero__content wrap">
+      <p class="eyebrow hero__eyebrow" data-reveal-load>Nashville · Private Residential</p>
+      <h1 class="hero__title" data-split="load" data-delay="0.25">Homes of <em>quiet</em><br /> distinction.</h1>
+
+      <div class="hero__foot">
+        <p class="hero__lede" data-reveal-load>A short list of Nashville’s finest homes, and the people who have earned them.</p>
+
+        <form class="search" action="/properties" method="get" data-reveal-load>
+          <label class="search__field">
+            <span>Neighbourhood</span>
+            <select name="area">
+              <option value="">All areas</option>
+              {neighbourhoods.map((n) => <option value={n.slug}>{n.name}</option>)}
+            </select>
+          </label>
+          <label class="search__field">
+            <span>Type</span>
+            <select name="type">
+              <option value="">Any type</option>
+              {propertyTypes.map((t) => <option value={t}>{t}</option>)}
+            </select>
+          </label>
+          <button class="btn btn--accent search__btn" type="submit" data-magnetic>Search <span class="arrow">→</span></button>
+        </form>
+      </div>
+    </div>
+
+    <a href="#intro" class="hero__scroll" aria-label="Scroll to content"><span></span></a>
+  </section>
+
+  <!-- INTRO STATEMENT -->
+  <section id="intro" class="statement section">
+    <div class="wrap statement__grid">
+      <p class="eyebrow" data-reveal>The Vértice way</p>
+      <div>
+        <p class="statement__text" data-words>
+          We take on fewer homes than most agencies, on purpose. Every listing gets our full attention, and every buyer gets an honest answer, even when that answer is “keep looking.”
+        </p>
+        <dl class="stats">
+          <div data-reveal><dt>In residential sales</dt><dd class="num" data-count="480" data-prefix="$" data-suffix="M+">$480M+</dd></div>
+          <div data-reveal><dt>Homes placed since 2014</dt><dd class="num" data-count="140" data-suffix="+">140+</dd></div>
+          <div data-reveal><dt>Average days to contract</dt><dd class="num" data-count="18">18</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED (pinned horizontal scroll on desktop) -->
+  <section class="featured dark" data-hscroll>
+    <div class="featured__inner">
+      <div class="featured__head wrap">
+        <div>
+          <p class="eyebrow" data-reveal>Featured residences</p>
+          <h2 data-split>Currently <em>offered</em></h2>
+        </div>
+        <a href="/properties" class="link" data-reveal>All properties <span>→</span></a>
+      </div>
+      <div class="featured__track" data-hscroll-track>
+        {featured.map((p) => <PropertyCard property={p} class="featured__card" sizes="(min-width: 900px) 30vw, 80vw" />)}
+        <a href="/properties" class="featured__more" data-cursor="Explore">
+          <span class="featured__more-label">View all<br /><em>residences</em></span>
+          <span class="featured__more-arrow">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="services section">
+    <div class="wrap">
+      <div class="services__head">
+        <p class="eyebrow" data-reveal>How we help</p>
+        <h2 data-split>One team, from first viewing <em>to keys.</em></h2>
+      </div>
+      <ol class="services__list" role="list">
+        {services.map((s, i) => (
+          <li data-reveal>
+            <a href={s.href} class="service" data-img={serviceImgs[i].src}>
+              <span class="service__num num">0{i + 1}</span>
+              <span class="service__title">{s.title}</span>
+              <span class="service__text">{s.text}</span>
+              <span class="service__arrow" aria-hidden="true">→</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </div>
+    <div class="services__float" aria-hidden="true"><img alt="" /></div>
+  </section>
+
+  <!-- PARALLAX BAND -->
+  <section class="band dark on-image">
+    <div class="band__media media" data-parallax="12">
+      <Image src={cityImg} alt="" widths={[800, 1280, 1672]} sizes="100vw" />
+    </div>
+    <div class="band__shade"></div>
+    <div class="band__content wrap">
+      <h2 class="band__title" data-split>Rooted in Nashville.<br /><em>Fluent</em> in every street.</h2>
+      <a href="/neighbourhoods" class="btn btn--light" data-reveal data-magnetic>Explore neighbourhoods <span class="arrow">→</span></a>
+    </div>
+  </section>
+
+  <!-- NEIGHBOURHOODS -->
+  <section class="areas section bone">
+    <div class="wrap areas__grid">
+      <div class="areas__visual">
+        <div class="areas__frame media">
+          {neighbourhoods.map((n, i) => (
+            <Image src={n.image} alt={n.imageAlt} widths={[600, 900]} sizes="(min-width: 900px) 40vw, 90vw" class:list={['areas__img', { 'is-active': i === 0 }]} data-area={n.slug} />
+          ))}
+        </div>
+      </div>
+      <div>
+        <p class="eyebrow" data-reveal>Neighbourhoods</p>
+        <h2 class="areas__title" data-split>Where we <em>work</em></h2>
+        <ul class="areas__list" role="list">
+          {neighbourhoods.map((n) => (
+            <li data-reveal>
+              <a href={`/neighbourhoods#${n.slug}`} class="area" data-area={n.slug}>
+                <span class="area__name">{n.name}</span>
+                <span class="area__meta"><span class="num">{n.medianPrice}</span> median · {n.driveToDowntown} to downtown</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="voices section">
+    <div class="wrap voices__wrap">
+      <p class="eyebrow" data-reveal>In their words</p>
+      <div class="voices__stage" data-reveal>
+        {testimonials.map((t, i) => (
+          <figure class:list={['voice', { 'is-active': i === 0 }]} aria-hidden={i === 0 ? undefined : 'true'}>
+            <blockquote class="voice__quote">“{t.quote}”</blockquote>
+            <figcaption><strong>{t.name}</strong><span>{t.detail}</span></figcaption>
+          </figure>
+        ))}
+      </div>
+      <div class="voices__nav" data-reveal>
+        {testimonials.map((t, i) => (
+          <button class:list={['voices__dot', { 'is-active': i === 0 }]} aria-label={`Show testimonial from ${t.name}`} data-index={i}><span></span></button>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- SPLIT CTA -->
+  <section class="split">
+    <a href="/buyers" class="split__panel dark on-image" data-cursor="Buy">
+      <div class="split__media media"><Image src={interiorImg} alt="" widths={[700, 1100]} sizes="(min-width: 800px) 50vw, 100vw" /></div>
+      <div class="split__content">
+        <p class="eyebrow">For buyers</p>
+        <h2>Find a home <em>worth</em> the wait.</h2>
+        <span class="link">Start your search <span>→</span></span>
+      </div>
+    </a>
+    <a href="/sellers" class="split__panel dark on-image" data-cursor="Sell">
+      <div class="split__media media"><Image src={aerialImg} alt="" widths={[700, 1100]} sizes="(min-width: 800px) 50vw, 100vw" /></div>
+      <div class="split__content">
+        <p class="eyebrow">For sellers</p>
+        <h2>Sell with <em>intention.</em></h2>
+        <span class="link">Get a valuation <span>→</span></span>
+      </div>
+    </a>
+  </section>
+</Base>
+
+<style>
+  /* Hero ------------------------------------------------------------------ */
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+  .hero__media { position: absolute; inset: 0; }
+  .hero__shade {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgb(8 8 8 / 0.55) 0%, rgb(8 8 8 / 0) 22%),
+      linear-gradient(0deg, rgb(8 8 8 / 0.9) 0%, rgb(8 8 8 / 0.5) 45%, rgb(8 8 8 / 0.1) 75%);
+  }
+  .hero__content { position: relative; padding-top: 9rem; padding-bottom: clamp(2.5rem, 5vw, 4rem); }
+  .hero__eyebrow { margin-bottom: 1.5rem; }
+  .hero__title { font-size: min(var(--step-6), 19svh); line-height: 0.92; letter-spacing: -0.035em; max-width: 12ch; }
+  .hero__foot {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 2rem 3rem;
+    margin-top: clamp(2rem, 4vw, 3.5rem);
+    padding-top: 2rem;
+    border-top: 1px solid rgb(247 243 236 / 0.2);
+  }
+  .hero__lede { max-width: 34ch; font-size: var(--step-1); color: rgb(247 243 236 / 0.85); }
+
+  .search {
+    display: flex;
+    align-items: stretch;
+    gap: 0.35rem;
+    padding: 0.35rem;
+    border-radius: 999px;
+    background: rgb(247 243 236 / 0.1);
+    backdrop-filter: blur(16px);
+    box-shadow: inset 0 0 0 1px rgb(247 243 236 / 0.18);
+  }
+  .search__field {
+    display: grid;
+    padding: 0.45rem 1.4rem;
+    min-width: 11rem;
+    border-radius: 999px;
+    transition: background 0.3s;
+    cursor: pointer;
+  }
+  .search__field:hover, .search__field:focus-within { background: rgb(247 243 236 / 0.08); }
+  .search__field span { font-size: var(--step--2); font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
+  .search__field select {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    outline: none;
+    color: var(--paper);
+    padding-right: 1rem;
+    cursor: pointer;
+    background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%);
+    background-position: right 4px center, right 0 center;
+    background-size: 4px 4px;
+    background-repeat: no-repeat;
+  }
+  .search__field option { color: var(--ink); }
+
+  .hero__scroll {
+    position: absolute;
+    right: var(--gutter);
+    top: 50%;
+    width: 1px;
+    height: 5rem;
+    background: rgb(247 243 236 / 0.2);
+    overflow: hidden;
+  }
+  .hero__scroll span {
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    animation: scroll-cue 2.4s var(--ease-in-out) infinite;
+  }
+  @keyframes scroll-cue {
+    0% { transform: translateY(-100%); }
+    60%, 100% { transform: translateY(100%); }
+  }
+
+  @media (max-width: 960px) {
+    .hero__foot { grid-template-columns: 1fr; }
+    .hero__scroll { display: none; }
+  }
+  @media (max-width: 640px) {
+    .search { flex-direction: column; border-radius: 1.25rem; }
+    .search__field { border-radius: 0.9rem; }
+  }
+
+  /* Statement ------------------------------------------------------------- */
+  .statement__grid { display: grid; grid-template-columns: 1fr 3fr; gap: 2rem; align-items: start; }
+  .statement__grid > .eyebrow { margin-top: 0.8rem; }
+  .statement__text {
+    font-family: var(--font-display);
+    font-size: var(--step-3);
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    max-width: 26ch;
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-top: clamp(3rem, 6vw, 5rem);
+  }
+  .stats div { border-top: 1px solid var(--line-light); padding-top: 1.25rem; display: flex; flex-direction: column-reverse; gap: 0.5rem; }
+  .stats dt { color: var(--stone); font-size: 0.9rem; }
+  .stats dd { font-size: var(--step-4); line-height: 1; color: var(--ink); }
+  @media (max-width: 800px) {
+    .statement__grid { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: 1fr; gap: 1.25rem; }
+  }
+
+  /* Featured -------------------------------------------------------------- */
+  .featured { overflow: hidden; }
+  .featured__inner { min-height: 100svh; display: flex; flex-direction: column; justify-content: center; padding-block: 6rem 4rem; }
+  .featured__head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 1rem 2rem; margin-bottom: clamp(2rem, 4vw, 3.5rem); }
+  .featured__track {
+    display: flex;
+    gap: clamp(1.25rem, 2.5vw, 2.5rem);
+    padding-inline: max(var(--gutter), calc((100vw - var(--max)) / 2 + var(--gutter)));
+    will-change: transform;
+  }
+  .featured__track :global(.featured__card) { flex: 0 0 clamp(18rem, 28vw, 27rem); }
+  .featured__track :global(.featured__card .card__media) { aspect-ratio: 4 / 4.6; }
+  .featured__more {
+    flex: 0 0 clamp(16rem, 22vw, 21rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 2rem;
+    border: 1px solid var(--line-dark);
+    transition: background 0.5s var(--ease-out), color 0.5s;
+  }
+  .featured__more:hover { background: var(--accent); color: var(--ink); }
+  .featured__more:hover em { color: var(--ink); }
+  .featured__more-label { font-family: var(--font-display); font-size: var(--step-3); line-height: 1.05; }
+  .featured__more-label em { color: var(--accent); }
+  .featured__more-arrow { font-size: 2rem; align-self: flex-end; }
+  @media (max-width: 899px) {
+    .featured__inner { min-height: 0; }
+    .featured__track { overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter); padding-bottom: 1rem; scrollbar-width: none; }
+    .featured__track > :global(*) { scroll-snap-align: start; }
+  }
+
+  /* Services -------------------------------------------------------------- */
+  .services { position: relative; }
+  .services__head { display: grid; grid-template-columns: 1fr 3fr; align-items: start; gap: 2rem; margin-bottom: clamp(3rem, 6vw, 5rem); }
+  .services__head h2 { max-width: 16ch; }
+  .services__list { border-top: 1px solid var(--line-light); }
+  .services__list li { border-bottom: 1px solid var(--line-light); }
+  .service {
+    display: grid;
+    grid-template-columns: 5rem 1.3fr 1.4fr auto;
+    gap: 2rem;
+    align-items: center;
+    padding-block: clamp(1.5rem, 3vw, 2.5rem);
+    position: relative;
+    isolation: isolate;
+  }
+  .service::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--bone);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.6s var(--ease-out);
+    z-index: -1;
+  }
+  .service:hover::before { transform: scaleY(1); }
+  .service__num { font-size: 0.9rem; color: var(--accent-deep); padding-left: 0.5rem; }
+  .service__title { font-family: var(--font-display); font-size: var(--step-4); line-height: 1.06; min-width: 0; overflow-wrap: break-word; hyphens: auto; transition: transform 0.6s var(--ease-out); }
+  .service:hover .service__title { font-style: italic; transform: translateX(0.75rem); }
+  .service__text { color: var(--stone); max-width: 40ch; }
+  .service__arrow { font-size: 1.6rem; padding-right: 0.5rem; transition: transform 0.5s var(--ease-out); }
+  .service:hover .service__arrow { transform: translateX(6px); color: var(--accent-deep); }
+  .services__float {
+    position: fixed;
+    top: 0; left: 0;
+    width: 18rem;
+    aspect-ratio: 4 / 5;
+    pointer-events: none;
+    z-index: 5;
+    overflow: hidden;
+    opacity: 0;
+    scale: 0.85;
+    transition: opacity 0.4s var(--ease-out), scale 0.6s var(--ease-out);
+  }
+  .services__float.is-on { opacity: 1; scale: 1; }
+  .services__float img { width: 100%; height: 100%; object-fit: cover; }
+  @media (max-width: 900px) {
+    .services__head { grid-template-columns: 1fr; }
+    .service { grid-template-columns: auto minmax(0, 1fr) auto; row-gap: 0.5rem; }
+    .service__text { grid-column: 2 / 3; }
+    .services__float { display: none; }
+  }
+
+  /* Band ------------------------------------------------------------------ */
+  .band { position: relative; min-height: 95svh; display: flex; align-items: center; overflow: hidden; }
+  .band__media { position: absolute; inset: 0; }
+  .band__shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgb(8 8 8 / 0.75), rgb(8 8 8 / 0.15)); }
+  .band__content { position: relative; display: grid; gap: 2.5rem; justify-items: start; }
+  .band__title { font-size: var(--step-5); max-width: 14ch; }
+
+  /* Neighbourhoods -------------------------------------------------------- */
+  .areas__grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(2rem, 6vw, 7rem); align-items: start; }
+  .areas__visual { position: sticky; top: 7rem; }
+  .areas__frame { aspect-ratio: 4 / 5; }
+  .areas__frame :global(.areas__img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transform: scale(1.08);
+    transition: opacity 0.8s var(--ease-out), transform 1.6s var(--ease-out);
+  }
+  .areas__frame :global(.areas__img.is-active) { opacity: 1; transform: scale(1); }
+  .areas__title { margin: 1.5rem 0 3rem; }
+  .areas__list { border-top: 1px solid var(--line-light); }
+  .area {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.5rem 2rem;
+    padding-block: 1.4rem;
+    border-bottom: 1px solid var(--line-light);
+  }
+  .area__name { font-family: var(--font-display); font-size: var(--step-3); line-height: 1; transition: color 0.4s, transform 0.6s var(--ease-out); }
+  .area__meta { font-size: 0.85rem; color: var(--stone); }
+  .area:hover .area__name, .area.is-active .area__name { font-style: italic; color: var(--accent-deep); transform: translateX(0.5rem); }
+  @media (max-width: 900px) {
+    .areas__grid { grid-template-columns: 1fr; }
+    .areas__visual { position: relative; top: 0; }
+    .areas__frame { aspect-ratio: 16 / 11; }
+  }
+
+  /* Testimonials ---------------------------------------------------------- */
+  .voices__wrap { display: grid; gap: 3rem; }
+  .voices__stage { display: grid; }
+  .voice {
+    grid-area: 1 / 1;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out);
+    pointer-events: none;
+  }
+  .voice.is-active { opacity: 1; transform: none; pointer-events: auto; }
+  .voice__quote { font-family: var(--font-display); font-size: var(--step-4); line-height: 1.1; letter-spacing: -0.02em; max-width: 22ch; }
+  .voice figcaption { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 2.5rem; font-size: 0.9rem; }
+  .voice figcaption span { color: var(--stone); }
+  .voices__nav { display: flex; gap: 0.75rem; }
+  .voices__dot { width: 4rem; height: 1.5rem; display: grid; align-items: center; }
+  .voices__dot span { display: block; height: 1px; background: var(--line-light); position: relative; overflow: hidden; }
+  .voices__dot span::after { content: ''; position: absolute; inset: 0; background: var(--ink); transform: scaleX(0); transform-origin: left; }
+  .voices__dot.is-active span::after { animation: voice-progress 7s linear forwards; }
+  @keyframes voice-progress { to { transform: scaleX(1); } }
+
+  /* Split CTA ------------------------------------------------------------- */
+  .split { display: grid; grid-template-columns: 1fr 1fr; }
+  .split__panel { position: relative; min-height: 80svh; display: flex; align-items: flex-end; overflow: hidden; }
+  .split__media { position: absolute; inset: 0; }
+  .split__media :global(img) { transition: transform 1.6s var(--ease-out); }
+  .split__panel:hover .split__media :global(img) { transform: scale(1.06); }
+  .split__panel::before { content: ''; position: absolute; inset: 0; z-index: 1; background: linear-gradient(0deg, rgb(8 8 8 / 0.8), rgb(8 8 8 / 0.1) 60%); transition: background 0.6s; }
+  .split__content { position: relative; z-index: 2; padding: clamp(1.5rem, 4vw, 4rem); display: grid; gap: 1.5rem; justify-items: start; }
+  .split__content h2 { font-size: var(--step-4); max-width: 12ch; }
+  @media (max-width: 800px) {
+    .split { grid-template-columns: 1fr; }
+    .split__panel { min-height: 70svh; }
+  }
+</style>
+
+<script>
+  import { gsap } from '../scripts/motion';
+
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const intro = parseFloat(document.documentElement.dataset.intro || '0');
+
+  // Hero entrance: image settles from a slow zoom while the copy rises in.
+  if (!reduce) {
+    const img = document.querySelector('.hero__media img');
+    gsap.fromTo(img, { scale: 1.25 }, { scale: 1, duration: 2.8, ease: 'expo.out', delay: intro });
+    gsap.fromTo('[data-reveal-load]', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 1.3, ease: 'expo.out', stagger: 0.12, delay: intro + 0.7 });
+    gsap.to('.hero__media', {
+      yPercent: 18,
+      ease: 'none',
+      scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true },
+    });
+  }
+
+  // Services: an image follows the pointer over each row.
+  const float = document.querySelector<HTMLElement>('.services__float');
+  const floatImg = float?.querySelector('img');
+  if (float && floatImg && matchMedia('(pointer: fine)').matches) {
+    const xTo = gsap.quickTo(float, 'x', { duration: 0.7, ease: 'expo.out' });
+    const yTo = gsap.quickTo(float, 'y', { duration: 0.7, ease: 'expo.out' });
+    document.querySelectorAll<HTMLElement>('.service').forEach((row) => {
+      row.addEventListener('pointerenter', () => {
+        floatImg.src = row.dataset.img || '';
+        float.classList.add('is-on');
+      });
+      row.addEventListener('pointerleave', () => float.classList.remove('is-on'));
+      row.addEventListener('pointermove', (e) => {
+        xTo(e.clientX + 30);
+        yTo(e.clientY - 160);
+      });
+    });
+    // Scrolling moves rows out from under a still pointer without firing pointerleave.
+    window.addEventListener('scroll', () => float.classList.remove('is-on'), { passive: true });
+  }
+
+  // Neighbourhoods: hovering or focusing a name swaps the image.
+  const areaImgs = document.querySelectorAll<HTMLElement>('.areas__img');
+  const areaLinks = document.querySelectorAll<HTMLElement>('.area');
+  const showArea = (slug: string) => {
+    areaImgs.forEach((img) => img.classList.toggle('is-active', img.dataset.area === slug));
+    areaLinks.forEach((a) => a.classList.toggle('is-active', a.dataset.area === slug));
+  };
+  areaLinks.forEach((a) => {
+    a.addEventListener('pointerenter', () => showArea(a.dataset.area!));
+    a.addEventListener('focus', () => showArea(a.dataset.area!));
+  });
+
+  // Testimonials: auto-advance every 7s, dots jump directly.
+  const voices = document.querySelectorAll<HTMLElement>('.voice');
+  const dots = document.querySelectorAll<HTMLButtonElement>('.voices__dot');
+  let current = 0;
+  let timer: number | undefined;
+  const show = (i: number) => {
+    current = i;
+    voices.forEach((v, j) => {
+      v.classList.toggle('is-active', j === i);
+      v.toggleAttribute('aria-hidden', j !== i);
+    });
+    dots.forEach((d, j) => {
+      d.classList.remove('is-active');
+      if (j === i) {
+        void d.offsetWidth; // restart the progress bar animation
+        d.classList.add('is-active');
+      }
+    });
+    window.clearTimeout(timer);
+    if (!reduce) timer = window.setTimeout(() => show((current + 1) % voices.length), 7000);
+  };
+  dots.forEach((d) => d.addEventListener('click', () => show(Number(d.dataset.index))));
+  show(0);
+</script>

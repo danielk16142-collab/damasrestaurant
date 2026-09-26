@@ -1,0 +1,166 @@
+---
+import Monogram from './Monogram.astro';
+import { consent, getNeighbourhoods, site } from '../lib/content';
+const neighbourhoods = await getNeighbourhoods();
+const year = new Date().getFullYear();
+---
+<footer class="footer dark">
+  <div class="wrap">
+    <div class="footer__top">
+      <div class="footer__lead">
+        <h2 class="footer__title" data-split>Let’s find the <em>one</em>.</h2>
+        <a href="/contact" class="btn btn--accent" data-magnetic>Start a conversation <span class="arrow">→</span></a>
+      </div>
+
+      <form class="footer__news" data-newsletter>
+        <label for="news-email" class="eyebrow">Private listings, first</label>
+        <p class="muted">A short monthly letter with homes that never reach the open market.</p>
+        <div class="footer__field">
+          <input id="news-email" type="email" name="email" placeholder="Your email" autocomplete="email" required />
+          <button type="submit" aria-label="Subscribe">→</button>
+        </div>
+        <p class="footer__thanks" role="status" hidden>Thank you. You’re on the list.</p>
+      </form>
+    </div>
+
+    <div class="footer__cols">
+      <div>
+        <p class="eyebrow">Explore</p>
+        <ul role="list">
+          <li><a href="/properties">Properties</a></li>
+          <li><a href="/buyers">For Buyers</a></li>
+          <li><a href="/sellers">For Sellers</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="eyebrow">Neighbourhoods</p>
+        <ul role="list">
+          {neighbourhoods.map((n) => <li><a href={`/properties?area=${n.slug}`}>{n.name}</a></li>)}
+        </ul>
+      </div>
+      <div>
+        <p class="eyebrow">Studio</p>
+        <address>
+          <p>{site.address}</p>
+          <p><a href={`tel:${site.phone.replace(/\D/g, '')}`}>{site.phone}</a></p>
+          <p><a href={`mailto:${site.email}`}>{site.email}</a></p>
+          <p class="muted">{site.hours}</p>
+        </address>
+      </div>
+    </div>
+
+    <div class="footer__brand" aria-hidden="true">
+      <Monogram class="footer__mark" />
+      <span class="footer__word">VÉRTICE</span>
+    </div>
+
+    <div class="footer__base">
+      <p>© {year} Vértice Real Estate. All rights reserved.</p>
+      <p>Showcase site. Listings, prices and addresses are illustrative.</p>
+      <nav class="footer__legal" aria-label="Legal">
+        <a href="/privacy">Privacy</a>
+        <a href="/cookies">Cookies</a>
+        <a href="/terms">Terms</a>
+        {(consent.analytics || consent.marketing) && <button type="button" data-cookie-settings>Cookie settings</button>}
+      </nav>
+      <p><a href="#main" class="footer__top-link">Back to top ↑</a></p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer { padding-top: var(--section); overflow: hidden; }
+  .footer__top {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 4rem;
+    align-items: end;
+    padding-bottom: 5rem;
+    border-bottom: 1px solid var(--line-dark);
+  }
+  .footer__title { font-size: var(--step-5); margin-bottom: 2.5rem; }
+  .footer__news { display: grid; gap: 1rem; max-width: 28rem; }
+  .footer__field {
+    display: flex;
+    border-bottom: 1px solid rgb(247 243 236 / 0.3);
+    transition: border-color 0.3s;
+  }
+  .footer__field:focus-within { border-color: var(--accent); }
+  .footer__field input {
+    flex: 1;
+    background: none;
+    border: 0;
+    padding: 1rem 0;
+    outline: none;
+    color: var(--paper);
+  }
+  .footer__field input::placeholder { color: var(--mist); }
+  .footer__field button { font-size: 1.4rem; color: var(--accent); padding-inline: 0.5rem; transition: transform 0.4s var(--ease-out); }
+  .footer__field button:hover { transform: translateX(4px); }
+  .footer__thanks { color: var(--accent); }
+
+  .footer__cols {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    padding-block: 4rem;
+  }
+  .footer__cols .eyebrow { margin-bottom: 1.4rem; }
+  .footer__cols ul, .footer__cols address { display: grid; gap: 0.5rem; font-style: normal; }
+  .footer__cols a { color: rgb(247 243 236 / 0.8); transition: color 0.3s; }
+  .footer__cols a:hover { color: var(--accent); }
+
+  .footer__brand {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2vw;
+    color: var(--accent);
+    padding-top: 2rem;
+  }
+  .footer__brand :global(.footer__mark) { width: 14vw; max-width: 13rem; flex: none; }
+  .footer__word {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(3rem, 13.5vw, 13rem);
+    line-height: 0.8;
+    letter-spacing: 0.08em;
+    margin-right: -0.08em;
+  }
+  .footer__base {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 2rem;
+    margin-top: 2rem;
+    border-top: 1px solid var(--line-dark);
+    font-size: var(--step--1);
+    color: var(--mist);
+  }
+  .footer__top-link:hover { color: var(--accent); }
+  .footer__legal { display: flex; flex-wrap: wrap; gap: 0.4rem 1.5rem; }
+  .footer__legal a, .footer__legal button { color: inherit; transition: color 0.3s; }
+  .footer__legal a:hover, .footer__legal button:hover { color: var(--accent); }
+
+  @media (max-width: 860px) {
+    .footer__top { grid-template-columns: 1fr; gap: 3rem; }
+    .footer__cols { grid-template-columns: 1fr 1fr; }
+    .footer__cols > :last-child { grid-column: 1 / -1; }
+  }
+  @media (max-width: 480px) {
+    .footer__cols { grid-template-columns: 1fr; }
+    .footer__cols address { overflow-wrap: anywhere; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('[data-newsletter]').forEach((form) => {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      form.querySelector('.footer__field')?.setAttribute('hidden', '');
+      form.querySelector<HTMLElement>('.footer__thanks')!.hidden = false;
+    });
+  });
+</script>

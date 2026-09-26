@@ -1,0 +1,223 @@
+---
+import Logo from './Logo.astro';
+import { site } from '../lib/content';
+
+const links = [
+  { href: '/properties', label: 'Properties' },
+  { href: '/neighbourhoods', label: 'Neighbourhoods' },
+  { href: '/buyers', label: 'Buy' },
+  { href: '/sellers', label: 'Sell' },
+  { href: '/about', label: 'About' },
+];
+const menuLinks = [{ href: '/', label: 'Home' }, ...links, { href: '/contact', label: 'Contact' }];
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+---
+<header class="nav">
+  <div class="nav__inner">
+    <Logo class="nav__logo" />
+    <nav class="nav__links" aria-label="Main">
+      {links.map((l) => (
+        <a href={l.href} class="nav__link" aria-current={isActive(l.href) ? 'page' : undefined}>{l.label}</a>
+      ))}
+    </nav>
+    <div class="nav__actions">
+      <a href="/contact#book" class="btn btn--accent nav__cta" data-magnetic>Book a call</a>
+      <button class="nav__burger" aria-expanded="false" aria-controls="menu" aria-label="Open menu">
+        <span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div id="menu" class="menu" inert>
+  <div class="menu__inner wrap">
+    <nav aria-label="Menu">
+      <ol class="menu__list" role="list">
+        {menuLinks.map((l, i) => (
+          <li>
+            <a href={l.href} aria-current={isActive(l.href) ? 'page' : undefined}>
+              <span class="menu__num">0{i + 1}</span>
+              <span class="menu__label">{l.label}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+    <div class="menu__meta">
+      <p class="eyebrow">Get in touch</p>
+      <a href={`tel:${site.phone.replace(/\D/g, '')}`}>{site.phone}</a>
+      <a href={`mailto:${site.email}`}>{site.email}</a>
+      <p class="menu__addr">{site.address}</p>
+      <a href="/contact#book" class="btn btn--accent">Book a call</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .nav {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 100;
+    color: var(--paper);
+    transition: transform 0.7s var(--ease-out), background-color 0.5s ease, backdrop-filter 0.5s ease;
+  }
+  :global(html[data-scrolled]) .nav {
+    background: rgb(8 8 8 / 0.82);
+    backdrop-filter: blur(14px) saturate(1.2);
+  }
+  :global(html[data-scroll-dir='down']:not(.menu-open)) .nav { transform: translateY(-100%); }
+  :global(html.menu-open) .nav { background: transparent; backdrop-filter: none; }
+
+  .nav__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    max-width: var(--max);
+    margin-inline: auto;
+    padding: 1.1rem var(--gutter);
+    transition: padding 0.5s var(--ease-out);
+  }
+  :global(html[data-scrolled]) .nav__inner { padding-block: 0.7rem; }
+
+  .nav__links { display: flex; gap: clamp(1.25rem, 2.5vw, 2.5rem); }
+  .nav__link {
+    position: relative;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding-block: 0.4rem;
+    opacity: 0.85;
+    transition: opacity 0.3s;
+  }
+  .nav__link::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 1px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.6s var(--ease-out);
+  }
+  .nav__link:hover, .nav__link[aria-current] { opacity: 1; }
+  .nav__link:hover::after, .nav__link[aria-current]::after { transform: scaleX(1); }
+
+  .nav__actions { display: flex; align-items: center; gap: 1rem; }
+  .nav__cta { min-height: 2.8rem; padding-inline: 1.4rem; }
+
+  .nav__burger {
+    display: none;
+    position: relative;
+    width: 2.8rem;
+    height: 2.8rem;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1px rgb(247 243 236 / 0.35);
+    z-index: 2;
+  }
+  .nav__burger span {
+    position: absolute;
+    left: 0.85rem; right: 0.85rem;
+    height: 1px;
+    background: currentColor;
+    transition: transform 0.5s var(--ease-out);
+  }
+  .nav__burger span:first-child { top: calc(50% - 3px); }
+  .nav__burger span:last-child { top: calc(50% + 3px); }
+  .nav__burger[aria-expanded='true'] span:first-child { transform: translateY(3px) rotate(45deg); }
+  .nav__burger[aria-expanded='true'] span:last-child { transform: translateY(-3px) rotate(-45deg); }
+
+  @media (max-width: 1080px) {
+    .nav__links { display: none; }
+    .nav__burger { display: block; }
+  }
+  @media (max-width: 520px) {
+    .nav__cta { display: none; }
+  }
+
+  /* Full-screen menu */
+  .menu {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    background: var(--ink);
+    color: var(--paper);
+    clip-path: inset(0 0 100% 0);
+    visibility: hidden;
+    transition: clip-path 0.9s var(--ease-in-out), visibility 0s 0.9s;
+    overflow-y: auto;
+  }
+  :global(html.menu-open) .menu {
+    clip-path: inset(0 0 0 0);
+    visibility: visible;
+    transition: clip-path 0.9s var(--ease-in-out), visibility 0s;
+  }
+  .menu__inner {
+    min-height: 100%;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    align-items: end;
+    gap: 3rem;
+    padding-top: 7rem;
+    padding-bottom: 3rem;
+  }
+  .menu__inner > * { min-width: 0; }
+  .menu__list li { overflow: hidden; border-bottom: 1px solid var(--line-dark); }
+  .menu__list a {
+    display: flex;
+    align-items: baseline;
+    gap: 1.5rem;
+    padding-block: 0.6rem;
+    transform: translateY(100%);
+    transition: transform 0.9s var(--ease-out), color 0.3s;
+  }
+  :global(html.menu-open) .menu__list a { transform: none; }
+  .menu__list li:nth-child(1) a { transition-delay: 0.25s, 0s; }
+  .menu__list li:nth-child(2) a { transition-delay: 0.3s, 0s; }
+  .menu__list li:nth-child(3) a { transition-delay: 0.35s, 0s; }
+  .menu__list li:nth-child(4) a { transition-delay: 0.4s, 0s; }
+  .menu__list li:nth-child(5) a { transition-delay: 0.45s, 0s; }
+  .menu__list li:nth-child(6) a { transition-delay: 0.5s, 0s; }
+  .menu__list li:nth-child(7) a { transition-delay: 0.55s, 0s; }
+  .menu__num { font-size: 0.75rem; letter-spacing: 0.2em; color: var(--accent); }
+  .menu__label {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 1.2rem + 4vw, 5rem);
+    line-height: 1.05;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    letter-spacing: -0.02em;
+    transition: transform 0.6s var(--ease-out), font-style 0s;
+  }
+  .menu__list a:hover .menu__label, .menu__list a[aria-current] .menu__label { font-style: italic; color: var(--accent); transform: translateX(0.5rem); }
+  .menu__meta { display: grid; gap: 0.6rem; justify-items: start; opacity: 0; transition: opacity 0.6s 0.5s; }
+  :global(html.menu-open) .menu__meta { opacity: 1; }
+  .menu__meta a:not(.btn) { font-size: var(--step-1); }
+  .menu__addr { color: var(--mist); margin-bottom: 1.2rem; max-width: 26ch; }
+  @media (max-width: 800px) {
+    .menu__inner { grid-template-columns: 1fr; align-items: start; }
+  }
+</style>
+
+<script>
+  const root = document.documentElement;
+  const btn = document.querySelector<HTMLButtonElement>('.nav__burger')!;
+  const menu = document.getElementById('menu')!;
+  const setOpen = (open: boolean) => {
+    root.classList.toggle('menu-open', open);
+    btn.setAttribute('aria-expanded', String(open));
+    btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    menu.inert = !open;
+    if (open) window.__lenis?.stop();
+    else window.__lenis?.start();
+  };
+  btn.addEventListener('click', () => setOpen(!root.classList.contains('menu-open')));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && root.classList.contains('menu-open')) {
+      setOpen(false);
+      btn.focus();
+    }
+  });
+</script>

@@ -1,0 +1,37 @@
+---
+import { Image } from 'astro:assets';
+import type { Property } from '../lib/content';
+import { formatPrice, getNeighbourhood, propertyUrl } from '../lib/content';
+
+interface Props {
+  property: Property;
+  class?: string;
+  sizes?: string;
+}
+const { property: p, class: cls, sizes = '(min-width: 900px) 34vw, 90vw' } = Astro.props;
+const area = await getNeighbourhood(p.neighbourhood);
+---
+<a href={propertyUrl(p)} class:list={['card', cls]} data-cursor={p.hasDetailPage ? 'View' : 'Enquire'}>
+  <div class="card__media media">
+    <Image
+      src={p.hero}
+      alt={p.heroAlt}
+      widths={[480, 800, 1200]}
+      sizes={sizes}
+      style={p.hasDetailPage ? `view-transition-name: prop-${p.slug}` : undefined}
+    />
+    <span class="status-pill card__status" data-status={p.status}>{p.status}</span>
+  </div>
+  <div class="card__body">
+    <p class="card__meta">{area?.name} · {p.type}</p>
+    <h3 class="card__name">{p.name}</h3>
+    <div class="card__row">
+      <ul class="card__facts" role="list">
+        <li><span class="num">{p.beds}</span> Beds</li>
+        <li><span class="num">{p.baths}</span> Baths</li>
+        <li><span class="num">{p.sqft.toLocaleString('en-US')}</span> Sq ft</li>
+      </ul>
+      <p class="card__price num">{formatPrice(p.price)}</p>
+    </div>
+  </div>
+</a>

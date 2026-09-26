@@ -1,0 +1,43 @@
+---
+/*
+ * Cookie policy skeleton. List exactly what the site stores: check DevTools >
+ * Application (cookies + localStorage) after accepting everything. See references/legal.md.
+ */
+import LegalPage from '../components/LegalPage.astro';
+import { consent, site } from '../lib/content';
+
+const hasBanner = consent.analytics || consent.marketing;
+---
+<LegalPage title="Cookie policy" description={`The cookies and browser storage ${site.name} uses, and how to change your choice.`}>
+  <section>
+    <h2 id="what">What we store</h2>
+    <p>Cookies and similar storage are small pieces of information saved in your browser. We use as few as possible.</p>
+    <table>
+      <thead><tr><th>Name</th><th>Category</th><th>Provider</th><th>Purpose</th><th>Lasts</th></tr></thead>
+      <tbody>
+        <tr><td>consent</td><td>Essential</td><td>This site</td><td>Remembers your cookie choice</td><td>Until you clear it</td></tr>
+        <tr><td>vertice-enquiry-draft</td><td>Essential</td><td>This site</td><td>Keeps a draft of the enquiry form if you leave the page</td><td>Until sent</td></tr>
+        <tr><td>[[_ga, _ga_*]]</td><td>Analytics</td><td>[[Google Analytics]]</td><td>[[Counts visits and how pages are used]]</td><td>[[2 years]]</td></tr>
+      </tbody>
+    </table>
+    {!hasBanner && <p>We don’t use analytics or advertising cookies, so we don’t need to ask for your consent.</p>}
+  </section>
+
+  {hasBanner && (
+    <section>
+      <h2 id="choice">Your choice</h2>
+      <p>Analytics and marketing cookies are off until you accept them. You can change your mind at any time.</p>
+      <p><button type="button" class="link" data-cookie-settings>Open cookie settings</button></p>
+    </section>
+  )}
+
+  <section>
+    <h2 id="browser">Browser settings</h2>
+    <p>You can also block or delete cookies in your browser settings. Blocking essential storage may stop parts of the site, such as the enquiry form draft, from working.</p>
+  </section>
+
+  <section>
+    <h2 id="more">More information</h2>
+    <p>See our <a href="/privacy">privacy policy</a> for how we handle personal information.</p>
+  </section>
+</LegalPage>

@@ -1,0 +1,65 @@
+---
+interface Props {
+  items: { q: string; a: string }[];
+}
+const { items } = Astro.props;
+---
+<section class="faq section bone">
+  <div class="wrap faq__grid">
+    <div>
+      <p class="eyebrow" data-reveal>Questions</p>
+      <h2 data-split>Good to <em>know</em></h2>
+    </div>
+    <div class="faq__list">
+      {items.map((it) => (
+        <details class="faq__item" data-reveal>
+          <summary><span>{it.q}</span><span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__body"><div><p>{it.a}</p></div></div>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq__grid { display: grid; grid-template-columns: 1fr 1.6fr; gap: clamp(2rem, 6vw, 6rem); align-items: start; }
+  .faq__grid h2 { margin-top: 1.25rem; }
+  .faq__item { border-top: 1px solid var(--line-light); }
+  .faq__item:last-child { border-bottom: 1px solid var(--line-light); }
+  .faq__item summary {
+    display: flex; justify-content: space-between; align-items: center; gap: 1.5rem;
+    padding-block: 1.6rem; cursor: pointer; list-style: none;
+    font-family: var(--font-display); font-size: var(--step-2); line-height: 1.2;
+  }
+  .faq__item summary::-webkit-details-marker { display: none; }
+  .faq__item summary:hover span:first-child { color: var(--accent-deep); }
+  .faq__icon { position: relative; width: 1rem; height: 1rem; flex: none; }
+  .faq__icon::before, .faq__icon::after { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: currentColor; transition: transform 0.5s var(--ease-out); }
+  .faq__icon::after { transform: rotate(90deg); }
+  .faq__item[open] .faq__icon::after { transform: rotate(0); }
+  .faq__body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.6s var(--ease-out); }
+  .faq__body > div { overflow: hidden; }
+  .faq__body p { padding-bottom: 1.6rem; color: var(--stone); max-width: 60ch; }
+  .faq__item[open] .faq__body { grid-template-rows: 1fr; }
+  @media (max-width: 860px) { .faq__grid { grid-template-columns: 1fr; } }
+</style>
+
+<script>
+  // Animate closing too: <details> hides content instantly, so delay the close.
+  document.querySelectorAll<HTMLDetailsElement>('.faq__item').forEach((d) => {
+    const summary = d.querySelector('summary')!;
+    const body = d.querySelector<HTMLElement>('.faq__body')!;
+    summary.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (d.open) {
+        body.style.gridTemplateRows = '0fr';
+        setTimeout(() => { d.open = false; body.style.gridTemplateRows = ''; window.dispatchEvent(new Event('vertice:layout')); }, 450);
+      } else {
+        d.open = true;
+        body.style.gridTemplateRows = '0fr';
+        requestAnimationFrame(() => requestAnimationFrame(() => { body.style.gridTemplateRows = ''; }));
+        setTimeout(() => window.dispatchEvent(new Event('vertice:layout')), 650);
+      }
+    });
+  });
+</script>

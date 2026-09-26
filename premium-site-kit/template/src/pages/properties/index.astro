@@ -1,0 +1,74 @@
+---
+import { getImage } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import PropertyFilters, { type ListingCard } from '../../components/PropertyFilters';
+import { formatPrice, getNeighbourhoods, getProperties, propertyTypes, propertyUrl } from '../../lib/content';
+import heroImg from '../../assets/img/twelve-south-modern.jpg';
+
+const properties = await getProperties();
+const neighbourhoods = await getNeighbourhoods();
+const areaName = new Map(neighbourhoods.map((n) => [n.slug, n.name]));
+
+const listings: ListingCard[] = await Promise.all(
+  properties.map(async (p) => {
+    const img = await getImage({ src: p.hero, widths: [480, 800, 1200], format: 'webp' });
+    return {
+      slug: p.slug,
+      name: p.name,
+      url: propertyUrl(p),
+      area: p.neighbourhood,
+      areaName: areaName.get(p.neighbourhood) ?? '',
+      type: p.type,
+      status: p.status,
+      price: p.price,
+      priceLabel: formatPrice(p.price),
+      beds: p.beds,
+      baths: p.baths,
+      sqft: p.sqft,
+      yearBuilt: p.yearBuilt,
+      featured: p.featured,
+      hasDetailPage: p.hasDetailPage,
+      img: { src: img.src, srcset: img.srcSet.attribute, alt: p.heroAlt },
+    };
+  }),
+);
+---
+<Base title="Properties" description="Browse luxury homes for sale in Nashville. Filter by neighbourhood, property type, price and bedrooms.">
+  <PageHero eyebrow="Properties" image={heroImg} imageAlt="Modern stone and cedar home lit at dusk" size="short">
+    <Fragment slot="title">Nashville <em>residences</em></Fragment>
+    <p>Estates, family homes, modern builds and penthouses across the city’s best neighbourhoods.</p>
+    <a href="/contact?intent=buy" class="link">Can’t see it? Ask about private listings →</a>
+  </PageHero>
+
+  <section class="section results">
+    <div class="wrap">
+      <PropertyFilters
+        client:load
+        listings={listings}
+        areas={neighbourhoods.map((n) => ({ slug: n.slug, name: n.name }))}
+        types={propertyTypes}
+      />
+    </div>
+  </section>
+
+  <section class="private dark section">
+    <div class="wrap private__grid">
+      <p class="eyebrow" data-reveal>Off-market</p>
+      <div>
+        <h2 data-split>Some of our best homes <em>never</em> go online.</h2>
+        <p class="lede muted" data-reveal>Share your brief in two minutes and we’ll send you private listings that fit, before anyone else sees them.</p>
+        <a href="/contact?intent=buy" class="btn btn--accent" data-reveal data-magnetic>Share your brief <span class="arrow">→</span></a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .results { padding-top: clamp(3rem, 6vw, 5rem); }
+  .private__grid { display: grid; grid-template-columns: 1fr 3fr; gap: 2rem; align-items: start; }
+  .private__grid > .eyebrow { margin-top: 0.8rem; }
+  .private h2 { max-width: 16ch; margin-bottom: 2rem; }
+  .private .lede { margin-bottom: 2.5rem; }
+  @media (max-width: 800px) { .private__grid { grid-template-columns: 1fr; } }
+</style>

@@ -1,0 +1,134 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Monogram from '../components/Monogram.astro';
+import heroImg from '../assets/img/brentwood-street.jpg';
+import storyImg from '../assets/img/family/second-floor.jpg';
+import ctaImg from '../assets/img/belle-meade-estate.jpg';
+
+const values = [
+  { title: 'Discretion', text: 'Many of our clients value privacy as much as the home itself. Quiet sales, private viewings and careful handling of every detail are standard.' },
+  { title: 'Candour', text: 'We tell you what we would tell a friend, about a price, a street or a house. Sometimes that means advising you to wait.' },
+  { title: 'Craft', text: 'Photography, writing and negotiation done to a standard that reflects the homes we represent.' },
+];
+
+const partners = [
+  { name: 'Elena Marsh', role: 'Founding Partner', focus: 'Belle Meade · Green Hills', years: 16 },
+  { name: 'Julian Reyes', role: 'Partner, Sales', focus: 'Brentwood · Franklin', years: 12 },
+  { name: 'Margaux Bell', role: 'Partner, Buyers', focus: '12 South · Sylvan Park', years: 9 },
+  { name: 'Theo Whitfield', role: 'Partner, New Development', focus: 'The Gulch · Downtown', years: 11 },
+];
+---
+<Base title="About" description="Vértice is a boutique Nashville real estate firm representing a short list of exceptional homes, with discretion, candour and craft.">
+  <PageHero eyebrow="About Vértice" image={heroImg} imageAlt="Stone homes on a tree-lined Nashville street at sunset">
+    <Fragment slot="title">A boutique firm, <em>by design.</em></Fragment>
+    <p>Founded in Nashville in 2014. Four partners, a small team, and a deliberately short list of homes.</p>
+  </PageHero>
+
+  <section class="section">
+    <div class="wrap story">
+      <div class="story__mark" data-reveal><Monogram /></div>
+      <div>
+        <p class="eyebrow" data-reveal>Our story</p>
+        <p class="story__text" data-words>
+          Vértice means “vertex”: the point where lines meet. We started the firm to be that point for our clients, where the right home, the right timing and the right advice come together.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section dark">
+    <div class="wrap values">
+      <div class="values__media media" data-clip>
+        <Image src={storyImg} alt="Upstairs lounge with a black metal stair rail and soft seating" widths={[600, 1000]} sizes="(min-width: 900px) 40vw, 100vw" />
+      </div>
+      <div>
+        <p class="eyebrow" data-reveal>What we value</p>
+        <ol class="values__list" role="list">
+          {values.map((v, i) => (
+            <li data-reveal>
+              <span class="num">0{i + 1}</span>
+              <div><h3>{v.title}</h3><p class="muted">{v.text}</p></div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="team__head">
+        <p class="eyebrow" data-reveal>The partners</p>
+        <h2 data-split>People you’ll <em>actually</em> speak to.</h2>
+      </div>
+      <ul class="team" role="list">
+        {partners.map((p) => (
+          <li class="partner" data-reveal>
+            <span class="partner__name">{p.name}</span>
+            <span class="partner__role">{p.role}</span>
+            <span class="partner__focus">{p.focus}</span>
+            <span class="partner__years"><span class="num">{p.years}</span> years in Nashville</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section bone">
+    <div class="wrap">
+      <dl class="figures">
+        <div data-reveal><dt>In residential sales</dt><dd class="num" data-count="480" data-prefix="$" data-suffix="M+">$480M+</dd></div>
+        <div data-reveal><dt>Homes placed</dt><dd class="num" data-count="140" data-suffix="+">140+</dd></div>
+        <div data-reveal><dt>Clients who return or refer</dt><dd class="num" data-count="72" data-suffix="%">72%</dd></div>
+        <div data-reveal><dt>Founded</dt><dd class="num">2014</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <CtaBand eyebrow="Work with us" href="/contact" label="Start a conversation" image={ctaImg}>Let’s find <em>your</em> vertex.</CtaBand>
+</Base>
+
+<style>
+  .story { display: grid; grid-template-columns: 1fr 3fr; gap: 2rem; align-items: start; }
+  .story__mark { color: var(--accent-deep); width: min(10rem, 60%); }
+  .story__mark :global(svg) { width: 100%; height: auto; }
+  .story__text { margin-top: 1.5rem; font-family: var(--font-display); font-size: var(--step-4); line-height: 1.1; letter-spacing: -0.02em; max-width: 22ch; }
+
+  .values { display: grid; grid-template-columns: 1fr 1.2fr; gap: clamp(2rem, 7vw, 8rem); align-items: center; }
+  .values__media { aspect-ratio: 4 / 5; }
+  .values__list { margin-top: 2rem; }
+  .values__list li { display: grid; grid-template-columns: 4rem 1fr; gap: 1rem; padding-block: 2rem; border-top: 1px solid var(--line-dark); }
+  .values__list .num { color: var(--accent); font-size: var(--step-2); }
+  .values__list h3 { font-size: var(--step-3); margin-bottom: 0.75rem; }
+
+  .team__head { display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; align-items: start; margin-bottom: clamp(2.5rem, 5vw, 4rem); }
+  .team__head h2 { max-width: 14ch; }
+  .team { border-top: 1px solid var(--line-light); }
+  .partner {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr auto;
+    gap: 1rem 2rem;
+    align-items: baseline;
+    padding-block: clamp(1.5rem, 3vw, 2.25rem);
+    border-bottom: 1px solid var(--line-light);
+    transition: padding 0.6s var(--ease-out);
+  }
+  .partner__name { font-family: var(--font-display); font-size: var(--step-3); line-height: 1; transition: color 0.4s, transform 0.6s var(--ease-out); }
+  .partner:hover .partner__name { font-style: italic; color: var(--accent-deep); transform: translateX(0.5rem); }
+  .partner__role { font-weight: 600; font-size: 0.9rem; }
+  .partner__focus, .partner__years { color: var(--stone); font-size: 0.9rem; }
+
+  .figures { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; }
+  .figures div { display: flex; flex-direction: column-reverse; gap: 0.5rem; border-top: 1px solid var(--line-light); padding-top: 1.25rem; }
+  .figures dt { color: var(--stone); font-size: 0.9rem; }
+  .figures dd { font-size: var(--step-4); line-height: 1; }
+
+  @media (max-width: 860px) {
+    .story, .values, .team__head { grid-template-columns: 1fr; }
+    .partner { grid-template-columns: 1fr; gap: 0.35rem; }
+    .figures { grid-template-columns: 1fr 1fr; }
+  }
+</style>

@@ -1,0 +1,75 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { getNeighbourhoods, getProperties } from '../lib/content';
+import heroImg from '../assets/img/aerial.jpg';
+import ctaImg from '../assets/img/nashville-city.jpg';
+
+const neighbourhoods = await getNeighbourhoods();
+const properties = await getProperties();
+const countIn = (slug: string) => properties.filter((p) => p.neighbourhood === slug && p.status !== 'Sold').length;
+---
+<Base title="Neighbourhoods" description="A guide to Nashville's best neighbourhoods for luxury homes: Belle Meade, Green Hills, Brentwood, 12 South, The Gulch and Sylvan Park.">
+  <PageHero eyebrow="Neighbourhoods" image={heroImg} imageAlt="Aerial view of a leafy Nashville neighbourhood at golden hour">
+    <Fragment slot="title">Six addresses, <em>six</em> ways to live.</Fragment>
+    <p>From Belle Meade’s old oaks to skyline views in The Gulch, this is where our clients live.</p>
+    <nav class="jump" aria-label="Jump to neighbourhood">
+      {neighbourhoods.map((n) => <a href={`#${n.slug}`}>{n.name}</a>)}
+    </nav>
+  </PageHero>
+
+  <div class="areas">
+    {neighbourhoods.map((n, i) => (
+      <section id={n.slug} class:list={['area-block section', { 'area-block--flip': i % 2 === 1 }]}>
+        <div class="wrap area-block__grid">
+          <div class="area-block__media media" data-clip>
+            <Image src={n.image} alt={n.imageAlt} widths={[600, 1000, 1400]} sizes="(min-width: 900px) 55vw, 100vw" />
+          </div>
+          <div class="area-block__text">
+            <p class="eyebrow" data-reveal><span class="num">0{i + 1}</span> {n.tagline}</p>
+            <h2 data-split>{n.name}</h2>
+            <p class="lede muted" data-reveal>{n.description}</p>
+            <dl class="area-block__stats">
+              <div data-reveal><dt>Median price</dt><dd class="num">{n.medianPrice}</dd></div>
+              <div data-reveal><dt>To downtown</dt><dd class="num">{n.driveToDowntown}</dd></div>
+            </dl>
+            <ul class="area-block__highlights" role="list">
+              {n.highlights.map((h) => <li data-reveal>{h}</li>)}
+            </ul>
+            <a href={`/properties?area=${n.slug}`} class="btn" data-reveal data-magnetic>
+              {countIn(n.slug) > 0 ? `View ${countIn(n.slug)} ${countIn(n.slug) === 1 ? 'home' : 'homes'}` : 'Ask about private listings'} <span class="arrow">→</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    ))}
+  </div>
+
+  <CtaBand eyebrow="Not sure where to start?" href="/contact?intent=relocate" label="Plan a neighbourhood tour" image={ctaImg}>We’ll show you the city, <em>street</em> by street.</CtaBand>
+</Base>
+
+<style>
+  .jump { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .jump a { padding: 0.55rem 1rem; border-radius: 999px; box-shadow: inset 0 0 0 1px rgb(247 243 236 / 0.3); font-size: 0.85rem; transition: background 0.3s, color 0.3s; }
+  .jump a:hover { background: var(--accent); color: var(--ink); box-shadow: none; }
+
+  .area-block + .area-block { border-top: 1px solid var(--line-light); }
+  .area-block__grid { display: grid; grid-template-columns: 1.25fr 1fr; gap: clamp(2rem, 6vw, 7rem); align-items: center; }
+  .area-block--flip .area-block__grid { grid-template-columns: 1fr 1.25fr; }
+  .area-block--flip .area-block__media { order: 2; }
+  .area-block__media { aspect-ratio: 5 / 4; }
+  .area-block__text { display: grid; gap: 1.5rem; justify-items: start; }
+  .area-block__text .num { margin-right: 0.5rem; }
+  .area-block__stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; width: 100%; }
+  .area-block__stats div { display: flex; flex-direction: column-reverse; gap: 0.3rem; border-top: 1px solid var(--line-light); padding-top: 0.9rem; }
+  .area-block__stats dt { font-size: 0.85rem; color: var(--stone); }
+  .area-block__stats dd { font-size: var(--step-3); line-height: 1; }
+  .area-block__highlights { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .area-block__highlights li { padding: 0.45rem 0.9rem; border-radius: 999px; background: var(--bone); font-size: 0.85rem; }
+  @media (max-width: 860px) {
+    .area-block__grid, .area-block--flip .area-block__grid { grid-template-columns: 1fr; }
+    .area-block--flip .area-block__media { order: 0; }
+  }
+</style>

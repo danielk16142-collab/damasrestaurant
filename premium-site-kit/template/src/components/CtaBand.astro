@@ -1,0 +1,30 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+interface Props {
+  eyebrow: string;
+  href: string;
+  label: string;
+  image: ImageMetadata;
+}
+const { eyebrow, href, label, image } = Astro.props;
+---
+<section class="cta dark on-image">
+  <div class="cta__media media" data-parallax="10">
+    <Image src={image} alt="" widths={[800, 1280, 1672]} sizes="100vw" />
+  </div>
+  <div class="cta__shade"></div>
+  <div class="wrap cta__content">
+    <p class="eyebrow" data-reveal>{eyebrow}</p>
+    <h2 data-split><slot /></h2>
+    <a href={href} class="btn btn--accent" data-reveal data-magnetic>{label} <span class="arrow">→</span></a>
+  </div>
+</section>
+
+<style>
+  .cta { position: relative; min-height: 80svh; display: flex; align-items: center; overflow: hidden; }
+  .cta__media { position: absolute; inset: 0; }
+  .cta__shade { position: absolute; inset: 0; background: rgb(8 8 8 / 0.55); }
+  .cta__content { position: relative; display: grid; justify-items: center; text-align: center; gap: 2rem; }
+  .cta__content h2 { font-size: var(--step-5); max-width: 14ch; }
+</style>

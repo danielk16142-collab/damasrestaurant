@@ -1,0 +1,98 @@
+/* Property filters + results grid */
+.pf__bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.25rem;
+  padding-bottom: 2rem;
+  margin-bottom: clamp(2rem, 4vw, 3.5rem);
+  border-bottom: 1px solid var(--line-light);
+}
+.pf__chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.chip {
+  padding: 0.7rem 1.2rem;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px var(--line-light);
+  font-size: 0.88rem;
+  transition: background 0.35s var(--ease-out), color 0.35s, box-shadow 0.35s;
+}
+.chip:hover { box-shadow: inset 0 0 0 1px var(--ink); }
+.chip[aria-pressed='true'] { background: var(--ink); color: var(--paper); box-shadow: none; }
+
+.pf__row > * { min-width: 0; }
+.pf__row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 1.25rem 2rem; }
+.pf__types { display: inline-flex; flex-wrap: wrap; padding: 0.3rem; border-radius: 999px; background: var(--bone); }
+.seg {
+  padding: 0.6rem 1.1rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--stone);
+  transition: background 0.35s var(--ease-out), color 0.35s;
+}
+.seg:hover { color: var(--ink); }
+.seg[aria-pressed='true'] { background: var(--paper); color: var(--ink); box-shadow: 0 1px 2px rgb(8 8 8 / 0.08); }
+
+.pf__selects { display: flex; flex-wrap: wrap; gap: 0.5rem 1.75rem; }
+.pf__select { display: grid; gap: 0.15rem; min-width: 0; max-width: 100%; }
+.pf__select select { max-width: 100%; }
+.pf__select span { font-size: var(--step--2); font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent-deep); }
+.pf__select select {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--line-light);
+  padding: 0.35rem 1.4rem 0.35rem 0;
+  cursor: pointer;
+  outline: none;
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: right 5px center, right 1px center;
+  background-size: 4px 4px;
+  background-repeat: no-repeat;
+  transition: border-color 0.3s;
+}
+.pf__select select:hover, .pf__select select:focus-visible { border-color: var(--ink); }
+
+.pf__summary { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 2rem; font-size: 0.9rem; color: var(--stone); }
+.pf__count { font-size: var(--step-2); color: var(--ink); margin-right: 0.25rem; }
+.pf__toggle { display: inline-flex; align-items: center; gap: 0.6rem; cursor: pointer; }
+.pf__toggle input { position: absolute; opacity: 0; pointer-events: none; }
+.pf__switch {
+  position: relative;
+  width: 2.3rem;
+  height: 1.3rem;
+  border-radius: 999px;
+  background: var(--sand);
+  transition: background 0.3s;
+}
+.pf__switch::after {
+  content: '';
+  position: absolute;
+  top: 0.15rem; left: 0.15rem;
+  width: 1rem; height: 1rem;
+  border-radius: 50%;
+  background: var(--paper);
+  transition: transform 0.4s var(--ease-out);
+}
+.pf__toggle input:checked + .pf__switch { background: var(--ink); }
+.pf__toggle input:checked + .pf__switch::after { transform: translateX(1rem); background: var(--accent); }
+.pf__toggle input:focus-visible + .pf__switch { outline: 1px solid var(--accent); outline-offset: 3px; }
+.pf__clear { text-decoration: underline; text-underline-offset: 4px; color: var(--ink); }
+
+.pgrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(2.5rem, 4vw, 4rem) clamp(1rem, 2vw, 2rem);
+}
+@media (max-width: 1100px) { .pgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 680px) { .pgrid { grid-template-columns: 1fr; } }
+
+.pf__empty { display: grid; gap: 1.25rem; justify-items: start; padding-block: 3rem; max-width: 40rem; }
+.pf__empty h3 { font-size: var(--step-3); }
+.pf__empty-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem; margin-top: 0.5rem; }
+
+@media (max-width: 720px) {
+  .pf__chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); }
+  .chip { flex: none; }
+  .pf__types { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; max-width: 100%; }
+  .seg { flex: none; }
+}

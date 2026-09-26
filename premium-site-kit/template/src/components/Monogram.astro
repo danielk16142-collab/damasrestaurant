@@ -1,0 +1,21 @@
+---
+// VR architectural monogram from the brand logo. Uses currentColor, and a
+// mask for the tower cut-out so it works on any background.
+interface Props { class?: string; title?: string }
+const { class: cls, title } = Astro.props;
+const id = `vr-cut-${Math.random().toString(36).slice(2, 8)}`;
+---
+<svg class={cls} viewBox="295 310 585 305" fill="currentColor" role={title ? 'img' : undefined} aria-hidden={title ? undefined : 'true'} aria-label={title}>
+  <defs>
+    <mask id={id} maskUnits="userSpaceOnUse" x="295" y="310" width="585" height="305">
+      <rect x="295" y="310" width="585" height="305" fill="#fff" />
+      <path d="M555 470 L585 440 L615 470 L615 615 L555 615 Z" fill="#000" />
+    </mask>
+  </defs>
+  <g mask={`url(#${id})`}>
+    <path d="M300 315 L375 315 L510 535 L445 535 Z" />
+    <path d="M445 535 L510 535 L560 455 L560 555 L505 610 Z" />
+    <path fill-rule="evenodd" d="M585 315 L735 315 C820 315 865 355 865 420 C865 475 830 510 775 520 L875 610 L805 610 L715 520 L675 520 L675 610 L610 610 L610 315 Z M675 365 L675 470 L730 470 C770 470 800 450 800 418 C800 385 770 365 730 365 Z" />
+    <path d="M535 445 L585 395 L635 445 L635 610 L610 610 L610 430 L585 410 L560 430 L560 610 L535 610 Z" />
+  </g>
+</svg>
