@@ -1,0 +1,110 @@
+---
+// Nous trouver: address, hours, phone, email, getting here, map on request.
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Hours from '../components/Hours.astro';
+import LiveEvening from '../components/LiveEvening.astro';
+import Faq from '../components/Faq.astro';
+import { site } from '../lib/content';
+import { url, useT, type Lang } from '../lib/i18n';
+import { breadcrumbLd, faqLd } from '../lib/seo';
+import img from '../assets/photos/moucharabieh.jpg';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useT(lang);
+const fr = lang === 'fr';
+const faq = fr
+  ? [
+      { q: 'Comment réserver ?', a: 'En ligne sur OpenTable, depuis la page Réserver, ou par téléphone au (514) 439-5435. Pour plus de huit personnes, écrivez à info@damas.ca.' },
+      { q: 'Quand servez-vous le brunch ?', a: 'Le samedi et le dimanche, de 11 h à 15 h. Le dîner est servi tous les soirs de 17 h 30 à 22 h.' },
+      { q: 'Et si j’ai une allergie ou une restriction alimentaire ?', a: 'Mentionnez-la en réservant et à votre serveur ; la cuisine s’adapte dans la mesure du possible.' },
+    ]
+  : [
+      { q: 'How do I book?', a: 'Online through OpenTable from the Reserve page, or by phone at (514) 439-5435. For more than eight guests, email info@damas.ca.' },
+      { q: 'When is brunch?', a: 'Saturday and Sunday, 11 am to 3 pm. Dinner is served every evening from 5:30 to 10 pm.' },
+      { q: 'What if I have an allergy or dietary restriction?', a: 'Mention it when you book and to your server; the kitchen adapts wherever possible.' },
+    ];
+const title = fr ? 'Contact — adresse, heures et téléphone | Restaurant Damas, Outremont' : 'Contact — address, hours and phone | Restaurant Damas, Outremont';
+const description = fr
+  ? 'Restaurant Damas, 1201 avenue Van Horne, Outremont (Montréal). Dîner tous les soirs dès 17 h 30, brunch samedi et dimanche. (514) 439-5435, info@damas.ca.'
+  : 'Restaurant Damas, 1201 Van Horne Avenue, Outremont (Montréal). Dinner nightly from 5:30 pm, brunch Saturday and Sunday. (514) 439-5435, info@damas.ca.';
+---
+<Base lang={lang} page="contact" title={title} description={description} jsonLd={[breadcrumbLd(lang, [{ key: 'contact', name: 'Contact' }]), faqLd(faq)]}>
+  <section class="ct">
+    <div class="wrap ct__grid">
+      <div class="ct__text">
+        <p class="eyebrow" data-reveal-load>Contact</p>
+        <h1 data-split="load">{fr ? <>Nous <em>trouver</em></> : <>Find <em>us</em></>}</h1>
+        <p class="lede muted" data-reveal-load>{fr ? 'Au coin de Van Horne et Bloomfield, à Outremont. Poussez la porte : la nuit commence.' : 'On the corner of Van Horne and Bloomfield, in Outremont. Push open the door: the night begins.'}</p>
+        <LiveEvening lang={lang} />
+        <div class="ct__blocks">
+          <div data-reveal>
+            <p class="eyebrow">{t.address}</p>
+            <address>{site.address.street[lang]}<br />{site.address.city} ({site.address.region}) {site.address.postalCode}</address>
+            <a class="link" href={site.mapsUrl} target="_blank" rel="noopener">{t.directions} ↗</a>
+          </div>
+          <div data-reveal>
+            <p class="eyebrow">{t.hours}</p>
+            <Hours lang={lang} />
+          </div>
+          <div data-reveal>
+            <p class="eyebrow">{t.phone}</p>
+            <a class="ct__phone num" href={`tel:${site.phoneIntl}`}>{site.phone}</a>
+          </div>
+          <div data-reveal>
+            <p class="eyebrow">{t.email}</p>
+            <a class="ct__mail" href={`mailto:${site.email}`}>{site.email}</a>
+          </div>
+          <div data-reveal>
+            <p class="eyebrow">{fr ? 'Accès' : 'Getting here'}</p>
+            <p class="muted">{fr ? 'Métro Outremont (ligne bleue), à quelques minutes à pied.' : 'Outremont metro (blue line), a few minutes’ walk.'}</p>
+          </div>
+        </div>
+        <a href={url('reserve', lang)} class="btn btn--accent" data-reveal>{t.reserveTable} <span class="arrow">→</span></a>
+      </div>
+      <figure class="ct__img" data-clip="load"><Image src={img} alt={fr ? 'Moucharabieh lumineux et lustres dans la salle de Damas' : 'Glowing mashrabiya and chandeliers in the Damas dining room'} widths={[480, 900]} sizes="(max-width: 900px) 80vw, 36vw" loading="eager" /></figure>
+    </div>
+
+    <div class="wrap">
+      <div class="map" data-map data-src={site.mapsEmbed}>
+        <div class="map__gate">
+          <p class="map__title">{site.address.street[lang]}, {site.address.neighbourhood}</p>
+          <p class="muted">{fr ? 'La carte est fournie par Google, qui peut déposer ses propres témoins une fois affichée.' : 'The map is provided by Google, which may set its own cookies once shown.'}</p>
+          <button type="button" class="btn btn--ghost" data-map-load>{fr ? 'Afficher la carte' : 'Show the map'}</button>
+        </div>
+      </div>
+    </div>
+  </section>
+  <Faq items={faq} eyebrow="Questions" title={fr ? ['Bon à', 'savoir'] : ['Good to', 'know']} />
+</Base>
+<style>
+  .ct { padding-top: 9rem; padding-bottom: var(--section); }
+  .ct__grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: clamp(2.5rem, 7vw, 7rem); align-items: start; }
+  .ct__text { display: grid; gap: 1.75rem; justify-items: start; }
+  .ct__text h1 { font-size: var(--step-6); }
+  .ct__blocks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.25rem 3rem; width: 100%; padding-top: 2rem; border-top: 1px solid var(--line-dark); }
+  .ct__blocks .eyebrow { margin-bottom: 0.8rem; }
+  .ct__blocks address { font-style: normal; font-family: var(--font-display); font-size: var(--step-1); margin-bottom: 0.5rem; }
+  .ct__phone, .ct__mail { font-family: var(--font-display); font-size: var(--step-2); color: var(--accent); overflow-wrap: anywhere; }
+  .ct__img { margin: 0; aspect-ratio: 3 / 4; border-radius: 50% 50% 0 0 / 30% 30% 0 0; overflow: hidden; position: sticky; top: 7rem; }
+  .ct__img :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .map { margin-top: clamp(4rem, 8vw, 6rem); aspect-ratio: 16 / 7; border: 1px solid var(--line-dark); border-radius: var(--radius); overflow: hidden; display: grid; place-items: center; background: var(--ink-2); }
+  .map__gate { display: grid; justify-items: center; gap: 1rem; text-align: center; padding: 2rem; max-width: 30rem; }
+  .map__title { font-family: var(--font-display); font-size: var(--step-2); }
+  .map :global(iframe) { width: 100%; height: 100%; border: 0; filter: invert(0.9) hue-rotate(180deg) sepia(0.3) saturate(0.8); }
+  @media (max-width: 900px) { .ct__grid { grid-template-columns: 1fr; } .ct__img { position: static; width: 80%; } .map { aspect-ratio: 4 / 5; } .ct { padding-top: 7rem; } }
+  @media (max-width: 520px) { .ct__blocks { grid-template-columns: 1fr; } }
+</style>
+<script>
+  document.querySelectorAll<HTMLElement>('[data-map]').forEach((box) => {
+    box.querySelector('[data-map-load]')?.addEventListener('click', () => {
+      const f = document.createElement('iframe');
+      f.src = box.dataset.src!;
+      f.title = box.querySelector('.map__title')?.textContent || 'Map';
+      f.loading = 'lazy';
+      f.referrerPolicy = 'no-referrer-when-downgrade';
+      box.replaceChildren(f);
+    });
+  });
+</script>

@@ -1,0 +1,116 @@
+---
+// La table (/fr/cuisine-syrienne/): Damas's own text on Syrian cuisine as four
+// short chapters with photos, then the lexicon of the table (DefinedTermSet).
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Rosette from '../components/Rosette.astro';
+import { glossary } from '../lib/glossary';
+import { url, useT, type Lang } from '../lib/i18n';
+import { breadcrumbLd, glossaryLd } from '../lib/seo';
+import heroImg from '../assets/photos/mezzes-cuivre.jpg';
+import imgShare from '../assets/photos/table-partage.jpg';
+import imgSpice from '../assets/photos/cocktail-rose.jpg';
+import imgCellar from '../assets/photos/cave-murale.jpg';
+import imgMains from '../assets/photos/poisson-grille.jpg';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useT(lang);
+const fr = lang === 'fr';
+
+const chapters = fr
+  ? [
+      { label: 'À partager', img: imgShare, alt: 'Une table garnie de mezzés et de grillades à partager', text: 'Comme dans bien d’autres pays méditerranéens, la cuisine syrienne fait la part belle aux mezzés chauds et froids : un assortiment de petits plats à partager entre convives, souvent servis avant le plat principal.' },
+      { label: 'Safran, rose, coriandre', img: imgSpice, alt: 'Cocktail aux pétales de rose', text: 'L’ail et l’huile d’olive du Sud côtoient des épices raffinées comme le safran. Nos boissons reflètent elles aussi cet art ancien des épices : une touche de coriandre ou une pincée de safran et de rose dans nos cocktails.' },
+      { label: 'La cave', img: imgCellar, alt: 'Le mur de bouteilles de la cave', text: 'La culture du vin syrien est ancienne, et le vin occupe une place essentielle à la table de Damas, qu’il accompagne les plats végétariens ou les plus carnés. Les accords suggérés par le sommelier devraient ravir les assiettes comme les palais.' },
+      { label: 'Les plats principaux', img: imgMains, alt: 'Poisson entier grillé aux herbes', text: 'Située entre la mer et la terre, la Syrie met en valeur une cuisine marine et agricole délicatement apprêtée. Olives, citrons et feuilles de vigne abondent dans le paysage comme dans les saveurs ; persil et piment donnent à la cuisine un accent résolument oriental.' },
+    ]
+  : [
+      { label: 'To share', img: imgShare, alt: 'A table laden with mezze and grills to share', text: 'Like many Mediterranean cuisines, Syrian cooking favours hot and cold mezze: an assortment of small dishes shared among the table, often served before the main course.' },
+      { label: 'Saffron, rose, cilantro', img: imgSpice, alt: 'Cocktail garnished with rose petals', text: 'Garlic and olive oil from the south rub shoulders with refined spices such as saffron. Our drinks reflect the same ancient art of spicing: a touch of cilantro or a pinch of saffron and rose in our cocktails.' },
+      { label: 'The cellar', img: imgCellar, alt: 'The wall of bottles in the cellar', text: 'Syrian wine culture is ancient, and great wine is essential to the Damas table, with vegetarian and meatier dishes alike. The sommelier’s pairing suggestions should make every plate and palate happier.' },
+      { label: 'Main courses', img: imgMains, alt: 'Whole grilled fish with herbs', text: 'Between the sea and the land, Syria’s cooking spotlights delicately prepared marine and farm produce. Olives, lemons and vine leaves fill the landscape and the flavours; parsley and chilli give it a decidedly Eastern accent.' },
+    ];
+const title = fr ? 'Cuisine syrienne — mezzés, épices et vins du Levant | Damas' : 'Syrian cuisine — mezze, spices and Levantine wine | Damas';
+const description = fr
+  ? 'La cuisine syrienne de Damas : mezzés chauds et froids, safran, rose et fleur d’oranger, grillades, vins de Syrie et du Liban, et le petit lexique de la table.'
+  : 'Syrian cuisine at Damas: hot and cold mezze, saffron, rose and orange blossom, grills, wines from Syria and Lebanon, and a small lexicon of the table.';
+---
+<Base lang={lang} page="cuisine" title={title} description={description} jsonLd={[breadcrumbLd(lang, [{ key: 'cuisine', name: fr ? 'Cuisine syrienne' : 'Syrian cuisine' }]), glossaryLd(lang)]}>
+  <PageHero eyebrow={fr ? 'Cuisine syrienne' : 'Syrian cuisine'} image={heroImg} imageAlt={fr ? 'Mezzés servis dans des bols de cuivre martelé' : 'Mezze served in hammered copper bowls'}>
+    <Fragment slot="title">{fr ? <>La <em>table</em></> : <>The <em>table</em></>}</Fragment>
+    <p>{fr ? 'Des plats frais, épicés et composés, où les légumes, les fruits et même les fleurs jouent un rôle essentiel.' : 'Fresh, spiced and composed dishes, where vegetables, fruit and even flowers play an essential role.'}</p>
+  </PageHero>
+
+  <section class="section wrap intro-c" data-blooms>
+    <Rosette class="intro-c__rosette" />
+    <p class="intro-c__text" data-words>{fr
+      ? 'Miel, noix, fruits, produits laitiers, un peu de viande et de poisson côtoient des grains comme le boulgour. Tomates, aubergines et courgettes apportent des notes juteuses et ensoleillées ; l’eau de rose, la fleur d’oranger et le café à la cardamome closent le repas sur une note orientale.'
+      : 'Honey, nuts, fruit, dairy, some meat and fish rub shoulders with grains such as bulgur. Tomatoes, eggplant and zucchini bring juicy, sunny notes; rosewater, orange blossom and cardamom coffee close the meal on an Eastern note.'}</p>
+  </section>
+
+  <section class="chapters wrap">
+    {chapters.map((c, i) => (
+      <article class:list={['chapter', { 'chapter--rev': i % 2 }]}>
+        <figure class="chapter__img" data-clip><Image src={c.img} alt={c.alt} widths={[480, 820, 1100]} sizes="(max-width: 800px) 90vw, 42vw" /></figure>
+        <div class="chapter__text">
+          <span class="chapter__n num">{String(i + 1).padStart(2, '0')}</span>
+          <h2 data-split>{c.label}</h2>
+          <p data-reveal>{c.text}</p>
+        </div>
+      </article>
+    ))}
+  </section>
+
+  <section class="lexicon paper" aria-labelledby="lex-title">
+    <div class="wrap section">
+      <div class="lexicon__head">
+        <p class="eyebrow" data-reveal>{fr ? 'Petit lexique' : 'A small lexicon'}</p>
+        <h2 id="lex-title" data-split>{fr ? <>Les mots <em>de la table</em></> : <>Words <em>of the table</em></>}</h2>
+        <p class="muted" data-reveal>{fr ? 'Pour lire le menu comme on lit un conte.' : 'To read the menu the way you would read a tale.'}</p>
+      </div>
+      <dl class="lexicon__list">
+        {glossary.map((g) => (
+          <div class="lex" data-reveal>
+            <dt><span class="lex__term">{fr ? g.term : g.termEn ?? g.term}</span><span class="lex__ar arabic" lang="ar">{g.ar}</span></dt>
+            <dd>{g.def[lang]}</dd>
+          </div>
+        ))}
+      </dl>
+      <div class="lexicon__cta">
+        <a href={url('menus', lang)} class="btn btn--accent">{t.seeMenus} <span class="arrow">→</span></a>
+        <a href={url('reserve', lang)} class="link">{t.reserveTable}</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .intro-c { display: grid; justify-items: center; gap: 2rem; text-align: center; }
+  :global(.intro-c__rosette) { width: 64px; color: var(--damask); }
+  .intro-c__text { font-family: var(--font-display); font-size: var(--step-3); line-height: 1.25; max-width: 30ch; }
+  .chapters { display: grid; gap: clamp(5rem, 10vw, 9rem); padding-bottom: var(--section); }
+  .chapter { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: clamp(2rem, 6vw, 6rem); align-items: center; }
+  .chapter--rev .chapter__img { order: 2; }
+  .chapter__img { margin: 0; aspect-ratio: 4 / 5; max-width: 34rem; width: 100%; border-radius: 50% 50% 0 0 / 30% 30% 0 0; overflow: hidden; }
+  .chapter--rev .chapter__img { justify-self: end; }
+  .chapter__img :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .chapter__text { display: grid; gap: 1.25rem; }
+  .chapter__text h2 { font-size: var(--step-4); }
+  .chapter__text p { max-width: 44ch; color: rgb(239 230 218 / 0.85); }
+  .chapter__n { font-size: var(--step--2); letter-spacing: 0.2em; color: var(--brass); }
+  @media (max-width: 800px) { .chapter { grid-template-columns: 1fr; } .chapter--rev .chapter__img { order: 0; } }
+
+  .lexicon__head { display: grid; gap: 1.25rem; max-width: 40rem; margin-bottom: 3rem; }
+  .lexicon__list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 4rem; }
+  .lex { padding-block: 1.3rem; border-top: 1px solid var(--line-light); display: grid; gap: 0.4rem; }
+  .lex dt { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+  .lex__term { font-family: var(--font-display); font-size: var(--step-2); transition: color 0.4s, transform 0.6s var(--ease-out); }
+  .lex__ar { font-size: var(--step-2); color: var(--damask); transition: transform 0.6s var(--ease-out); }
+  .lex:hover .lex__term { color: var(--accent-deep); transform: translateX(0.3rem); font-style: italic; }
+  .lex:hover .lex__ar { transform: scale(1.2); }
+  .lex dd { margin: 0; color: var(--stone); max-width: 48ch; }
+  .lexicon__cta { display: flex; flex-wrap: wrap; gap: 1rem 2rem; align-items: center; margin-top: 3.5rem; }
+  @media (max-width: 800px) { .lexicon__list { grid-template-columns: 1fr; } }
+</style>

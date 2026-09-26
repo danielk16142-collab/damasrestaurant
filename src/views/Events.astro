@@ -1,0 +1,120 @@
+---
+// Événements privés: Damas's own text, the formats, how it works, FAQ and the
+// multi-step enquiry (EventsForm, not connected yet: it composes an email).
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Process from '../components/Process.astro';
+import Faq from '../components/Faq.astro';
+import EventsForm from '../components/EventsForm';
+import { site } from '../lib/content';
+import { tasting } from '../lib/menus';
+import { url, type Lang } from '../lib/i18n';
+import { breadcrumbLd, faqLd } from '../lib/seo';
+import heroImg from '../assets/photos/evenements-prives.avif';
+import imgTable from '../assets/photos/longue-table.jpg';
+import imgFeast from '../assets/photos/table-partage.jpg';
+import imgBites from '../assets/photos/tartare-bouchees.jpg';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+
+const formats = fr
+  ? [
+      { t: 'La longue table', d: 'Une grande tablée sous les lustres de cristal, pour réunir tout le monde autour des mêmes plats.', img: imgTable },
+      { t: 'Un festin à partager', d: `Mezzés, grillades sur charbon de bois et douceurs, ou le menu dégustation du chef (${tasting.price} $ par personne), avec accords vins, cocktails ou sans alcool.`, img: imgFeast },
+      { t: 'Cocktail dînatoire', d: 'Bouchées, mezzés et cocktails aux parfums de Damas pour les réceptions debout.', img: imgBites },
+    ]
+  : [
+      { t: 'The long table', d: 'One great table beneath the crystal chandeliers, to gather everyone around the same dishes.', img: imgTable },
+      { t: 'A feast to share', d: `Mezze, charcoal grills and sweets, or the chef’s tasting menu ($${tasting.price} per guest), with wine, cocktail or zero-proof pairings.`, img: imgFeast },
+      { t: 'Cocktail reception', d: 'Bites, mezze and Damascus-scented cocktails for standing receptions.', img: imgBites },
+    ];
+const steps = fr
+  ? [
+      { title: 'Votre demande', text: 'La date, le nombre de convives et l’occasion, par le formulaire ou à info@damas.ca.' },
+      { title: 'Notre proposition', text: 'Nous confirmons la disponibilité et vous proposons une formule et un menu.' },
+      { title: 'La soirée', text: 'Vous arrivez, la salle est prête. Il ne reste qu’à passer à table.' },
+    ]
+  : [
+      { title: 'Your request', text: 'The date, number of guests and occasion, through the form or at info@damas.ca.' },
+      { title: 'Our proposal', text: 'We confirm availability and suggest a format and a menu.' },
+      { title: 'The evening', text: 'You arrive, the room is ready. All that’s left is to sit down.' },
+    ];
+const faq = fr
+  ? [
+      { q: 'Peut-on privatiser tout le restaurant ?', a: 'Oui, certains jours. Écrivez-nous avec la date souhaitée et le nombre de convives, et nous vous dirons ce qui est possible.' },
+      { q: 'À partir de combien de personnes parle-t-on de groupe ?', a: `Pour une table de plus de huit personnes, écrivez-nous à ${site.email} plutôt que de réserver en ligne.` },
+      { q: 'Tenez-vous compte des allergies ?', a: 'Oui. Indiquez-les dans votre demande ; la cuisine adapte le menu dans la mesure du possible.' },
+    ]
+  : [
+      { q: 'Can we book the whole restaurant?', a: 'Yes, on certain days. Write to us with your date and number of guests and we’ll tell you what’s possible.' },
+      { q: 'When does a table become a group?', a: `For parties larger than eight, email us at ${site.email} rather than booking online.` },
+      { q: 'Do you accommodate allergies?', a: 'Yes. Mention them in your request; the kitchen adapts the menu wherever possible.' },
+    ];
+const title = fr ? 'Événements privés — privatiser le restaurant Damas, Outremont' : 'Private events — book Restaurant Damas, Outremont';
+const description = fr
+  ? 'Privatisez le restaurant Damas pour vos réceptions d’entreprise ou vos célébrations personnelles, à Outremont : longue table, festin à partager, cocktail dînatoire.'
+  : 'Book Restaurant Damas for corporate receptions or personal celebrations in Outremont: a long table, a feast to share, a cocktail reception.';
+---
+<Base lang={lang} page="events" title={title} description={description} jsonLd={[breadcrumbLd(lang, [{ key: 'events', name: fr ? 'Événements privés' : 'Private events' }]), faqLd(faq)]}>
+  <PageHero eyebrow={fr ? 'Événements privés' : 'Private events'} image={heroImg} imageAlt={fr ? 'Salon privé dressé pour une longue tablée sous des lustres de cristal' : 'Private salon set for a long table beneath crystal chandeliers'}>
+    <Fragment slot="title">{fr ? <>Privatiser <em>la salle</em></> : <>Book <em>the room</em></>}</Fragment>
+    <p>{fr ? 'Notre restaurant peut être réservé pour vos occasions privées, certains jours. Nous recevons aussi bien les événements d’entreprise que les célébrations personnelles.' : 'Our restaurant can be booked for your private occasions on certain days. We host corporate events and personal celebrations alike.'}</p>
+    <a href="#demande" class="link">{fr ? 'Faire une demande' : 'Send a request'} ↓</a>
+  </PageHero>
+
+  <section class="section wrap formats">
+    {formats.map((f, i) => (
+      <article class:list={['format', { 'format--rev': i % 2 }]}>
+        <figure class="format__img" data-clip><Image src={f.img} alt="" widths={[480, 900]} sizes="(max-width: 800px) 90vw, 40vw" /></figure>
+        <div class="format__text">
+          <span class="format__n num">{String(i + 1).padStart(2, '0')}</span>
+          <h2 data-split>{f.t}</h2>
+          <p data-reveal>{f.d}</p>
+        </div>
+      </article>
+    ))}
+  </section>
+
+  <div class="paper">
+    <Process eyebrow={fr ? 'Comment ça se passe' : 'How it works'} steps={steps}>
+      {fr ? <>Trois <em>étapes</em></> : <>Three <em>steps</em></>}
+    </Process>
+  </div>
+
+  <section id="demande" class="section paper request">
+    <div class="wrap request__grid">
+      <div class="request__intro">
+        <p class="eyebrow" data-reveal>{fr ? 'Votre demande' : 'Your request'}</p>
+        <h2 data-split>{fr ? <>Parlons de <em>votre soirée</em></> : <>Let’s talk about <em>your evening</em></>}</h2>
+        <p class="muted" data-reveal>{fr ? 'Écrivez-nous à ' : 'Email us at '}<a class="link" href={`mailto:${site.email}`}>{site.email}</a>{fr ? ' ou remplissez le formulaire, et nous reviendrons vers vous avec les détails.' : ' or fill in the form, and we’ll come back to you with the details.'}</p>
+        <p class="muted" data-reveal><a class="link" href={`tel:${site.phoneIntl}`}>{site.phone}</a></p>
+      </div>
+      <div class="request__form">
+        <EventsForm client:visible lang={lang} privacyHref={url('privacy', lang)} />
+      </div>
+    </div>
+  </section>
+
+  <Faq items={faq} eyebrow={fr ? 'Questions' : 'Questions'} title={fr ? ['Bon à', 'savoir'] : ['Good to', 'know']} />
+</Base>
+
+<style>
+  .formats { display: grid; gap: clamp(5rem, 10vw, 8rem); }
+  .format { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(2rem, 6vw, 6rem); align-items: center; }
+  .format--rev .format__img { order: 2; justify-self: end; }
+  .format__img { margin: 0; aspect-ratio: 4 / 5; max-width: 32rem; width: 100%; border-radius: 50% 50% 0 0 / 30% 30% 0 0; overflow: hidden; }
+  .format__img :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .format__text { display: grid; gap: 1.25rem; }
+  .format__text h2 { font-size: var(--step-4); }
+  .format__text p { max-width: 42ch; color: rgb(239 230 218 / 0.85); }
+  .format__n { font-size: var(--step--2); letter-spacing: 0.2em; color: var(--brass); }
+  @media (max-width: 800px) { .format { grid-template-columns: 1fr; } .format--rev .format__img { order: 0; justify-self: start; } }
+  .request { scroll-margin-top: 4rem; border-top: 1px solid var(--line-light); }
+  .request__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: clamp(2.5rem, 7vw, 7rem); align-items: start; }
+  .request__intro { display: grid; gap: 1.25rem; position: sticky; top: 7rem; }
+  .request__intro h2 { font-size: var(--step-4); }
+  @media (max-width: 900px) { .request__grid { grid-template-columns: 1fr; } .request__intro { position: static; } }
+</style>

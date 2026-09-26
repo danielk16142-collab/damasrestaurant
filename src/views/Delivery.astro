@@ -1,0 +1,52 @@
+---
+// Livraison: Folfol, the counter next door (DoorDash), from Damas's own copy.
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import { integrations } from '../lib/content';
+import { url, type Lang } from '../lib/i18n';
+import { breadcrumbLd } from '../lib/seo';
+import img from '../assets/photos/boeuf-pain.webp';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+const title = fr ? 'Livraison et commandes à emporter — Folfol par Damas' : 'Delivery and takeout — Folfol by Damas';
+const description = fr
+  ? 'Folfol, le comptoir gourmand voisin du restaurant Damas, livre la cuisine méditerranéenne et moyen-orientale à votre porte par DoorDash.'
+  : 'Folfol, the gourmet counter next door to Restaurant Damas, delivers Mediterranean and Middle Eastern dishes to your door via DoorDash.';
+---
+<Base lang={lang} page="delivery" title={title} description={description} jsonLd={[breadcrumbLd(lang, [{ key: 'delivery', name: fr ? 'Livraison' : 'Delivery' }])]}>
+  <section class="dlv oxblood">
+    <div class="wrap dlv__grid">
+      <div class="dlv__text">
+        <p class="eyebrow" data-reveal-load>{fr ? 'Livraison et à emporter' : 'Delivery and takeout'}</p>
+        <h1 data-split="load">{fr ? <>Folfol, <em>notre comptoir voisin</em></> : <>Folfol, <em>our counter next door</em></>}</h1>
+        <p class="lede" data-reveal-load>{fr
+          ? 'Chez Damas, nous prenons la livraison au sérieux, au point d’avoir fondé un comptoir gourmand qui lui est dédié : Folfol. On y sert les mêmes plats qu’au restaurant.'
+          : 'At Damas, we take delivery seriously, so much so that we founded a gourmet counter just for it: Folfol. It serves the same dishes as the restaurant.'}</p>
+        <p data-reveal-load>{fr
+          ? 'Folfol est situé juste à côté de Damas et livre par DoorDash les délices de la Méditerranée et du Moyen-Orient jusqu’à votre porte. Suivez Folfol pour les nouvelles gourmandes, et parfois de nouveaux plats au menu.'
+          : 'Folfol is right next door and delivers Mediterranean and Middle Eastern delights to your door via DoorDash. Follow Folfol for tasty news and, at times, new dishes on the menu.'}</p>
+        <div class="dlv__actions" data-reveal-load>
+          <a href={integrations.folfol.site(lang)} class="btn btn--accent" target="_blank" rel="noopener" data-magnetic>{fr ? 'Commander chez Folfol' : 'Order from Folfol'} <span class="arrow">↗</span></a>
+          <a href={integrations.folfol.instagram} class="link" target="_blank" rel="noopener">Instagram</a>
+          <a href={integrations.folfol.facebook} class="link" target="_blank" rel="noopener">Facebook</a>
+        </div>
+        <p class="dlv__note" data-reveal-load>{fr ? 'Envie de la salle plutôt ? ' : 'Rather have the room? '}<a href={url('reserve', lang)} class="link">{fr ? 'Réserver chez Damas' : 'Reserve at Damas'}</a></p>
+      </div>
+      <figure class="dlv__img" data-clip="load"><Image src={img} alt={fr ? 'Tranches de bœuf grillé sur pain, prêtes à partager' : 'Sliced grilled beef on bread, ready to share'} widths={[480, 900, 1300]} sizes="(max-width: 800px) 90vw, 44vw" loading="eager" /></figure>
+    </div>
+  </section>
+</Base>
+<style>
+  .dlv { min-height: 100svh; display: flex; align-items: center; padding-block: 9rem var(--section); }
+  .dlv__grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: clamp(2.5rem, 7vw, 7rem); align-items: center; }
+  .dlv__text { display: grid; gap: 1.5rem; justify-items: start; }
+  .dlv__text h1 { font-size: var(--step-5); max-width: 14ch; }
+  .dlv__text p { max-width: 50ch; color: rgb(239 230 218 / 0.9); }
+  .dlv__actions { display: flex; flex-wrap: wrap; gap: 1rem 2rem; align-items: center; }
+  .dlv__note { font-size: var(--step--1); }
+  .dlv__img { margin: 0; aspect-ratio: 4 / 5; border-radius: 50% 50% 0 0 / 30% 30% 0 0; overflow: hidden; }
+  .dlv__img :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  @media (max-width: 800px) { .dlv__grid { grid-template-columns: 1fr; } .dlv__img { width: 80%; } }
+</style>

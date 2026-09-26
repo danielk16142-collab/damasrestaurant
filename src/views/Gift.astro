@@ -1,0 +1,49 @@
+---
+// Carte cadeau: Damas's copy, sold through Treater (external link).
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Emblem from '../components/Emblem.astro';
+import { integrations } from '../lib/content';
+import { url, useT, type Lang } from '../lib/i18n';
+import { breadcrumbLd } from '../lib/seo';
+import img from '../assets/photos/douceur-pistache.jpg';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useT(lang);
+const fr = lang === 'fr';
+const title = fr ? 'Carte cadeau — offrir une soirée au restaurant Damas' : 'Gift card — give an evening at Restaurant Damas';
+const description = fr
+  ? 'Offrez une soirée au restaurant Damas, cuisine syrienne à Outremont : carte cadeau au montant de votre choix, envoyée par courriel.'
+  : 'Give an evening at Restaurant Damas, Syrian dining in Outremont: a gift card for the amount of your choice, sent by email.';
+---
+<Base lang={lang} page="gift" title={title} description={description} jsonLd={[breadcrumbLd(lang, [{ key: 'gift', name: fr ? 'Carte cadeau' : 'Gift card' }])]}>
+  <section class="gift">
+    <Emblem class="gift__emblem" color="oxblood" loading="eager" />
+    <div class="wrap gift__grid">
+      <figure class="gift__img" data-clip="load"><Image src={img} alt={fr ? 'Pâtisserie à la pistache et crème glacée à l’ashta' : 'Pistachio pastry with ashta ice cream'} widths={[480, 900]} sizes="(max-width: 800px) 80vw, 36vw" loading="eager" /></figure>
+      <div class="gift__text">
+        <p class="eyebrow" data-reveal-load>{fr ? 'Carte cadeau' : 'Gift card'}</p>
+        <h1 data-split="load">{fr ? <>Offrir <em>une soirée</em></> : <>Give <em>an evening</em></>}</h1>
+        <p class="lede" data-reveal-load>{fr ? 'Vous aimez Damas ? Vos proches apprécieront sûrement une soirée chez nous, eux aussi. Offrez-leur un monde de saveurs, au montant de votre choix.' : 'Love Damas? We bet your loved ones will enjoy an evening with us, too. Give them a world of flavours, for the amount of your choice.'}</p>
+        <div class="gift__actions" data-reveal-load>
+          <a href={integrations.giftCardUrl(lang)} class="btn btn--accent" target="_blank" rel="noopener" data-magnetic>{fr ? 'Offrir une carte' : 'Send a gift card'} <span class="arrow">↗</span></a>
+          <a href={url('menus', lang)} class="link">{t.seeMenus}</a>
+        </div>
+        <p class="gift__note muted" data-reveal-load>{fr ? 'Achat sécurisé chez notre partenaire Treater ; la carte est envoyée par courriel.' : 'Secure purchase through our partner Treater; the card is sent by email.'}</p>
+      </div>
+    </div>
+  </section>
+</Base>
+<style>
+  .gift { position: relative; min-height: 100svh; display: flex; align-items: center; overflow: hidden; isolation: isolate; padding-block: 9rem var(--section); }
+  .gift :global(.gift__emblem) { position: absolute; z-index: -1; left: -15vw; bottom: -10%; width: min(1000px, 120vw); opacity: 0.45; }
+  .gift__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: clamp(2.5rem, 7vw, 7rem); align-items: center; }
+  .gift__img { margin: 0; aspect-ratio: 4 / 5; border-radius: 50% 50% 0 0 / 30% 30% 0 0; overflow: hidden; }
+  .gift__img :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .gift__text { display: grid; gap: 1.5rem; justify-items: start; }
+  .gift__text h1 { font-size: var(--step-6); }
+  .gift__actions { display: flex; flex-wrap: wrap; gap: 1rem 2rem; align-items: center; }
+  .gift__note { font-size: var(--step--1); }
+  @media (max-width: 800px) { .gift__grid { grid-template-columns: 1fr; } .gift__img { width: 75%; } }
+</style>

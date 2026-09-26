@@ -5,26 +5,32 @@
  * pass `toc` to list them in a sticky contents column.
  */
 import Base from '../layouts/Base.astro';
-import PageHero from './PageHero.astro';
 import { legal } from '../lib/content';
+import type { Lang, RouteKey } from '../lib/i18n';
+import { breadcrumbLd } from '../lib/seo';
 
 interface Props {
+  lang: Lang;
+  page: RouteKey;
   title: string;
   description: string;
   toc?: { id: string; label: string }[];
 }
-const { title, description, toc = [] } = Astro.props;
+const { lang, page, title, description, toc = [] } = Astro.props;
+const fr = lang === 'fr';
+const updated = new Date(legal.updated + 'T12:00:00').toLocaleDateString(fr ? 'fr-CA' : 'en-CA', { year: 'numeric', month: 'long', day: 'numeric' });
 ---
-<Base title={title} description={description}>
-  <PageHero eyebrow="Legal">
-    <Fragment slot="title">{title}</Fragment>
-    <p class="muted">Last updated {legal.updated}</p>
-  </PageHero>
+<Base lang={lang} page={page} title={`${title} — Restaurant Damas`} description={description} tone="paper" jsonLd={[breadcrumbLd(lang, [{ key: page, name: title }])]}>
+  <header class="legal__hero wrap">
+    <p class="eyebrow" data-reveal-load>{fr ? 'Mentions' : 'Legal'}</p>
+    <h1 data-split="load">{title}</h1>
+    <p class="muted" data-reveal-load>{fr ? 'Dernière mise à jour :' : 'Last updated:'} {updated}</p>
+  </header>
 
   <div class="legal wrap">
     {toc.length > 0 && (
-      <nav class="legal__toc" aria-label="On this page">
-        <p class="eyebrow">On this page</p>
+      <nav class="legal__toc" aria-label={fr ? 'Sur cette page' : 'On this page'}>
+        <p class="eyebrow">{fr ? 'Sur cette page' : 'On this page'}</p>
         <ol role="list">{toc.map((t) => <li><a href={`#${t.id}`}>{t.label}</a></li>)}</ol>
       </nav>
     )}
@@ -35,6 +41,8 @@ const { title, description, toc = [] } = Astro.props;
 </Base>
 
 <style>
+  .legal__hero { display: grid; gap: 1.25rem; justify-items: start; padding-top: 9rem; }
+  .legal__hero h1 { font-size: var(--step-5); max-width: 18ch; }
   .legal {
     display: grid;
     grid-template-columns: minmax(12rem, 1fr) minmax(0, 3fr);

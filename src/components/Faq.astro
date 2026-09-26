@@ -1,14 +1,16 @@
 ---
 interface Props {
   items: { q: string; a: string }[];
+  eyebrow: string;
+  title: [string, string];
 }
-const { items } = Astro.props;
+const { items, eyebrow, title } = Astro.props;
 ---
-<section class="faq section bone">
+<section class="faq section paper">
   <div class="wrap faq__grid">
     <div>
-      <p class="eyebrow" data-reveal>Questions</p>
-      <h2 data-split>Good to <em>know</em></h2>
+      <p class="eyebrow" data-reveal>{eyebrow}</p>
+      <h2 data-split>{title[0]}{' '}<em>{title[1]}</em></h2>
     </div>
     <div class="faq__list">
       {items.map((it) => (

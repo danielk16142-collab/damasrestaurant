@@ -1,0 +1,40 @@
+---
+// Accessibility statement (recommended by the kit for public-facing businesses).
+import LegalPage from '../components/LegalPage.astro';
+import { site } from '../lib/content';
+import type { Lang } from '../lib/i18n';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+---
+<LegalPage lang={lang} page="accessibility" title={fr ? 'Déclaration d’accessibilité' : 'Accessibility statement'} description={fr ? 'L’engagement du Restaurant Damas pour un site accessible à tous.' : 'Restaurant Damas’s commitment to a website everyone can use.'}>
+  {fr ? (
+    <>
+      <section><h2>Notre objectif</h2><p>Nous voulons que chacun puisse découvrir Damas en ligne. Ce site vise le niveau AA des Règles pour l’accessibilité des contenus Web (WCAG 2.2).</p></section>
+      <section><h2>Ce que nous avons fait</h2>
+        <ul>
+          <li>Navigation complète au clavier, lien d’évitement et focus visible.</li>
+          <li>Contrastes de couleurs vérifiés, textes d’au moins 16 px sur mobile.</li>
+          <li>Menus en texte, et non en images ou en PDF seulement.</li>
+          <li>Animations réduites ou désactivées si votre appareil le demande (« réduire les animations »).</li>
+          <li>Textes de remplacement pour les images.</li>
+        </ul>
+      </section>
+      <section><h2>Vous rencontrez un obstacle ?</h2><p>Dites-le-nous : <a href={`mailto:${site.email}`}>{site.email}</a> ou {site.phone}. Nous vous répondrons et corrigerons le problème dès que possible.</p></section>
+    </>
+  ) : (
+    <>
+      <section><h2>Our goal</h2><p>We want everyone to be able to discover Damas online. This site aims for level AA of the Web Content Accessibility Guidelines (WCAG 2.2).</p></section>
+      <section><h2>What we’ve done</h2>
+        <ul>
+          <li>Full keyboard navigation, a skip link and visible focus.</li>
+          <li>Checked colour contrast, and text of at least 16 px on phones.</li>
+          <li>Menus as text, not only images or PDFs.</li>
+          <li>Motion reduced or turned off when your device asks for it (“reduce motion”).</li>
+          <li>Text alternatives for images.</li>
+        </ul>
+      </section>
+      <section><h2>Found a barrier?</h2><p>Let us know: <a href={`mailto:${site.email}`}>{site.email}</a> or {site.phone}. We’ll reply and fix it as soon as we can.</p></section>
+    </>
+  )}
+</LegalPage>

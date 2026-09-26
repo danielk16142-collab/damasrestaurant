@@ -35,7 +35,7 @@ const t = useT(lang);
     letter-spacing: 0.16em;
     text-transform: uppercase;
     box-shadow: 0 10px 40px rgb(18 10 13 / 0.45);
-    transform: translateY(160%);
+    transform: translateY(calc(100% + var(--gutter) + 1.5rem));
     transition: transform 0.8s var(--ease-out), background 0.4s;
   }
   .rfloat:hover { background: var(--paper); }
@@ -43,7 +43,7 @@ const t = useT(lang);
   @keyframes pulse { 50% { opacity: 0.25; } }
   /* Appears once the hero is behind you; hidden where the page already shows the widget */
   :global(html[data-scrolled]) .rfloat { transform: none; }
-  :global(html[data-page='reserve']) .rfloat, :global(html.menu-open) .rfloat { transform: translateY(160%); }
+  :global(html[data-page='reserve']) .rfloat, :global(html.menu-open) .rfloat { transform: translateY(calc(100% + var(--gutter) + 1.5rem)); }
 
   .rbar { display: none; }
   @media (max-width: 760px) {

@@ -1,0 +1,32 @@
+---
+// Terms of use (kit skeleton, filled for a restaurant site). Draft, not legal advice.
+import LegalPage from '../components/LegalPage.astro';
+import { legal, site } from '../lib/content';
+import { url, type Lang } from '../lib/i18n';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+---
+<LegalPage lang={lang} page="terms" title={fr ? 'Conditions d’utilisation' : 'Terms of use'} description={fr ? 'Les conditions d’utilisation du site du Restaurant Damas.' : 'The terms of use of the Restaurant Damas website.'}>
+  {fr ? (
+    <>
+      <section><h2>Éditeur</h2><p>Ce site est édité par {legal.entity}, {legal.address}. Contact : <a href={`mailto:${site.email}`}>{site.email}</a>, {site.phone}.</p></section>
+      <section><h2>Menus, prix et heures</h2><p>Les menus, les prix et les heures sont donnés à titre indicatif et peuvent changer selon la saison et les arrivages. Les prix sont en dollars canadiens, taxes et service en sus. Avisez votre serveur de toute allergie ou restriction alimentaire.</p></section>
+      <section><h2>Réservations</h2><p>Les réservations en ligne sont gérées par OpenTable et soumises à ses conditions. Pour un groupe de plus de huit personnes ou une privatisation, écrivez-nous à <a href={`mailto:${site.email}`}>{site.email}</a>.</p></section>
+      <section><h2>Propriété intellectuelle</h2><p>Les textes, photographies, logos et éléments graphiques de ce site appartiennent au {site.name} ou à leurs auteurs. Toute reproduction sans autorisation est interdite.</p></section>
+      <section><h2>Liens externes</h2><p>Le site contient des liens vers des services tiers (OpenTable, Treater, Folfol, réseaux sociaux). Nous ne sommes pas responsables de leur contenu ni de leurs pratiques.</p></section>
+      <section><h2>Responsabilité</h2><p>Nous faisons notre possible pour que l’information de ce site soit exacte et à jour, sans pouvoir le garantir en tout temps.</p></section>
+      <section><h2>Droit applicable</h2><p>Ces conditions sont régies par les lois applicables au {legal.governingLaw.fr}. Voir aussi notre <a href={url('privacy', 'fr')}>politique de confidentialité</a>.</p></section>
+    </>
+  ) : (
+    <>
+      <section><h2>Publisher</h2><p>This site is published by {legal.entity}, {legal.address}. Contact: <a href={`mailto:${site.email}`}>{site.email}</a>, {site.phone}.</p></section>
+      <section><h2>Menus, prices and hours</h2><p>Menus, prices and hours are for information and may change with the season and the market. Prices are in Canadian dollars; taxes and service are not included. Please tell your server about any allergies or dietary restrictions.</p></section>
+      <section><h2>Reservations</h2><p>Online reservations are handled by OpenTable under its own terms. For parties larger than eight, or to book the room privately, email us at <a href={`mailto:${site.email}`}>{site.email}</a>.</p></section>
+      <section><h2>Intellectual property</h2><p>The text, photographs, logos and graphics on this site belong to {site.name} or their authors. Reproduction without permission is prohibited.</p></section>
+      <section><h2>External links</h2><p>The site links to third-party services (OpenTable, Treater, Folfol, social networks). We are not responsible for their content or practices.</p></section>
+      <section><h2>Liability</h2><p>We do our best to keep the information on this site accurate and current, but can’t guarantee it at all times.</p></section>
+      <section><h2>Governing law</h2><p>These terms are governed by the laws applicable in {legal.governingLaw.en}. See also our <a href={url('privacy', 'en')}>privacy policy</a>.</p></section>
+    </>
+  )}
+</LegalPage>

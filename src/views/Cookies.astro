@@ -1,0 +1,58 @@
+---
+// Cookie policy: no analytics or marketing cookies; third-party embeds load
+// only when the visitor asks. Keep in sync with what the site loads.
+import LegalPage from '../components/LegalPage.astro';
+import { url, type Lang } from '../lib/i18n';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+---
+<LegalPage lang={lang} page="cookies" title={fr ? 'Politique relative aux témoins' : 'Cookie policy'} description={fr ? 'Les témoins et le stockage utilisés par le site du Restaurant Damas.' : 'The cookies and storage used by the Restaurant Damas website.'}>
+  {fr ? (
+    <>
+      <section><h2>En bref</h2>
+        <p>Ce site n’utilise <strong>aucun témoin d’analyse ni de publicité</strong>. C’est pourquoi aucune bannière de consentement ne s’affiche.</p>
+      </section>
+      <section><h2>Stockage essentiel dans votre navigateur</h2>
+        <table><thead><tr><th>Nom</th><th>Type</th><th>Fin</th><th>Durée</th></tr></thead>
+          <tbody>
+            <tr><td>damas-intro</td><td>Stockage de session</td><td>Ne jouer l’introduction animée qu’une fois par visite</td><td>Jusqu’à la fermeture de l’onglet</td></tr>
+            <tr><td>damas-events-draft</td><td>Stockage local</td><td>Garder le brouillon du formulaire d’événement si vous quittez la page</td><td>Jusqu’à l’envoi</td></tr>
+          </tbody></table>
+      </section>
+      <section><h2>Services tiers, seulement à votre demande</h2>
+        <ul>
+          <li><strong>OpenTable</strong> : le calendrier de réservation ne se charge que si vous cliquez sur « Voir les disponibilités » (page <a href={url('reserve', 'fr')}>Réserver</a>). OpenTable peut alors déposer ses propres témoins.</li>
+          <li><strong>Google Maps</strong> : la carte ne se charge que si vous cliquez sur « Afficher la carte » (page <a href={url('contact', 'fr')}>Contact</a>).</li>
+          <li>Les liens vers Treater, Folfol, Instagram et Facebook ouvrent ces sites, qui appliquent leurs propres politiques.</li>
+        </ul>
+      </section>
+      <section><h2>Vos choix</h2>
+        <p>Vous pouvez effacer ou bloquer ce stockage dans les réglages de votre navigateur ; le site continuera de fonctionner.</p>
+      </section>
+    </>
+  ) : (
+    <>
+      <section><h2>In short</h2>
+        <p>This site uses <strong>no analytics or advertising cookies</strong>. That’s why no consent banner appears.</p>
+      </section>
+      <section><h2>Essential storage in your browser</h2>
+        <table><thead><tr><th>Name</th><th>Type</th><th>Purpose</th><th>Lifetime</th></tr></thead>
+          <tbody>
+            <tr><td>damas-intro</td><td>Session storage</td><td>Play the animated introduction only once per visit</td><td>Until the tab closes</td></tr>
+            <tr><td>damas-events-draft</td><td>Local storage</td><td>Keep a draft of the events form if you leave the page</td><td>Until sent</td></tr>
+          </tbody></table>
+      </section>
+      <section><h2>Third-party services, only when you ask</h2>
+        <ul>
+          <li><strong>OpenTable</strong>: the booking calendar loads only if you click “See availability” (on the <a href={url('reserve', 'en')}>Reserve</a> page). OpenTable may then set its own cookies.</li>
+          <li><strong>Google Maps</strong>: the map loads only if you click “Show the map” (on the <a href={url('contact', 'en')}>Contact</a> page).</li>
+          <li>Links to Treater, Folfol, Instagram and Facebook open those sites, which apply their own policies.</li>
+        </ul>
+      </section>
+      <section><h2>Your choices</h2>
+        <p>You can clear or block this storage in your browser settings; the site keeps working.</p>
+      </section>
+    </>
+  )}
+</LegalPage>
