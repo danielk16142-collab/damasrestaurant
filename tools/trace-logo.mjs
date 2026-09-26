@@ -33,7 +33,7 @@ const [x0, y0, x1, y1] = bbox(word);
 const pad = 4;
 const r = (n) => Math.round(n * 10) / 10;
 const wvb = [x0 - pad, y0 - pad, x1 - x0 + pad * 2, y1 - y0 + pad * 2].map(r).join(" ");
-fs.writeFileSync('src/assets/brand/wordmark.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${wvb}"><path fill="currentColor" d="${word}"/></svg>\n`);
+fs.writeFileSync('src/assets/brand/wordmark.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${wvb}"><path fill="currentColor" fill-rule="evenodd" d="${word}"/></svg>\n`);
 const [fx0, fy0, fx1, fy1] = bbox(flora);
 if (!process.env.WORD_ONLY) fs.writeFileSync('src/assets/brand/emblem.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${fx0 - pad} ${fy0 - pad} ${fx1 - fx0 + pad * 2} ${fy1 - fy0 + pad * 2}"><path fill="currentColor" fill-rule="evenodd" d="${flora}"/></svg>\n`);
 console.log('wordmark', word.length, wvb, '| emblem', flora.length);
