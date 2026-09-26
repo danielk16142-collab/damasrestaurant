@@ -30,7 +30,7 @@ const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWit
   </div>
 </header>
 
-<div id="menu" class="menu" inert>
+<div id="menu" class="menu" inert data-lenis-prevent>
   <div class="menu__inner wrap">
     <nav aria-label="Menu">
       <ol class="menu__list" role="list">
@@ -148,6 +148,7 @@ const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWit
     visibility: hidden;
     transition: clip-path 0.9s var(--ease-in-out), visibility 0s 0.9s;
     overflow-y: auto;
+    overscroll-behavior: contain;
   }
   :global(html.menu-open) .menu {
     clip-path: inset(0 0 0 0);

@@ -91,7 +91,9 @@ Hydrate with `client:load` (above the fold, or needs the URL at once) or `client
 - **Astro scoped styles don't reach child components.** A class passed into `<Monogram class="x">` isn't styled by the parent's scoped `.x`. Use `.parent :global(.x)`.
 - **`ScrollTrigger.batch` with `once: true` throws** (`reading 'end'` in refresh) when elements are already in view at creation. The kit omits `once` there; re-running the tween is harmless.
 - **An element with `[hidden]` plus a `display:` rule stays visible.** global.css has `[hidden]{display:none!important}`, so use `inert` + visibility for animated overlays (see the Nav menu).
-- **Full-screen overlays with Lenis:** call `window.__lenis.stop()` on open and `start()` on close.
+- **Full-screen overlays with Lenis:** call `window.__lenis.stop()` on open and `start()` on close, **and put `data-lenis-prevent` (plus `overscroll-behavior: contain`) on the overlay**. A stopped Lenis cancels wheel and touch events everywhere, so without it a tall menu can't scroll and its bottom (often the Reserve button) is out of reach on short screens (Damas, 2026-09).
+- **ScrollTriggers below a pinned section need `refreshPriority: -1`,** or they measure before the pin's spacer exists and fire at the wrong place.
+- **Traced logos need `fill-rule="evenodd"`,** or the letter counters (the holes in a, o, e) fill in.
 - **SSR'd islands render defaults first.** URL-driven filters apply after hydration.
 - **The featured row on mobile needs `scroll-padding-inline`,** or the snap aligns the cards flush to the screen edge.
 - **Card rows need `flex-wrap`** so the facts and price don't overflow on narrow cards.
