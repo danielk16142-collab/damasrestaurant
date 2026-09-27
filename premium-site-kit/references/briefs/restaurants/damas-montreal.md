@@ -70,6 +70,7 @@ Every damas.ca URL was kept (`/fr/…` + `/en/…`, both prefixed, `/` → `/fr/
 - **No JSX in Astro frontmatter:** keep bilingual titles as `[plain, italic]` string pairs and render them in the markup, with `{' '}` before `<em>`.
 - **Vercel built `main` before the site was merged** ("astro: command not found", exit 127). Production builds from the default branch, so merge the first PR early or set the production branch.
 - **The wine-list PDF had three-column pages** the parser misread. We published only the proofread sections and linked the full PDF.
+- **`/menu` and `/contact` redirects ended on a 404:** with `trailingSlash: true`, Vercel adds the slash before redirects run, so `"source": "/menu"` never matched. Both forms are now listed; see `../../deploy.md`.
 - **Deployment protection:** team-scoped Vercel URLs ask for a login; `<project>.vercel.app` is public. Tell the client which link to share.
 
 ## 9. Integrations, SEO, legal
