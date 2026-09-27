@@ -59,6 +59,7 @@ Every damas.ca URL was kept (`/fr/…` + `/en/…`, both prefixed, `/` → `/fr/
 - **Full-screen menu couldn't scroll** on short screens, so Réserver was cut off. → See §8.
 - **(27 Sep) The big "La salle" statement was too large on phones** (5+ ragged lines at 40px). → The statement goes down to `step-3` at 800px and below, and `step-2` at 480px and below. Check large display paragraphs at 360–390px, not just headlines.
 - **(27 Sep) Photos on phones must fill the width and be centred:** 85%-wide, left-aligned arch photos looked unfinished, and the small secondary collage photo (brunch) looked lost. → On phones, main photos are 100% of the column and centred; decorative secondary photos in a collage are hidden.
+- **(27 Sep) Duplicate photos and overlapping stacks:** the Story "décor" collage had two near-identical shots of the red room, and the home "La salle" collage overlapped a small arch on the wide photo on phones. → Check every page for near-duplicate shots, not just identical files. On phones, collages become a clean stack (wide photo, then two arches side by side, or the secondary photo hidden), never an overlap. On desktop, keep collages in two tidy rows.
 
 ## 8. Pitfalls and fixes
 - **Lenis blocks scrolling inside overlays:** while `lenis.stop()` is active, wheel and touch events are cancelled, even inside a scrollable fixed menu. Put **`data-lenis-prevent` on any scrollable overlay** (nav menu, modals, drawers), plus `overscroll-behavior: contain`. It's now a kit-wide lesson.

@@ -159,7 +159,7 @@ const c = fr
           <Image src={sallePlafond} alt={fr ? 'Le plafond rouge constellé de lanternes' : 'The red ceiling studded with lanterns'} widths={[640, 1100, 1440]} sizes="(max-width: 800px) 90vw, 50vw" />
         </figure>
         <figure class="salle__c arch-frame" data-clip>
-          <Image src={longueTable} alt={fr ? 'La longue table dressée sous les lustres de cristal' : 'The long table set beneath crystal chandeliers'} widths={[400, 700]} sizes="(max-width: 800px) 60vw, 22vw" />
+          <Image src={longueTable} alt={fr ? 'La longue table dressée sous les lustres de cristal' : 'The long table set beneath crystal chandeliers'} widths={[400, 700]} sizes="22vw" />
         </figure>
       </div>
       <ul class="figs" role="list">
@@ -389,7 +389,8 @@ const c = fr
   @media (max-width: 800px) {
     .salle__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .salle__a, .salle__text, .salle__b { grid-column: 1 / -1; }
-    .salle__c { grid-column: 2; margin-top: -5rem; }
+    /* The long-table photo returns in the salons section on phones; hide the collage copy */
+    .salle__c { display: none; }
   }
 
   /* Les mezzés: pinned horizontal track ≥900px, swipe row below */
