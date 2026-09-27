@@ -32,6 +32,7 @@ People visit to answer four questions fast: *What's the food like? Can I get a t
 - The mood comes from the photos: food close-ups, the room, people. A video loop needs a poster image and a reduced-motion fallback.
 - **Ask which photo is "the" photo of the room.** Clients have one they identify with (Damas swapped our pick for the one on their old site). Give the hero text a strong shade (a radial behind the title plus a two-layer text shadow) from the start, because dining rooms are busy, bright photos.
 - Art-direct wide photos: give phones a vertical crop or a different vertical photo through `<picture>` + `getImage()`.
+- **On phones, every main photo fills the column and is centred; hide secondary "collage" photos.** Offset 85%-wide images and small side photos look unfinished on a 390px screen (Damas). Keep big display statements to about 25px on phones.
 - **No magnetic buttons by default:** restaurant clients read them as "buttons that move" (Damas rejected P2).
 - A famous restaurant that doesn't need leads can take **expressive** motion: the site becomes part of the experience.
 - Typography carries the concept: a French bistro, an izakaya and a steakhouse should look nothing alike. Use `design-variations.md`.
