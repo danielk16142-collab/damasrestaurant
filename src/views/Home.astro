@@ -374,6 +374,8 @@ const c = fr
 
   /* La salle */
   .statement { font-family: var(--font-display); font-size: var(--step-4); line-height: 1.15; max-width: 24ch; }
+  @media (max-width: 800px) { .statement { font-size: var(--step-3); line-height: 1.2; max-width: 26ch; } }
+  @media (max-width: 480px) { .statement { font-size: var(--step-2); line-height: 1.25; max-width: none; } }
   .salle__grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 2rem; margin-top: clamp(4rem, 8vw, 7rem); align-items: start; }
   .salle__a { grid-column: 1 / span 5; aspect-ratio: 4 / 5; }
   .salle__text { grid-column: 7 / span 5; align-self: center; display: grid; gap: 1.25rem; max-width: 46ch; }
