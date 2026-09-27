@@ -18,6 +18,9 @@ Plan terms and prices change, so check the providers' current pages before quoti
 3. The user imports it at vercel.com/new. Framework: Astro, build `npm run build`, output `dist`, no env vars.
 4. If the repo doesn't appear in Vercel's import list, the Vercel GitHub app lacks access. Send them to github.com/settings/installations → Vercel → Configure → Repository access → add the repo, or to Vercel Account Settings → Authentication → connect GitHub.
 5. Every push to `main` redeploys. Afterwards, set `site` in `astro.config.mjs` to the live URL.
+6. **Production builds from `main`.** Until the site is merged there, the production deployment fails (for example `astro: command not found`, exit 127). Merge the first PR as soon as its preview is green, or set the production branch in Vercel → Settings → Git.
+7. **Redirects with `trailingSlash: true`** (the kit's default): Vercel adds the trailing slash *before* `redirects` run, so a rule with `"source": "/menu"` never matches, and `/menu` ends on a 404 at `/menu/`. Add both forms for every redirect (`/menu` and `/menu/`), and test each old URL on the live site with `curl -sL -o /dev/null -w '%{http_code} %{url_effective}' <url>` (Damas, 2026-09).
+8. Team-scoped URLs (`<project>-<team>.vercel.app`, `…-git-<branch>-…`) are behind Vercel's deployment protection and ask for a login; `<project>.vercel.app` is public. Share the public one with the client, or turn protection off for previews.
 
 ## CLI alternative
 `npx vercel login` (the user does this in their own terminal), then `npx vercel deploy --yes` for a preview. Never ask for tokens in chat; if a token is needed, have the user save it to a file you read without printing. The old anonymous "claimable" deploy endpoint now only returns CLI instructions.
