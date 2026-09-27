@@ -12,7 +12,7 @@ import { breadcrumbLd } from '../lib/seo';
 import heroImg from '../assets/photos/salle-soir.jpg';
 import salon from '../assets/photos/salon-lanternes.jpg';
 import salleLarge from '../assets/photos/salle-large.jpg';
-import salleTables from '../assets/photos/salle-tables.jpg';
+import barLumieres from '../assets/photos/bar-lumieres.jpg';
 import four from '../assets/photos/four-pain.jpg';
 
 interface Props { lang: Lang }
@@ -79,9 +79,9 @@ const description = fr
           ? 'Plafonds rouges constellés de lanternes, murs rayés à la manière des palais damascènes, moucharabiehs, velours, bois sculpté, lustres de perles et de cristal, banquettes aux motifs turquoise : chaque salle est un chapitre, chaque coin une alcôve où la soirée se prolonge.'
           : 'Red ceilings studded with lanterns, walls striped like the palaces of Damascus, mashrabiya screens, velvet, carved wood, beaded crystal chandeliers, turquoise-patterned banquettes: every room is a chapter, every corner an alcove where the evening lingers.'}</p>
       </div>
-      <figure class="decor__a" data-clip><Image src={salon} alt={fr ? 'Alcôve aux banquettes turquoise sous des lustres de perles' : 'Alcove with turquoise banquettes beneath beaded chandeliers'} widths={[480, 900]} sizes="(max-width: 800px) 80vw, 34vw" /></figure>
-      <figure class="decor__b media" data-parallax="10"><Image src={salleLarge} alt={fr ? 'La salle rouge et ses lanternes' : 'The red dining room and its lanterns'} widths={[640, 1080]} sizes="(max-width: 800px) 90vw, 50vw" /></figure>
-      <figure class="decor__c" data-clip><Image src={salleTables} alt={fr ? 'Tables dressées sous les lanternes' : 'Tables set beneath the lanterns'} widths={[400, 700]} sizes="(max-width: 800px) 60vw, 24vw" /></figure>
+      <figure class="decor__a" data-clip><Image src={salon} alt={fr ? 'Alcôve aux banquettes turquoise sous des lustres de perles' : 'Alcove with turquoise banquettes beneath beaded chandeliers'} widths={[480, 900]} sizes="(max-width: 800px) 45vw, 34vw" /></figure>
+      <figure class="decor__b media" data-parallax="10"><Image src={salleLarge} alt={fr ? 'La salle rouge et ses lanternes' : 'The red dining room and its lanterns'} widths={[640, 1080]} sizes="(max-width: 800px) 92vw, 62vw" /></figure>
+      <figure class="decor__c" data-clip><Image src={barLumieres} alt={fr ? 'Le bar sous ses guirlandes de lumières rouges' : 'The bar beneath its strings of red lights'} widths={[400, 700]} sizes="(max-width: 800px) 45vw, 24vw" /></figure>
     </div>
   </section>
 
@@ -123,17 +123,18 @@ const description = fr
   .decor__grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 2rem; align-items: start; }
   .decor__grid figure { margin: 0; overflow: hidden; }
   .decor__grid :global(img) { width: 100%; height: 100%; object-fit: cover; }
-  .decor__text { grid-column: 1 / span 6; display: grid; gap: 1.5rem; }
+  .decor__text { grid-column: 1 / span 6; grid-row: 1; align-self: center; display: grid; gap: 1.5rem; }
   .decor__text h2 { font-size: var(--step-4); }
   .decor__text p { max-width: 46ch; }
-  .decor__a { grid-column: 8 / span 5; grid-row: 1 / span 2; aspect-ratio: 3 / 4; border-radius: 50% 50% 0 0 / 30% 30% 0 0; }
-  .decor__b { grid-column: 1 / span 6; aspect-ratio: 16 / 11; margin-top: 2rem !important; }
-  .decor__c { grid-column: 8 / span 3; aspect-ratio: 3 / 4; border-radius: 50% 50% 0 0 / 30% 30% 0 0; }
+  .decor__a { grid-column: 8 / span 5; grid-row: 1; aspect-ratio: 3 / 4; border-radius: 50% 50% 0 0 / 30% 30% 0 0; }
+  .decor__b { grid-column: 1 / span 8; grid-row: 2; aspect-ratio: 16 / 10; margin-top: 2rem !important; }
+  .decor__c { grid-column: 10 / span 3; grid-row: 2; align-self: end; aspect-ratio: 3 / 4; border-radius: 50% 50% 0 0 / 30% 30% 0 0; }
   @media (max-width: 800px) {
     .decor__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.5rem 1rem; }
-    .decor__text, .decor__b { grid-column: 1 / -1; }
-    .decor__a { grid-column: 1 / -1; grid-row: auto; width: 85%; justify-self: end; }
-    .decor__c { grid-column: 1; }
+    .decor__text { grid-column: 1 / -1; grid-row: 1; }
+    .decor__b { grid-column: 1 / -1; grid-row: 2; }
+    .decor__a { grid-column: 1; grid-row: 3; }
+    .decor__c { grid-column: 2; grid-row: 3; align-self: start; }
   }
   .rituals { display: grid; gap: 1.25rem; }
   .rituals h2 { font-size: var(--step-4); }
