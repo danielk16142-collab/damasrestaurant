@@ -67,6 +67,7 @@ const year = new Date().getFullYear();
         <a href={url('accessibility', lang)}>{t.accessibility}</a>
         {(consent.analytics || consent.marketing) && <button type="button" data-cookie-settings>Cookies</button>}
       </nav>
+      <p class="footer__credit">{t.credit}</p>
       <p><a href="#main" class="footer__top-link">{t.backToTop}</a></p>
     </div>
   </div>
